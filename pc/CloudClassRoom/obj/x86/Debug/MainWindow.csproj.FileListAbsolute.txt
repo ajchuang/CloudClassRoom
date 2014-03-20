@@ -1,0 +1,12 @@
+C:\Users\Family\AppData\Local\Temporary Projects\WpfApplication1\obj\x86\Debug\MainWindow.baml
+C:\Users\Family\AppData\Local\Temporary Projects\WpfApplication1\obj\x86\Debug\MainWindow.g.cs
+C:\Users\Family\AppData\Local\Temporary Projects\WpfApplication1\obj\x86\Debug\App.g.cs
+C:\Users\Family\AppData\Local\Temporary Projects\WpfApplication1\obj\x86\Debug\MainWindow.csproj.GenerateResource.Cache
+C:\Users\Family\AppData\Local\Temporary Projects\WpfApplication1\obj\x86\Debug\MainWindow.csproj.ResolveComReference.cache
+C:\Users\Family\AppData\Local\Temporary Projects\WpfApplication1\obj\x86\Debug\CloudClassRoom_MarkupCompile.cache
+C:\Users\Family\AppData\Local\Temporary Projects\WpfApplication1\obj\x86\Debug\CloudClassRoom.g.resources
+C:\Users\Family\AppData\Local\Temporary Projects\WpfApplication1\obj\x86\Debug\CloudClassRoom.Properties.Resources.resources
+C:\Users\Family\AppData\Local\Temporary Projects\WpfApplication1\bin\Debug\CloudClassRoom.exe
+C:\Users\Family\AppData\Local\Temporary Projects\WpfApplication1\bin\Debug\CloudClassRoom.pdb
+C:\Users\Family\AppData\Local\Temporary Projects\WpfApplication1\obj\x86\Debug\CloudClassRoom.exe
+C:\Users\Family\AppData\Local\Temporary Projects\WpfApplication1\obj\x86\Debug\CloudClassRoom.pdb
