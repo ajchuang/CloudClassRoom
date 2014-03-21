@@ -16,14 +16,16 @@ public class Server {
         m_port = port;
     }
     
-    void readMsg () {
+    Server_ClntMsg readMsg () {
         
         String data;
+        Server_ClntMsg clntMsg = new Server_ClntMsg ();
     
         try {    
             while ((data = m_reader.readLine ()) != null) {
                 
                 Server.log (data);
+                clntMsg.pushMsg (data);
                 
                 if (data.equals ("END") == true) 
                     break;
@@ -33,11 +35,16 @@ public class Server {
             e.printStackTrace ();
         }
         
-        return;
+        return clntMsg;
     }
     
-    void processMsg () {
-        Server.log ("processMsg");
+    void sendToProcThread (Server_ClntMsg clntMsg) {
+        
+        Server.log ("sendToProcThread");
+        
+        Server_ProcThread.enqueueCmd (clntMsg);
+        
+        // respond to the user
         m_writer.println ("OK");
         m_writer.flush ();
     }
@@ -48,8 +55,7 @@ public class Server {
             m_writer = new PrintWriter (sc.getOutputStream (), true);
             m_reader = new BufferedReader (new InputStreamReader (sc.getInputStream ()));
             
-            readMsg ();
-            processMsg ();
+            sendToProcThread (readMsg ());
             
             Server.log ("Complete client");
         } catch (Exception e) {
@@ -58,6 +64,9 @@ public class Server {
     }
     
     public void startServer () {
+        
+        Server_ProcThread pThd = Server_ProcThread.getProcThread ();
+        (new Thread (pThd)).start ();
         
         try {
             ServerSocket skt = new ServerSocket (m_port);
