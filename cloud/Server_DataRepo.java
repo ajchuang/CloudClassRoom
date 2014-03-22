@@ -18,7 +18,8 @@ public class Server_DataRepo {
     Connection m_dbConn;
 
     // static data 
-    static Server_DataRepo m_repo = null; 
+    static Server_DataRepo m_repo = null;
+    static int m_sessionId = 0; 
 
     private Server_DataRepo () {
         
@@ -48,6 +49,9 @@ public class Server_DataRepo {
     void initDbTable () {
         
         try {
+            execSqlCmd ("drop table if exists LoginUsers; ");
+            execSqlCmd ("drop table if exists AllClasses; ");
+            
             execSqlCmd ("create table if not exists ValidUsers (name string, pass string); ");
             execSqlCmd ("create table if not exists LoginUsers (name string, session_id integer); ");
             execSqlCmd ("create table if not exists AllClasses (class_id intetger, class_name string, session_id integer, inst_name string); ");
@@ -75,12 +79,12 @@ public class Server_DataRepo {
     
     public boolean isValidUser (String name, String pass) {
         
-        String sql = "select count (*) as RECORDCOUNT from ValidUsers where name = '" + name + "' AND pass = '" + pass + "';";
+        String sql = "select count (*) as RECORD_COUNT from ValidUsers where name = '" + name + "' AND pass = '" + pass + "';";
         
         try {
             ResultSet rs = execSqlQuery (sql);
             
-            if (rs.next () && rs.getInt ("RECORDCOUNT") == 1)
+            if (rs.next () && rs.getInt ("RECORD_COUNT") == 1)
                 return true;
             else
                 return false;
@@ -89,5 +93,29 @@ public class Server_DataRepo {
             e.printStackTrace ();
             return false;
         }
+    }
+    
+    public int userLoggedIn (String name) {
+        
+        String sql = "select session_id as SESSION_ID from LoginUsers where name = '" + name + "';";
+        
+        try {
+            ResultSet rs = execSqlQuery (sql);
+            
+            if (rs.next ()) {
+                return rs.getInt ("SESSION_ID");
+            }
+            else {
+                m_sessionId++;
+                execSqlCmd ("insert into LoginUsers values('" + name + "', " + m_sessionId + ")");
+                return m_sessionId;
+            }
+        } catch (Exception e) {
+            Server.logErr ("Exception @ isValidUser:" + e);
+            e.printStackTrace ();
+            System.exit (0);
+        }
+        
+        return 0;
     }
 }

@@ -41,13 +41,18 @@ public class Server_ProcThread implements Runnable {
     
     // ugly: handle functions for individual msgs
     void processMsg_login (Server_ClntMsg sCmd) {
+        
+        Server_DataRepo repo = Server_DataRepo.getDataRepo ();
         Server.log ("LOGIN_REQ");
             
         String name = sCmd.getMsgAt (1);
         String pass = sCmd.getMsgAt (2);
         
-        if (Server_DataRepo.getDataRepo().isValidUser (name, pass) == true) {
-            Server.log ("login okay");
+        if (repo.isValidUser (name, pass) == true) {
+            
+            // check if logged-in already, If so, just returned the session id
+            int sessionId = repo.userLoggedIn (name);
+            Server.log ("login okay: " + sessionId);
         } else {
             Server.log ("login failed");
         }
