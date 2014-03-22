@@ -24,11 +24,12 @@ public class Server {
         try {    
             while ((data = m_reader.readLine ()) != null) {
                 
-                Server.log (data);
-                clntMsg.pushMsg (data);
+                data.trim ();
                 
                 if (data.equals ("END") == true) 
                     break;
+                                    
+                clntMsg.pushMsg (data);
             }
         } catch (Exception e) {
             Server.log ("Exception: " + e);
