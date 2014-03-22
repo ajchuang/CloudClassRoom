@@ -71,6 +71,26 @@ public class Server_ProcThread implements Runnable {
         }
     }
     
+    void readMsg (Server_ClntMsg sCmd) {
+        
+        String data;
+        
+        try {    
+            while ((data = sCmd.getReader().readLine ()) != null) {
+                
+                data.trim ();
+                
+                if (data.equals ("END") == true) 
+                    break;
+                                    
+                sCmd.pushMsg (data);
+            }
+        } catch (Exception e) {
+            Server.log ("Exception: " + e);
+            e.printStackTrace ();
+        }
+    }
+    
     // main processing functions
     void processMsg (Server_ClntMsg sCmd) {
         
@@ -106,6 +126,7 @@ public class Server_ProcThread implements Runnable {
             
             // @lfred: dispatch the command to the right thread.
             Server.log ("Get the object to dispatch");
+            readMsg (sCmd);
             processMsg (sCmd);
         }
     }

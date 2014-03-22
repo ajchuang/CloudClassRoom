@@ -8,55 +8,25 @@ public class Server {
     static Server   sm_server = null;
     
     int m_port;
-    PrintWriter m_writer;
-    BufferedReader m_reader;
+    //PrintWriter m_writer;
+    //BufferedReader m_reader;
     
     //--- instance methods
     Server (int port) {
         m_port = port;
     }
     
-    Server_ClntMsg readMsg () {
-        
-        String data;
-        Server_ClntMsg clntMsg = new Server_ClntMsg ();
-    
-        try {    
-            while ((data = m_reader.readLine ()) != null) {
-                
-                data.trim ();
-                
-                if (data.equals ("END") == true) 
-                    break;
-                                    
-                clntMsg.pushMsg (data);
-            }
-        } catch (Exception e) {
-            Server.log ("Exception: " + e);
-            e.printStackTrace ();
-        }
-        
-        return clntMsg;
-    }
-    
     void sendToProcThread (Server_ClntMsg clntMsg) {
-        
         Server.log ("sendToProcThread");
-        
         Server_ProcThread.enqueueCmd (clntMsg);
-        
-        // respond to the user
-        m_writer.println ("OK");
-        m_writer.flush ();
     }
     
     void processMsg (Socket sc) {
         
+        Server.log ("Server: processMsg");
         try {
-            m_writer = new PrintWriter (sc.getOutputStream (), true);
-            m_reader = new BufferedReader (new InputStreamReader (sc.getInputStream ()));
-            
-            sendToProcThread (readMsg ());
+            Server_ClntMsg clntMsg = new Server_ClntMsg (sc);
+            sendToProcThread (clntMsg);
             
             Server.log ("Complete client");
         } catch (Exception e) {
@@ -77,11 +47,8 @@ public class Server {
             while (true) {
                 try {
                     Socket sc = skt.accept ();
-                    Server.log ("Server: incoming link");
-                    
                     processMsg (sc);
                     
-                    sc.close ();
                 } catch (Exception ee) {
                     Server.logErr ("exception: " + ee);
                     ee.printStackTrace ();

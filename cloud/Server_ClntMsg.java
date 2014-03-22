@@ -1,9 +1,16 @@
 
 import java.util.*;
+import java.net.*;
+import java.io.*;
 
 public class Server_ClntMsg {
 
     Vector<String> m_msgVec;
+    
+    // TODO: this is a temp solution - should be removed later.
+    PrintWriter m_writer;
+    BufferedReader m_reader;
+    Socket m_socket;
     
     final static HashMap<String, Server_CmdType> sm_cmdMap;
     
@@ -27,8 +34,30 @@ public class Server_ClntMsg {
         sm_cmdMap.put ("RETRIEVE_PRESENT_TOKEN_REQ", Server_CmdType.RETRIEVE_PRESENT_TOKEN_REQ);
     }
     
-    public Server_ClntMsg () {
+    public Server_ClntMsg (Socket socket) {
         m_msgVec = new Vector<String> (); 
+        
+        m_socket = socket;
+        
+        try {
+            m_writer = new PrintWriter (m_socket.getOutputStream (), true);
+            m_reader = new BufferedReader (new InputStreamReader (m_socket.getInputStream ()));
+        } catch (Exception e) {
+            Server.logErr ("exception @ Server_ClntMsg :" + e);
+            e.printStackTrace ();
+        }
+    }
+    
+    public PrintWriter getWriter () {
+        return m_writer;
+    }
+    
+    public BufferedReader getReader () {
+        return m_reader;
+    }
+    
+    public Socket getSocket () {
+        return m_socket;
     }
     
     public Server_CmdType getMsgType () {
