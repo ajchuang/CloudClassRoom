@@ -9,9 +9,10 @@ public class Server_ProcThread implements Runnable {
     
     // @lfred: the key data structure in async processing
     LinkedBlockingQueue<Server_ClntMsg> m_cmdQueue;
-    
+        
+    // @lfred: static variables
     static Server_ProcThread m_procThread = null;
-
+    
     // @lfred: yet another singleton trick
     Server_ProcThread () {
         m_cmdQueue = new LinkedBlockingQueue<Server_ClntMsg> ();
@@ -34,12 +35,31 @@ public class Server_ProcThread implements Runnable {
         }
     }
     
+    boolean authenticate (String name, String pass) {
+        return true;
+    }
+    
+    // ugly: handle functions for individual msgs
+    void processMsg_login (Server_ClntMsg sCmd) {
+        Server.log ("LOGIN_REQ");
+            
+        String name = sCmd.getMsgAt (1);
+        String pass = sCmd.getMsgAt (2);
+        
+        if (Server_DataRepo.getDataRepo().isValidUser (name, pass) == true) {
+            Server.log ("login okay");
+        } else {
+            Server.log ("login failed");
+        }
+    }
+    
+    // main processing functions
     void processMsg (Server_ClntMsg sCmd) {
         
         String msgType = sCmd.getMsgAt (0);
         
         if (msgType.equals ("LOGIN_REQ") == true) {
-            Server.log ("LOGIN_REQ");
+            processMsg_login (sCmd);
         } else if (msgType.equals ("LOGOUT_REQ") == true) {
             Server.log ("LOGOUT_REQ");
         }
@@ -64,5 +84,4 @@ public class Server_ProcThread implements Runnable {
             processMsg (sCmd);
         }
     }
-
 }

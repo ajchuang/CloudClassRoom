@@ -119,6 +119,10 @@ public class Server {
         int port = Integer.parseInt (args[0]);
         Server.log ("Using port: " + port);
         
+        // 1. init database
+        Server_DataRepo.getDataRepo ();
+        
+        // 2. start welcoming socket
         Server svr = Server.createServer (port);
         svr.startServer ();
     }
