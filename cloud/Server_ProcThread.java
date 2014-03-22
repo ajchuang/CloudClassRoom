@@ -35,10 +35,6 @@ public class Server_ProcThread implements Runnable {
         }
     }
     
-    boolean authenticate (String name, String pass) {
-        return true;
-    }
-    
     // ugly: handle functions for individual msgs
     void processMsg_login (Server_ClntMsg sCmd) {
         
@@ -58,15 +54,39 @@ public class Server_ProcThread implements Runnable {
         }
     }
     
+    void processMsg_createClass (Server_ClntMsg sCmd) {
+        
+        Server_DataRepo repo = Server_DataRepo.getDataRepo ();
+        Server.log ("LOGIN_REQ");
+            
+        String className = sCmd.getMsgAt (1);
+        int userSession = Integer.parseInt (sCmd.getMsgAt (2));
+        
+        if (repo.isClassExist (className) == true) {
+            //TODO: should return an existing ID or return error
+            return;
+        } else {
+            //TODO: to create the classroom and related tables
+            return;
+        }
+    }
+    
     // main processing functions
     void processMsg (Server_ClntMsg sCmd) {
         
         String msgType = sCmd.getMsgAt (0);
         
-        if (msgType.equals ("LOGIN_REQ") == true) {
-            processMsg_login (sCmd);
-        } else if (msgType.equals ("LOGOUT_REQ") == true) {
-            Server.log ("LOGOUT_REQ");
+        switch (sCmd.getMsgType ()) {
+            case LOGIN_REQ:
+                processMsg_login (sCmd);
+            break;
+                
+            case LOGOUT_REQ:
+            break;
+            
+            case CREATE_CLASS_REQ:
+                processMsg_createClass (sCmd);
+            break;
         }
     }
     

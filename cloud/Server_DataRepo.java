@@ -19,7 +19,8 @@ public class Server_DataRepo {
 
     // static data 
     static Server_DataRepo m_repo = null;
-    static int m_sessionId = 0; 
+    static int m_sessionId  = 0;
+    static int m_classId    = 0; 
 
     private Server_DataRepo () {
         
@@ -115,6 +116,43 @@ public class Server_DataRepo {
             e.printStackTrace ();
             System.exit (0);
         }
+        
+        return 0;
+    }
+    
+    public boolean isClassExist (String className) {
+        
+        String sql = "select count (*) as CLASS_COUNT from AllClasses where name = '" + className + "';";
+        
+        try {
+            
+            ResultSet rs = execSqlQuery (sql);
+            
+            if (rs.next ()) {
+                int classCount = rs.getInt ("CLASS_COUNT");
+                if (classCount == 1)
+                    return true;
+                else {
+                    Server.logErr ("Well, multiple classes of the same name are generated.");
+                    System.exit (0);
+                    return false;
+                }
+            } else {
+                return false;
+            }
+            
+        } catch (Exception e) {
+            Server.logErr ("Exception @ isClassExist:" + e);
+            e.printStackTrace ();
+            System.exit (0);
+        }
+        
+        return false;
+    }
+    
+    public int createClass (String className, String instName) {
+        
+        //execSqlCmd ("create table if not exists " + className + " (name string, session_id integer); ");
         
         return 0;
     }
