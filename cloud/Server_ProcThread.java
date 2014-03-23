@@ -107,6 +107,46 @@ public class Server_ProcThread implements Runnable {
             case CREATE_CLASS_REQ:
                 processMsg_createClass (sCmd);
             break;
+            
+            case LIST_CLASS_REQ:
+            break;
+            
+            case DEL_CLASS_REQ:
+            break;
+            
+            case JOIN_CLASS_REQ:
+            break;
+            
+            case QUERY_CLASS_INFO_REQ:
+            break;
+            
+            case QUIT_CLASS_REQ:
+            break;
+            
+            case KICK_USER_REQ:
+            break;
+            
+            case PUSH_CONTENT_REQ:
+            break;
+            
+            case PUSH_CONTENT_GET_REQ:
+            break;
+            
+            case COND_PUSH_CONTENT_REQ:
+            break;
+            
+            case GET_PRESENT_TOKEN_REQ:
+            break;
+            
+            case CHANGE_PRESENT_TOKEN_RES:
+            break;
+            
+            case RETRIEVE_PRESENT_TOKEN_REQ:
+            break;
+            
+            default:
+                Server.logErr ("Unknown command");
+            break;
         }
     }
     
