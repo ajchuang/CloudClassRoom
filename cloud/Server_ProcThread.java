@@ -66,7 +66,9 @@ public class Server_ProcThread implements Runnable {
             //TODO: should return an existing ID or return error
             return;
         } else {
-            //TODO: to create the classroom and related tables
+            
+            // TO FIX: find the name from login user table.
+            repo.createClass (className, "admin");
             return;
         }
     }

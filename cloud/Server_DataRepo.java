@@ -152,8 +152,16 @@ public class Server_DataRepo {
     
     public int createClass (String className, String instName) {
         
-        //execSqlCmd ("create table if not exists " + className + " (name string, session_id integer); ");
+        try {
+            m_classId++;
+            execSqlCmd ("insert into AllClasses values(" + m_classId + ", '" + className + "', '" + instName + "')");
+            execSqlCmd ("create table if not exists " + m_classId + " (user_name string, role integer, is_presenter boolean); ");
+            return m_classId;
+        } catch (Exception e) {
+            Server.logErr ("Exception @ createClass: " + e);
+            e.printStackTrace ();
+        }        
         
-        return 0;
+        return (-1);
     }
 }
