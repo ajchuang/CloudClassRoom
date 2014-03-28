@@ -120,6 +120,23 @@ public class Server_DataRepo {
         return 0;
     }
     
+    // only a simple version - buggy need to modify later.
+    public boolean userLoggedOut (int sessionId) {
+        // remove the user from various database.
+        
+        try {
+            String sql = "delete from LoginUsers where session_id=" + sessionId + ";";
+            execSqlCmd (sql);
+            
+        } catch (Exception e) {
+            Server.logErr ("Exception @ userLoggedOut:" + e);
+            e.printStackTrace ();
+            System.exit (0);
+        }
+        
+        return true;
+    }
+    
     public boolean isClassExist (String className) {
         
         String sql = "select count (*) as CLASS_COUNT from AllClasses where name = '" + className + "';";

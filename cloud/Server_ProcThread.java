@@ -38,26 +38,75 @@ public class Server_ProcThread implements Runnable {
     // ugly: handle functions for individual msgs
     void processMsg_login (Server_ClntMsg sCmd) {
         
-        Server_DataRepo repo = Server_DataRepo.getDataRepo ();
-        Server.log ("LOGIN_REQ");
+        try {
+            Server_DataRepo repo = Server_DataRepo.getDataRepo ();
+            Server.log ("LOGIN_REQ");
+                
+            String name = sCmd.getMsgAt (1);
+            String pass = sCmd.getMsgAt (2);
             
-        String name = sCmd.getMsgAt (1);
-        String pass = sCmd.getMsgAt (2);
+            if (repo.isValidUser (name, pass) == true) {
+                
+                // check if logged-in already, If so, just returned the session id
+                int sessionId = repo.userLoggedIn (name);
+                Server.log ("login okay: " + sessionId);
+                
+                sCmd.getWriter().println ("LOGIN_RES");
+                sCmd.getWriter().println ("OK");
+                sCmd.getWriter().println (Integer.toString (sessionId));
+                sCmd.getWriter().println ("END");
+                sCmd.getWriter().flush ();
+                
+            } else {
+                Server.log ("login failed");
+                
+                sCmd.getWriter().println ("LOGIN_RES");
+                sCmd.getWriter().println ("ERROR");
+                sCmd.getWriter().println ("INVALID_USER");
+                sCmd.getWriter().println ("END");
+                sCmd.getWriter().flush ();
+            }
+            
+            sCmd.getSocket ().close ();
+            
+        } catch (Exception e) {
+            Server.logErr ("Exception @ processMsg_login");
+            e.printStackTrace ();
+        }
         
-        if (repo.isValidUser (name, pass) == true) {
+        return;
+    }
+    
+    // ugly: handle functions for individual msgs
+    void processMsg_logout (Server_ClntMsg sCmd) {
+        
+        try {
+            Server_DataRepo repo = Server_DataRepo.getDataRepo ();
+            Server.log ("LOGOUT_REQ");
             
-            // check if logged-in already, If so, just returned the session id
-            int sessionId = repo.userLoggedIn (name);
-            Server.log ("login okay: " + sessionId);
-        } else {
-            Server.log ("login failed");
+            // TODO: if the user is the instructor of some class.
+            // If so, we also need to drop all the users in the class -
+            
+            int sessionId = Integer.parseInt (sCmd.getMsgAt (1));
+            repo.userLoggedOut (sessionId);
+            
+            sCmd.getWriter().println ("LOGOUT_RES");
+            sCmd.getWriter().println ("OK");
+            sCmd.getWriter().println ("END");
+            sCmd.getWriter().flush ();
+            
+            sCmd.getSocket ().close ();
+            
+        } catch (Exception e) {
+            Server.logErr ("Exception @ processMsg_logout");
+            e.printStackTrace ();
         }
     }
     
     void processMsg_createClass (Server_ClntMsg sCmd) {
         
         Server_DataRepo repo = Server_DataRepo.getDataRepo ();
-        Server.log ("LOGIN_REQ");
+        Server.log ("Create class");
             
         String className = sCmd.getMsgAt (1);
         int userSession = Integer.parseInt (sCmd.getMsgAt (2));
@@ -104,6 +153,7 @@ public class Server_ProcThread implements Runnable {
             break;
                 
             case LOGOUT_REQ:
+                processMsg_logout (sCmd);
             break;
             
             case CREATE_CLASS_REQ:
