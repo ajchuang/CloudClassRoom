@@ -36,7 +36,7 @@ public class Server_ProcThread implements Runnable {
     }
     
     // ugly: handle functions for individual msgs
-    void processMsg_login (Server_ClntMsg sCmd) {
+    void procMsg_login (Server_ClntMsg sCmd) {
         
         try {
             Server_DataRepo repo = Server_DataRepo.getDataRepo ();
@@ -78,7 +78,7 @@ public class Server_ProcThread implements Runnable {
     }
     
     // ugly: handle functions for individual msgs
-    void processMsg_logout (Server_ClntMsg sCmd) {
+    void procMsg_logout (Server_ClntMsg sCmd) {
         
         try {
             Server_DataRepo repo = Server_DataRepo.getDataRepo ();
@@ -103,10 +103,10 @@ public class Server_ProcThread implements Runnable {
         }
     }
     
-    void processMsg_createClass (Server_ClntMsg sCmd) {
+    void procMsg_createClass (Server_ClntMsg sCmd) {
         
         Server_DataRepo repo = Server_DataRepo.getDataRepo ();
-        Server.log ("Create class");
+        Server.log ("procMsg_createClass");
             
         String className = sCmd.getMsgAt (1);
         int userSession = Integer.parseInt (sCmd.getMsgAt (2));
@@ -120,6 +120,14 @@ public class Server_ProcThread implements Runnable {
             repo.createClass (className, "admin");
             return;
         }
+    }
+    
+    void procMsg_LisClassReq (Server_ClntMsg sCmd) {
+        Server_DataRepo repo = Server_DataRepo.getDataRepo ();
+        Server.log ("procMsg_LisClassReq");
+        
+        String sessionId = sCmd.getMsgAt (1);
+        return;
     }
     
     void readMsg (Server_ClntMsg sCmd) {
@@ -149,18 +157,19 @@ public class Server_ProcThread implements Runnable {
         
         switch (sCmd.getMsgType ()) {
             case LOGIN_REQ:
-                processMsg_login (sCmd);
+                procMsg_login (sCmd);
             break;
                 
             case LOGOUT_REQ:
-                processMsg_logout (sCmd);
+                procMsg_logout (sCmd);
             break;
             
             case CREATE_CLASS_REQ:
-                processMsg_createClass (sCmd);
+                procMsg_createClass (sCmd);
             break;
             
             case LIST_CLASS_REQ:
+                procMsg_LisClassReq (sCmd);
             break;
             
             case DEL_CLASS_REQ:
