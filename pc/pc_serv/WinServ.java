@@ -36,6 +36,7 @@ public class WinServ implements Runnable {
             
             PrintWriter writer = new PrintWriter (sc.getOutputStream (), true);
             BufferedReader reader = new BufferedReader (new InputStreamReader (sc.getInputStream ()));
+            boolean isWaiting = false;
         
             while ((data = reader.readLine ()) != null) {
                 
@@ -99,27 +100,24 @@ public class WinServ implements Runnable {
         
     }
     
+    public static int getPort () {
+        return DEFAULT_PORT;
+    }
+    
     public static void main (String args[]) throws Exception {
         
         int port = DEFAULT_PORT;
         
-        // argument check
-        if (args.length != 1) {
-            WinServ.logErr ("Incorrect Argument Count. Using default port");
-        } else {
-            try {
-                port = Integer.parseInt (args[0]);
-                WinServ.logInfo ("Using port: " + port);
-            } catch (Exception e) {
-                WinServ.logExp (e, true);
-            }
-        }
-        
+        // starting server notification server.
         Thread ntf = new Thread (new WinServ_NotificationListener ());
         ntf.start ();
         
+        // starting local working server
         Thread serv = new Thread (new WinServ (port));
         serv.start ();
+        
+        // starting login UI
+        WinServ_LoginWindow loginWin = new WinServ_LoginWindow ();
         
         return;
     }
