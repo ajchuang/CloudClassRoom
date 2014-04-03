@@ -1,19 +1,25 @@
 // Part of the code is from http://www.leepoint.net/notes-java/examples/components/editor/nutpad.html
+// At this moment, we can only send the last line or the whole file.
 // We modify the sample editor into an editor with sharing ability
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.io.*;
+import java.net.*;
 
-public class PC_SimpleEditor extends JFrame {
+public class PC_SimpleEditor extends JFrame implements KeyListener {
     
-    private JTextArea    _editArea;
-    private JFileChooser _fileChooser = new JFileChooser();
+    // UI components
+    private JTextArea    m_editArea;
+    private JFileChooser m_fileChooser = new JFileChooser();
     
-    private Action _openAction = new OpenAction();
-    private Action _saveAction = new SaveAction();
-    private Action _exitAction = new ExitAction(); 
+    // Action objects
+    private Action m_openAction  = new OpenAction ();
+    private Action m_saveAction  = new SaveAction ();
+    private Action m_shareAction = new ShareAction ();
+    private Action m_exitAction  = new ExitAction ();
+     
     
     //===================================================================== main
     public static void main(String[] args) {
@@ -23,10 +29,11 @@ public class PC_SimpleEditor extends JFrame {
     //============================================================== constructor
     public PC_SimpleEditor () {
         //... Create scrollable text area.
-        _editArea = new JTextArea(15, 80);
-        _editArea.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
-        _editArea.setFont(new Font("monospaced", Font.PLAIN, 14));
-        JScrollPane scrollingText = new JScrollPane(_editArea);
+        m_editArea = new JTextArea(15, 80);
+        m_editArea.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
+        m_editArea.setFont(new Font("monospaced", Font.PLAIN, 14));
+        m_editArea.addKeyListener (this);
+        JScrollPane scrollingText = new JScrollPane(m_editArea);
         
         //-- Create a content pane, set layout, add component.
         JPanel content = new JPanel();
@@ -37,39 +44,41 @@ public class PC_SimpleEditor extends JFrame {
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = menuBar.add(new JMenu("File"));
         fileMenu.setMnemonic('F');
-        fileMenu.add(_openAction);       // Note use of actions, not text.
-        fileMenu.add(_saveAction);
-        fileMenu.addSeparator(); 
-        fileMenu.add(_exitAction);
+        fileMenu.add (m_openAction);       // Note use of actions, not text.
+        fileMenu.add (m_saveAction);
+        fileMenu.addSeparator (); 
+        
+        fileMenu.add (m_shareAction);
+        fileMenu.addSeparator (); 
+        
+        fileMenu.add (m_exitAction);
         
         //... Set window content and menu.
-        setContentPane(content);
+        setContentPane (content);
         setJMenuBar(menuBar);
         
         //... Set other window characteristics.
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setTitle("PC_SimpleEditor");
+        setTitle ("PC_SimpleEditor");
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
     }
     
-    ////////////////////////////////////////////////// inner class OpenAction
     class OpenAction extends AbstractAction {
-        //============================================= constructor
+        
         public OpenAction() {
             super("Open...");
             putValue(MNEMONIC_KEY, new Integer('O'));
         }
         
-        //========================================= actionPerformed
         public void actionPerformed(ActionEvent e) {
-            int retval = _fileChooser.showOpenDialog(PC_SimpleEditor.this);
+            int retval = m_fileChooser.showOpenDialog(PC_SimpleEditor.this);
             if (retval == JFileChooser.APPROVE_OPTION) {
-                File f = _fileChooser.getSelectedFile();
+                File f = m_fileChooser.getSelectedFile();
                 try {
                     FileReader reader = new FileReader(f);
-                    _editArea.read(reader, "");  // Use TextComponent read
+                    m_editArea.read(reader, "");  // Use TextComponent read
                 } catch (IOException ioex) {
                     System.out.println(e);
                     System.exit(1);
@@ -78,22 +87,20 @@ public class PC_SimpleEditor extends JFrame {
         }
     }
     
-    //////////////////////////////////////////////////// inner class SaveAction
     class SaveAction extends AbstractAction {
-        //============================================= constructor
+        
         SaveAction() {
             super("Save...");
             putValue(MNEMONIC_KEY, new Integer('S'));
         }
         
-        //========================================= actionPerformed
         public void actionPerformed(ActionEvent e) {
-            int retval = _fileChooser.showSaveDialog(PC_SimpleEditor.this);
+            int retval = m_fileChooser.showSaveDialog(PC_SimpleEditor.this);
             if (retval == JFileChooser.APPROVE_OPTION) {
-                File f = _fileChooser.getSelectedFile();
+                File f = m_fileChooser.getSelectedFile();
                 try {
                     FileWriter writer = new FileWriter(f);
-                    _editArea.write(writer);  // Use TextComponent write
+                    m_editArea.write(writer);  // Use TextComponent write
                 } catch (IOException ioex) {
                     JOptionPane.showMessageDialog(PC_SimpleEditor.this, ioex);
                     System.exit(1);
@@ -102,18 +109,75 @@ public class PC_SimpleEditor extends JFrame {
         }
     }
     
-    ///////////////////////////////////////////////////// inner class ExitAction
     class ExitAction extends AbstractAction {
         
-        //============================================= constructor
         public ExitAction() {
             super("Exit");
             putValue(MNEMONIC_KEY, new Integer('X'));
         }
         
-        //========================================= actionPerformed
         public void actionPerformed(ActionEvent e) {
             System.exit(0);
         }
+    }
+    
+    class ShareAction extends AbstractAction {
+        
+        public ShareAction() {
+            super("Share");
+        }
+        
+        public void actionPerformed (ActionEvent e) {
+            String all = m_editArea.getText ();
+            System.out.println ("Share All: " + all);
+        }
+    }
+    
+    // section: required by KeyListener
+    public void keyPressed (KeyEvent e) {
+    }
+
+    public void keyTyped (KeyEvent e) {
+    }
+
+    public void keyReleased (KeyEvent e) {
+        
+        // Updating the last line
+        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+            
+            try {
+                int lastLine = m_editArea.getLineCount () - 2;
+                int sPos = m_editArea.getLineStartOffset (lastLine);
+                int ePos = m_editArea.getLineEndOffset (lastLine);
+                
+                String content = m_editArea.getText ();                
+                String send = content.substring (sPos, ePos - 1);
+                
+                System.out.println ("Sending: " + send);
+                sendLine (send);
+                
+            } catch (Exception ee) {
+                ee.printStackTrace ();
+            }
+        }
+    }
+    
+    public void sendLine (String msg) {
+        
+        try {
+            
+            Socket s = new Socket ("localhost", 5566);
+            
+            PrintWriter writer = new PrintWriter (s.getOutputStream (), true);
+            writer.println ("UPDATE_CODE");
+            writer.println (Integer.toString (msg.length ()));        
+            writer.println (msg);
+            writer.println ("END");
+            s.close ();
+            
+        } catch (Exception e) {
+            e.printStackTrace ();
+            System.exit (0);
+        }        
     }
 }
