@@ -145,6 +145,7 @@ public class PC_SimpleEditor extends JFrame implements KeyListener {
                 writer.println (tempFile.getPath ());
                 writer.println ("END");
                 sck.close ();
+                
             } catch (Exception ee) {
                 ee.printStackTrace ();
             }
@@ -184,7 +185,7 @@ public class PC_SimpleEditor extends JFrame implements KeyListener {
         
         try {
             
-            Socket s = new Socket ("localhost", 5566);
+            Socket s = new Socket ("localhost", WinServ.getPort ());
             
             PrintWriter writer = new PrintWriter (s.getOutputStream (), true);
             writer.println ("UPDATE_CODE");
