@@ -116,8 +116,8 @@ public class PC_SimpleEditor extends JFrame implements KeyListener {
             putValue(MNEMONIC_KEY, new Integer('X'));
         }
         
-        public void actionPerformed(ActionEvent e) {
-            System.exit(0);
+        public void actionPerformed (ActionEvent e) {
+            System.exit (0);
         }
     }
     
@@ -128,8 +128,26 @@ public class PC_SimpleEditor extends JFrame implements KeyListener {
         }
         
         public void actionPerformed (ActionEvent e) {
-            String all = m_editArea.getText ();
-            System.out.println ("Share All: " + all);
+            
+            System.out.println ("Sharing");
+            
+            try {
+                File tempFile = File.createTempFile ("temp-edit-file", ".tmp");
+                PrintWriter p = new PrintWriter (tempFile);
+                String s = m_editArea.getText (); 
+                p.print (s);
+                p.close ();
+                
+                Socket sck = new Socket ("localhost", 5566);
+                PrintWriter writer = new PrintWriter (sck.getOutputStream (), true);
+                writer.println ("UPDATE_FILE");
+                writer.println (Integer.toString (tempFile.getPath ().length ()));        
+                writer.println (tempFile.getPath ());
+                writer.println ("END");
+                sck.close ();
+            } catch (Exception ee) {
+                ee.printStackTrace ();
+            }
         }
     }
     
