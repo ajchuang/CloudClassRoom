@@ -58,9 +58,29 @@ public class WinServ implements Runnable {
         return null;
     }
     
+    void uploadFileToS3 (String fName) {
+        
+    }
+    
+    void processMsg_UpdateFile (WinServ_ReqCommand cmd) {
+        // updating a file
+        String path = cmd.getStrAt (1);
+        WinServ.logInfo ("UPDATE_FILE: " + path);
+        
+        // update to the Amazon server
+        uploadFileToS3 (path);
+        
+        // send notification to the server
+    }
+    
     void processMsg (WinServ_ReqCommand cmd) {
         // do the job - send info to the real server
         
+        String msgType = cmd.getStrAt (0);
+        
+        if (msgType.equals ("BEGIN UPDATE_FILE")) {
+            processMsg_UpdateFile (cmd);
+        }
     }
     
     void readRsp () {

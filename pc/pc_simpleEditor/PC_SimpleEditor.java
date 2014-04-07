@@ -140,9 +140,8 @@ public class PC_SimpleEditor extends JFrame implements KeyListener {
                 
                 Socket sck = new Socket ("localhost", 5566);
                 PrintWriter writer = new PrintWriter (sck.getOutputStream (), true);
-                writer.println ("UPDATE_FILE");
-                writer.println (Integer.toString (tempFile.getPath ().length ()));        
-                writer.println (tempFile.getPath ());
+                writer.println ("BEGIN UPDATE_FILE");
+                writer.println (Integer.toString (tempFile.getPath ().length ()):tempFile.getPath ());
                 writer.println ("END");
                 sck.close ();
                 
@@ -183,6 +182,7 @@ public class PC_SimpleEditor extends JFrame implements KeyListener {
     
     public void sendLine (String msg) {
         
+        /* @lfred: I would like to disable the sending line feature - to leverage Amazon s3
         try {
             
             Socket s = new Socket ("localhost", WinServ.getPort ());
@@ -197,6 +197,7 @@ public class PC_SimpleEditor extends JFrame implements KeyListener {
         } catch (Exception e) {
             e.printStackTrace ();
             System.exit (0);
-        }        
+        } 
+        */       
     }
 }
