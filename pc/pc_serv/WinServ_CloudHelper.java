@@ -13,6 +13,8 @@ import com.amazonaws.auth.PropertiesCredentials;
 public class WinServ_CloudHelper {
     
     final static String sm_bucketName = "CloudClassRoom";
+    final static String sm_secretFile = "./sys/AwsCredentials.properties";
+    
     static int sm_uploadPartSize = 500 * 1024;
     static int sm_downloadPartSize = 10 * 1024;
     
@@ -24,8 +26,7 @@ public class WinServ_CloudHelper {
         
         AmazonS3 s3Client = 
             new AmazonS3Client (new PropertiesCredentials (
-        		WinServ_CloudHelper.class.getResourceAsStream (
-                    "./sys/AwsCredentials.properties")));        
+        		WinServ_CloudHelper.class.getResourceAsStream (sm_secretFile)));        
 
         // Create a list of UploadPartResponse objects. You get one of these
         // for each part upload.
@@ -91,13 +92,13 @@ public class WinServ_CloudHelper {
         // local var
         boolean ret = true;
         
-        int rCounr;
+        int rCounr = 0;
         byte[] buf = new byte[sm_downloadPartSize];
         
         try {
             AmazonS3 s3Client = 
                 new AmazonS3Client (new PropertiesCredentials (
-                    WinServ_CloudHelper.class.getResourceAsStream ("AwsCredentials.properties")));
+                    WinServ_CloudHelper.class.getResourceAsStream (sm_secretFile)));
                 
             S3Object remoteObj = s3Client.getObject (new GetObjectRequest (bucketName, keyName));
             ObjectMetadata metaObj = remoteObj.getObjectMetadata ();
