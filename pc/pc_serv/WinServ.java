@@ -58,8 +58,8 @@ public class WinServ implements Runnable {
         return null;
     }
     
-    void uploadFileToS3 (String fName) {
-        WinServ_CloudHelper.uploadFile (fName);
+    void uploadFileToS3 (String fName, String remoteName) {
+        WinServ_CloudHelper.uploadFile (fName, remoteName);
     }
     
     void notifyCloud () {
@@ -70,8 +70,8 @@ public class WinServ implements Runnable {
         String path = cmd.getStrAt (1);
         WinServ.logInfo ("UPDATE_FILE: " + path);
         
-        // update to the Amazon server
-        uploadFileToS3 (path);
+        // TODO: update to the Amazon server. Fix the remote name
+        uploadFileToS3 (path, "remote");
         
         // send notification to the server
         notifyCloud ();
