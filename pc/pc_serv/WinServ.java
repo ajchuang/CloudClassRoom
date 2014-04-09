@@ -58,8 +58,15 @@ public class WinServ implements Runnable {
         return null;
     }
     
-    void uploadFileToS3 (String fName, String remoteName) {
-        WinServ_CloudHelper.uploadFile (fName, remoteName);
+    boolean uploadFileToS3 (String fName, String remoteName) {
+        try {
+            WinServ_CloudHelper.uploadFile (fName, remoteName);
+        } catch (Exception e) {
+            e.printStackTrace ();
+            return false;
+        }
+        
+        return true;
     }
     
     void notifyCloud () {

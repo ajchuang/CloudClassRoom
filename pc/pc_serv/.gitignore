@@ -1,2 +1,3 @@
 *.class
-./sys
+sys/
+sys/AwsCredentials.properties
