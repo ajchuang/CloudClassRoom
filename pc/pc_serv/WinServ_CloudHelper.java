@@ -37,7 +37,7 @@ public class WinServ_CloudHelper {
         AmazonS3 s3Client = 
             new AmazonS3Client (new PropertiesCredentials (
         		LowLevelJavaUploadFile.class.getResourceAsStream (
-                    "AwsCredentials.properties")));        
+                    "./sys/AwsCredentials.properties")));        
 
         // Create a list of UploadPartResponse objects. You get one of these
         // for each part upload.
