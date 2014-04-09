@@ -59,7 +59,10 @@ public class WinServ implements Runnable {
     }
     
     void uploadFileToS3 (String fName) {
-        
+        WinServ_CloudHelper.uploadFile (fName);
+    }
+    
+    void notifyCloud () {
     }
     
     void processMsg_UpdateFile (WinServ_ReqCommand cmd) {
@@ -71,6 +74,7 @@ public class WinServ implements Runnable {
         uploadFileToS3 (path);
         
         // send notification to the server
+        notifyCloud ();
     }
     
     void processMsg (WinServ_ReqCommand cmd) {
@@ -117,7 +121,6 @@ public class WinServ implements Runnable {
                 WinServ.logExp (e, false);
             }
         }
-        
     }
     
     public static int getPort () {
