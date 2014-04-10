@@ -177,6 +177,7 @@ public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListen
         }
     }
     
+    // just a bad way - perhaps need to refine
     public void actionPerformed (ActionEvent ae) {
         
         if (ae.getSource () == m_saveBtn) {

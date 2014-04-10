@@ -17,6 +17,27 @@ public class WinServ_NotificationListener implements Runnable {
         m_port = DEFAULT_PORT;
     }
     
+    public void process_NTF (String str) {
+        
+        String toks[] = str.split (" ");
+        WinServ.logInfo ("process_NTF: " + toks[0]);
+        
+        if (toks[0].equals ("DL_FILE")) {
+            String fName = toks[1];
+            
+            try {
+                Socket sck = new Socket ("localhost", 5566);
+                PrintWriter writer = new PrintWriter (sck.getOutputStream (), true);
+                writer.println ("DL_FILE");
+                writer.println (Integer.toString (fName.length ()) + ":" + fName);
+                writer.println ("END");
+                sck.close ();
+            } catch (Exception e) {
+                e.printStackTrace ();
+            }
+        }
+    }
+    
     public void run () {
         
         try {
@@ -31,6 +52,7 @@ public class WinServ_NotificationListener implements Runnable {
                 // check what the type of the message is, and send to the main thread and request information
                 String str = new String (receivePacket.getData(), "UTF-8");
                 System.out.println ("[NTF] " + str);
+                process_NTF (str);
             }
         } catch (Exception e) {
             e.printStackTrace ();

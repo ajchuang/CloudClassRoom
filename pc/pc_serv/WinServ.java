@@ -6,7 +6,10 @@ import java.io.*;
 public class WinServ implements Runnable {
     
     int m_port;
+    
     static final int DEFAULT_PORT = 5566;
+    static final String sfm_fileSysDir = "./fs/";
+    static final String sfm_defaultBucket = "CloudClassRoom";
     
     public static void logErr (String s) {
         System.out.println ("[Bug] " + s);
@@ -52,8 +55,6 @@ public class WinServ implements Runnable {
                 data.trim ();
                 WinServ.logInfo ("Received: " + data);
                 
-                //token processing
-                
                 if (data.equals ("END") == true) 
                     break;
                 else {
@@ -91,6 +92,19 @@ public class WinServ implements Runnable {
         return true;
     }
     
+    boolean downloadFileFromS3 (String remoteName, String localName) {
+        
+        try {
+            WinServ_CloudHelper.downloadFile (sfm_fileSysDir+localName, sfm_defaultBucket, remoteName);
+        } catch (Exception e) {
+            e.printStackTrace ();
+            return false;
+        }
+        
+        WinServ.logInfo ("Donwload completed");
+        return true;
+    }
+    
     // TODO: notify the server
     void notifyCloud () {
     }
@@ -109,6 +123,14 @@ public class WinServ implements Runnable {
         notifyCloud ();
     }
     
+    void processMsg_DLFile (WinServ_ReqCommand cmd) {
+        
+        String name = cmd.getStrAt (1);
+        WinServ.logInfo ("DL_FILE: " + name);
+        
+        downloadFileFromS3 (name, name);
+    }
+    
     void processMsg (WinServ_ReqCommand cmd) {
         // do the job - send info to the real server
         
@@ -117,6 +139,8 @@ public class WinServ implements Runnable {
         
         if (msgType.equals ("UPDATE_FILE")) {
             processMsg_UpdateFile (cmd);
+        } else if (msgType.equals ("DL_FILE")) {
+            processMsg_DLFile (cmd);
         }
     }
     
