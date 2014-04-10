@@ -84,7 +84,7 @@ public class WinServ implements Runnable {
         try {
             WinServ_CloudHelper.uploadFile (fName, remoteName);
         } catch (Exception e) {
-            e.printStackTrace ();
+            WinServ.logExp (e, false);
             return false;
         }
         
@@ -97,7 +97,7 @@ public class WinServ implements Runnable {
         try {
             WinServ_CloudHelper.downloadFile (sfm_fileSysDir+localName, sfm_defaultBucket, remoteName);
         } catch (Exception e) {
-            e.printStackTrace ();
+            WinServ.logExp (e, false);
             return false;
         }
         

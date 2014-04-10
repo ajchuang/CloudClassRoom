@@ -33,7 +33,7 @@ public class WinServ_NotificationListener implements Runnable {
                 writer.println ("END");
                 sck.close ();
             } catch (Exception e) {
-                e.printStackTrace ();
+                WinServ.logExp (e, false);
             }
         }
     }
@@ -55,7 +55,7 @@ public class WinServ_NotificationListener implements Runnable {
                 process_NTF (str);
             }
         } catch (Exception e) {
-            e.printStackTrace ();
+            WinServ.logExp (e, true);
         }
     }
 }
