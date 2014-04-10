@@ -66,19 +66,23 @@ public class WinServ implements Runnable {
             return false;
         }
         
+        WinServ.logInfo ("Uploading completed");
         return true;
     }
     
+    // TODO: notify the server
     void notifyCloud () {
     }
     
     void processMsg_UpdateFile (WinServ_ReqCommand cmd) {
         // updating a file
-        String path = cmd.getStrAt (1);
-        WinServ.logInfo ("UPDATE_FILE: " + path);
+        String path = cmd.getStrAt (2);
+        File f = new File (path);
         
-        // TODO: update to the Amazon server. Fix the remote name
-        uploadFileToS3 (path, "remote");
+        WinServ.logInfo ("UPDATE_FILE: " + f.getAbsolutePath () + ":" + f.getName ());
+        
+        // update to the Amazon server. Fix the remote name
+        uploadFileToS3 (path, f.getName ());
         
         // send notification to the server
         notifyCloud ();
@@ -89,7 +93,7 @@ public class WinServ implements Runnable {
         
         String msgType = cmd.getStrAt (0);
         
-        if (msgType.equals ("BEGIN UPDATE_FILE")) {
+        if (msgType.equals ("UPDATE_FILE")) {
             processMsg_UpdateFile (cmd);
         }
     }

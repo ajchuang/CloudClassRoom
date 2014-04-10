@@ -8,7 +8,6 @@ import com.amazonaws.services.s3.model.*;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.PropertiesCredentials;
-import com.amazonaws.auth.PropertiesCredentials;
 
 public class WinServ_CloudHelper {
     
@@ -23,6 +22,7 @@ public class WinServ_CloudHelper {
     public static boolean uploadFile (String filePath, String keyName) throws Exception {
         
         boolean retVal = true;
+        int uploadPartSize = sm_uploadPartSize;
         
         AmazonS3 s3Client = 
             new AmazonS3Client (new PropertiesCredentials (
@@ -49,7 +49,7 @@ public class WinServ_CloudHelper {
             for (int i = 1; filePosition < contentLength; i++) {
                 
                 // Last part can be less than 5 MB. Adjust part size.
-            	sm_uploadPartSize = (int) Math.min (sm_uploadPartSize, (contentLength - filePosition));
+            	uploadPartSize = (int) Math.min (uploadPartSize, (contentLength - filePosition));
             	
                 // Create request to upload a part.
                 UploadPartRequest uploadRequest = new UploadPartRequest ()
@@ -57,12 +57,12 @@ public class WinServ_CloudHelper {
                     .withUploadId (initResponse.getUploadId()).withPartNumber(i)
                     .withFileOffset (filePosition)
                     .withFile (file)
-                    .withPartSize (sm_uploadPartSize);
+                    .withPartSize (uploadPartSize);
 
                 // Upload part and add response to our list.
                 partETags.add (s3Client.uploadPart (uploadRequest).getPartETag ());
 
-                filePosition += sm_uploadPartSize;
+                filePosition += uploadPartSize;
             }
 
             // Step 3: complete.
