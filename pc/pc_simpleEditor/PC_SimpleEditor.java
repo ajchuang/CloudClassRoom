@@ -8,11 +8,15 @@ import javax.swing.*;
 import java.io.*;
 import java.net.*;
 
-public class PC_SimpleEditor extends JFrame implements KeyListener {
+public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListener {
     
     // UI components
     private JTextArea    m_editArea;
     private JFileChooser m_fileChooser = new JFileChooser();
+    
+    JButton     m_openBtn;
+    JButton     m_saveBtn;
+    JButton     m_shareBtn;
     
     // Action objects
     private Action m_openAction  = new OpenAction ();
@@ -56,6 +60,28 @@ public class PC_SimpleEditor extends JFrame implements KeyListener {
         //... Set window content and menu.
         setContentPane (content);
         setJMenuBar(menuBar);
+        
+        // Toolbar config
+        JToolBar toolBar = new JToolBar ();
+        toolBar.setMargin (new Insets (2, 2, 2, 2));
+        toolBar.setBorderPainted (true);
+        toolBar.setFloatable (false);
+        add (toolBar, BorderLayout.NORTH);
+        
+        m_saveBtn = new JButton (new ImageIcon ("res/save.png"));
+        m_saveBtn.addActionListener (this);
+        toolBar.add (m_saveBtn);
+        
+        m_openBtn = new JButton (new ImageIcon ("res/open.png"));
+        m_openBtn.addActionListener (this);
+        toolBar.add (m_openBtn);
+        
+        toolBar.addSeparator ();
+        
+        m_shareBtn = new JButton (new ImageIcon ("res/share.png"));
+        m_shareBtn.addActionListener (this);
+        toolBar.add (m_shareBtn);
+        toolBar.addSeparator ();
         
         //... Set other window characteristics.
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -140,14 +166,25 @@ public class PC_SimpleEditor extends JFrame implements KeyListener {
                 
                 Socket sck = new Socket ("localhost", 5566);
                 PrintWriter writer = new PrintWriter (sck.getOutputStream (), true);
-                writer.println ("BEGIN UPDATE_FILE");
-                writer.println (Integer.toString (tempFile.getPath ().length ()):tempFile.getPath ());
+                writer.println ("UPDATE_FILE");
+                writer.println (Integer.toString (tempFile.getPath ().length ()) + ":" + tempFile.getPath ());
                 writer.println ("END");
                 sck.close ();
                 
             } catch (Exception ee) {
                 ee.printStackTrace ();
             }
+        }
+    }
+    
+    public void actionPerformed (ActionEvent ae) {
+        
+        if (ae.getSource () == m_saveBtn) {
+            m_saveAction.actionPerformed (null);
+        } else if (ae.getSource () == m_openBtn) {
+            m_openAction.actionPerformed (null);
+        } else if (ae.getSource () == m_shareBtn) {
+            m_shareAction.actionPerformed (null);
         }
     }
     

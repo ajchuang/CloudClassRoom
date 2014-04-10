@@ -14,8 +14,8 @@ public class WinServ_CloudHelper {
     final static String sm_bucketName = "CloudClassRoom";
     final static String sm_secretFile = "./sys/AwsCredentials.properties";
     
-    static int sm_uploadPartSize = 500 * 1024;
-    static int sm_downloadPartSize = 10 * 1024;
+    final static int sm_uploadPartSize = 500 * 1024;
+    final static int sm_downloadPartSize = 10 * 1024;
     
     // filePath: local file path
     // keyName: remove file name

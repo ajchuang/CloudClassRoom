@@ -28,6 +28,15 @@ public class WinServ implements Runnable {
         m_port = port;
     }
     
+    int isNumber (String s) {
+        try {  
+            int d = Integer.parseInt (s);
+            return d;  
+        } catch (NumberFormatException nfe) {  
+            return -1;  
+        }  
+    }
+    
     WinServ_ReqCommand readMsg (Socket sc) {
         
         try {
@@ -43,10 +52,22 @@ public class WinServ implements Runnable {
                 data.trim ();
                 WinServ.logInfo ("Received: " + data);
                 
+                //token processing
+                
                 if (data.equals ("END") == true) 
                     break;
-                else
-                    cmd.pushStr (data);
+                else {
+                    String[] toks = data.split (":");
+                    int len;
+                    
+                    if (toks.length == 1) {
+                        WinServ.logInfo ("Push: " + data);
+                        cmd.pushStr (data);
+                    } else if ((len = isNumber (toks[0])) != -1) {
+                        WinServ.logInfo ("Push: " + data.substring (toks[0].length () + 1 ));
+                        cmd.pushStr (data.substring (toks[0].length () + 1 ));
+                    }
+                }
             }
             
             return cmd;
@@ -76,7 +97,7 @@ public class WinServ implements Runnable {
     
     void processMsg_UpdateFile (WinServ_ReqCommand cmd) {
         // updating a file
-        String path = cmd.getStrAt (2);
+        String path = cmd.getStrAt (1);
         File f = new File (path);
         
         WinServ.logInfo ("UPDATE_FILE: " + f.getAbsolutePath () + ":" + f.getName ());
@@ -92,6 +113,7 @@ public class WinServ implements Runnable {
         // do the job - send info to the real server
         
         String msgType = cmd.getStrAt (0);
+        WinServ.logInfo ("processMsg: " + msgType);
         
         if (msgType.equals ("UPDATE_FILE")) {
             processMsg_UpdateFile (cmd);
