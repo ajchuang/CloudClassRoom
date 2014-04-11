@@ -6,15 +6,10 @@ import java.io.*;
 public class WinServ_NotificationListener implements Runnable {
     
     int m_port; 
-    static int DEFAULT_PORT = 7788;
     static int DEFAULT_NFT_SIZE = 1024;
     
     public WinServ_NotificationListener (int port) {
         m_port = port;
-    }
-    
-    public WinServ_NotificationListener () {
-        m_port = DEFAULT_PORT;
     }
     
     public void process_NTF (String str) {

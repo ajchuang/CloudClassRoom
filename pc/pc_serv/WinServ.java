@@ -3,11 +3,13 @@ import java.util.*;
 import java.net.*;
 import java.io.*;
 
+// WinServ is a local server used to communicate with different apps
 public class WinServ implements Runnable {
     
     int m_port;
     
-    static final int DEFAULT_PORT = 5566;
+    static final int DEFAULT_LOCAL_PORT = 5566;
+    static final int DEFAULT_COMM_PORT  = 4119;
     static final String sfm_fileSysDir = "./fs/";
     static final String sfm_defaultBucket = "CloudClassRoom";
     
@@ -181,19 +183,17 @@ public class WinServ implements Runnable {
     }
     
     public static int getPort () {
-        return DEFAULT_PORT;
+        return DEFAULT_LOCAL_PORT;
     }
     
     public static void main (String args[]) throws Exception {
         
-        int port = DEFAULT_PORT;
-        
         // starting server notification server.
-        Thread ntf = new Thread (new WinServ_NotificationListener ());
+        Thread ntf = new Thread (new WinServ_NotificationListener (DEFAULT_COMM_PORT));
         ntf.start ();
         
         // starting local working server
-        Thread serv = new Thread (new WinServ (port));
+        Thread serv = new Thread (new WinServ (DEFAULT_LOCAL_PORT));
         serv.start ();
         
         // starting login UI

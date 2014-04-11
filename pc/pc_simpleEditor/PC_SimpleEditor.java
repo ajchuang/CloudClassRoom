@@ -23,7 +23,6 @@ public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListen
     private Action m_saveAction  = new SaveAction ();
     private Action m_shareAction = new ShareAction ();
     private Action m_exitAction  = new ExitAction ();
-     
     
     //===================================================================== main
     public static void main(String[] args) {
@@ -37,7 +36,7 @@ public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListen
         m_editArea.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
         m_editArea.setFont(new Font("monospaced", Font.PLAIN, 14));
         m_editArea.addKeyListener (this);
-        JScrollPane scrollingText = new JScrollPane(m_editArea);
+        JScrollPane scrollingText = new JScrollPanev (m_editArea);
         
         //-- Create a content pane, set layout, add component.
         JPanel content = new JPanel();
