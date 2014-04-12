@@ -1,6 +1,6 @@
 package message;
 
-public class QueryClassInfoReqMsg implements Message{
+public class QueryClassInfoReqMsg extends AbstractMessage {
 
 	private static final String head = "QUERY_CLASS_INFO_REQ";
 	private final long cookieId;
@@ -19,10 +19,11 @@ public class QueryClassInfoReqMsg implements Message{
 	public long getClassId() {
 		return classId;
 	}
-	
+
 	@Override
 	public String toMseeage() {
-		return head + SEPARATOR + cookieId + SEPARATOR + classId;
+		throw new UnsupportedOperationException("Not to client");
+		// return head + SEPARATOR + cookieId + SEPARATOR + classId;
 	}
 
 	public static Message parse(final String message) {
@@ -30,7 +31,10 @@ public class QueryClassInfoReqMsg implements Message{
 		if (fields.length != 3 || !head.equals(fields[0])) {
 			return null;
 		}
-		return new QueryClassInfoReqMsg(Long.valueOf(fields[1]),
-				Long.valueOf(fields[2]));
+		if (!validDataField(fields)) {
+			return null;
+		}
+		return new QueryClassInfoReqMsg(Long.valueOf(getData(fields[1])),
+				Long.valueOf(getData(fields[2])));
 	}
 }

@@ -1,6 +1,7 @@
 package message;
 
-public class CreateClassReqMsg implements Message {
+//to server
+public class CreateClassReqMsg extends AbstractMessage {
 	private static final String head = "CREATE_CLASS_REQ";
 	private final String className;
 	private final long cookieId;
@@ -21,7 +22,8 @@ public class CreateClassReqMsg implements Message {
 
 	@Override
 	public String toMseeage() {
-		return head + SEPARATOR + className + SEPARATOR + cookieId;
+		throw new UnsupportedOperationException("Not to client");
+		// return head + SEPARATOR + className + SEPARATOR + cookieId;
 	}
 
 	public static Message parse(final String message) {
@@ -29,6 +31,10 @@ public class CreateClassReqMsg implements Message {
 		if (fields.length != 3 || !head.equals(fields[0])) {
 			return null;
 		}
-		return new CreateClassReqMsg(fields[1], Long.valueOf(fields[2]));
+		if (!validDataField(fields)) {
+			return null;
+		}
+		return new CreateClassReqMsg(getData(fields[1]),
+				Long.valueOf(getData(fields[2])));
 	}
 }

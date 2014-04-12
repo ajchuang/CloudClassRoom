@@ -1,6 +1,6 @@
 package message;
 
-public class LoginResultMsg implements Message {
+public class LoginResultMsg extends AbstractMessage {
 
 	private static final String head = "LOGIN_RES";
 	private final String status;
@@ -22,14 +22,7 @@ public class LoginResultMsg implements Message {
 
 	@Override
 	public String toMseeage() {
-		return head + SEPARATOR + status + SEPARATOR + cookieId;
-	}
-
-	public static Message parse(final String message) {
-		final String[] fields = message.split(SEPARATOR);
-		if (fields.length != 3 || !head.equals(fields[0])) {
-			return null;
-		}
-		return new LoginResultMsg(fields[1], Long.valueOf(fields[2]));
+		return head + SEPARATOR + wrapDataField(status) + SEPARATOR
+				+ wrapDataField(cookieId) + SEPARATOR + END;
 	}
 }

@@ -1,6 +1,6 @@
 package message;
 
-public class DeleteClassResMsg implements Message{
+public class DeleteClassResMsg extends AbstractMessage {
 
 	private static final String head = "DELETE_CLASS_RES";
 	private final ClassAdminStatus status;
@@ -9,9 +9,10 @@ public class DeleteClassResMsg implements Message{
 		super();
 		this.status = status;
 	}
-	
+
 	@Override
 	public String toMseeage() {
-		return head + SEPARATOR + status.toString();
+		return head + SEPARATOR + wrapDataField(status.toString()) + SEPARATOR
+				+ END;
 	}
 }

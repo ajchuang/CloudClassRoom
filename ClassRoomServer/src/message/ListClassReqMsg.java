@@ -1,6 +1,6 @@
 package message;
 
-public class ListClassReqMsg implements Message {
+public class ListClassReqMsg extends AbstractMessage {
 	private static final String head = "LIST_CLASS_REQ";
 	private final long cookieId;
 
@@ -15,7 +15,8 @@ public class ListClassReqMsg implements Message {
 
 	@Override
 	public String toMseeage() {
-		return head + SEPARATOR + cookieId;
+		throw new UnsupportedOperationException("Not to client");
+		// return head + SEPARATOR + cookieId;
 	}
 
 	public static Message parse(final String message) {
@@ -23,6 +24,9 @@ public class ListClassReqMsg implements Message {
 		if (fields.length != 2 || !head.equals(fields[0])) {
 			return null;
 		}
-		return new ListClassReqMsg(Long.valueOf(fields[1]));
+		if (!validDataField(fields)) {
+			return null;
+		}
+		return new ListClassReqMsg(Long.valueOf(getData(fields[1])));
 	}
 }

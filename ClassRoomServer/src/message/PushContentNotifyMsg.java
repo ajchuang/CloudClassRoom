@@ -1,6 +1,6 @@
 package message;
 
-public class PushContentNotifyMsg implements Message {
+public class PushContentNotifyMsg extends AbstractMessage {
 
 	private static final String head = "PUSH_CONTENT_NOTIFY";
 	private final long classId;
@@ -22,6 +22,7 @@ public class PushContentNotifyMsg implements Message {
 
 	@Override
 	public String toMseeage() {
-		return head + SEPARATOR + classId + SEPARATOR + contentId;
+		return head + SEPARATOR + wrapDataField(classId) + SEPARATOR
+				+ wrapDataField(contentId) + SEPARATOR + END;
 	}
 }

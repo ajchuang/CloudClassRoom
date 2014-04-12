@@ -1,6 +1,6 @@
 package message;
 
-public class DeleteClassReqMsg implements Message {
+public class DeleteClassReqMsg extends AbstractMessage {
 
 	private static final String head = "DELETE_CLASS_REQ";
 	private final long cookieId;
@@ -22,7 +22,8 @@ public class DeleteClassReqMsg implements Message {
 
 	@Override
 	public String toMseeage() {
-		return head + SEPARATOR + cookieId + SEPARATOR + classId;
+		throw new UnsupportedOperationException("Not to client");
+		// return head + SEPARATOR + cookieId + SEPARATOR + classId;
 	}
 
 	public static Message parse(final String message) {
@@ -30,7 +31,10 @@ public class DeleteClassReqMsg implements Message {
 		if (fields.length != 3 || !head.equals(fields[0])) {
 			return null;
 		}
-		return new DeleteClassReqMsg(Long.valueOf(fields[1]),
-				Long.valueOf(fields[2]));
+		if (!validDataField(fields)) {
+			return null;
+		}
+		return new DeleteClassReqMsg(Long.valueOf(getData(fields[1])),
+				Long.valueOf(getData(fields[2])));
 	}
 }

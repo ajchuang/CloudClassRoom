@@ -1,6 +1,6 @@
 package message;
 
-public class LogoutResultMsg implements Message {
+public class LogoutResultMsg extends AbstractMessage {
 
 	private static final String head = "LOGOUT_RES";
 
@@ -13,15 +13,6 @@ public class LogoutResultMsg implements Message {
 
 	@Override
 	public String toMseeage() {
-		return head + SEPARATOR + status;
+		return head + SEPARATOR + wrapDataField(status) + SEPARATOR + END;
 	}
-
-	public static Message parse(final String message) {
-		final String[] fields = message.split(SEPARATOR);
-		if (fields.length != 2 || !head.equals(fields[0])) {
-			return null;
-		}
-		return new LogoutResultMsg(fields[1]);
-	}
-
 }

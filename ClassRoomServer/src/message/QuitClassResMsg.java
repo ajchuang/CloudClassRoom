@@ -1,7 +1,7 @@
 package message;
 
-public class QuitClassResMsg implements Message {
-	
+public class QuitClassResMsg extends AbstractMessage {
+
 	private static final String head = "QUIT_CLASS_RES";
 	private final String status;
 
@@ -16,6 +16,6 @@ public class QuitClassResMsg implements Message {
 
 	@Override
 	public String toMseeage() {
-		return head + SEPARATOR + status;
+		return head + SEPARATOR + wrapDataField(status) + SEPARATOR + END;
 	}
 }

@@ -73,7 +73,7 @@ public class ServerDAOImpl implements ServerDAO {
 	@Override
 	public Map<Long, Class> loadClasses() {
 		final Map<Long, Class> classes = new HashMap<Long, Class>();
-		final ResultSet rs = execSqlQuery("SELECT c.id, c.name, c.instructor, u.pass FROM Class c, User u WHERE u.name=c.instructor");
+		final ResultSet rs = execSqlQuery("SELECT c.id, c.name, c.instructor, c.presenter, u.pass FROM Class c, User u WHERE u.name=c.instructor");
 		try {
 			while (rs.next()) {
 				final long classId = rs.getLong("id");
@@ -88,8 +88,9 @@ public class ServerDAOImpl implements ServerDAO {
 					final String password = students.getString("pass");
 					stud.put(user, new Student(user, password));
 				}
-				classes.put(classId, new Class(classId, className, instructor,
-						stud));
+				final Class c = new Class(classId, className, instructor, stud);
+				c.assignPresenter(rs.getString("presenter"));
+				classes.put(classId, c);
 			}
 		} catch (final SQLException e) {
 			throw new RuntimeException(e);
@@ -99,9 +100,14 @@ public class ServerDAOImpl implements ServerDAO {
 
 	@Override
 	public void insertNewClass(final Class c) {
-		execSqlCmd("INSERT INTO Class (id, name, instructor) VALUES ("
-				+ c.getClassId() + ",'" + c.getClassName() + "','"
-				+ c.getInstructor().getUserName() + "')");
+		execSqlCmd("INSERT INTO Class (id, name, instructor, presenter) VALUES ("
+				+ c.getClassId()
+				+ ",'"
+				+ c.getClassName()
+				+ "','"
+				+ c.getInstructor().getUserName()
+				+ "','"
+				+ c.getPresenter().getUserName() + "')");
 	}
 
 	@Override
@@ -120,5 +126,11 @@ public class ServerDAOImpl implements ServerDAO {
 	public void leaveClass(final long classId, final String student) {
 		execSqlCmd("DELETE FROM Class_Student WHERE class_id= " + classId
 				+ " AND student= '" + student + "'");
+	}
+
+	@Override
+	public void assignPresenter(final long classId, final String presenter) {
+		execSqlCmd("UPDATE Class SET presenter= '" + presenter + "' where id= "
+				+ classId);
 	}
 }

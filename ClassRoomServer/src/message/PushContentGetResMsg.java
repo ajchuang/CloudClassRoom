@@ -1,6 +1,6 @@
 package message;
 
-public class PushContentGetResMsg implements Message {
+public class PushContentGetResMsg extends AbstractMessage {
 
 	private static final String head = "JOIN_CLASS_RES";
 	private final String status;
@@ -42,11 +42,14 @@ public class PushContentGetResMsg implements Message {
 	@Override
 	public String toMseeage() {
 		final StringBuilder str = new StringBuilder(head + SEPARATOR
-				+ status.toString() + SEPARATOR + contentId + SEPARATOR
-				+ contentType + SEPARATOR + nBytes);
+				+ wrapDataField(status.toString()) + SEPARATOR
+				+ wrapDataField(contentId) + SEPARATOR
+				+ wrapDataField(contentType) + SEPARATOR
+				+ wrapDataField(nBytes));
 		for (final byte oneByte : bytes) {
-			str.append(SEPARATOR + oneByte);
+			str.append(SEPARATOR + wrapDataField(oneByte));
 		}
+		str.append(SEPARATOR + END);
 		return str.toString();
 	}
 }

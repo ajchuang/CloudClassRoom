@@ -1,13 +1,12 @@
 package message;
 
-public class RetrivePresentTokenIndMsg implements Message {
+public class RetrivePresentTokenIndMsg extends AbstractMessage {
 
 	private static final String head = "RETRIVE_PRESENT_TOKEN_IND";
 	private final long classId;
 	private final String className;
 
-	public RetrivePresentTokenIndMsg(final long classId,
-			final String className) {
+	public RetrivePresentTokenIndMsg(final long classId, final String className) {
 		super();
 		this.classId = classId;
 		this.className = className;
@@ -23,6 +22,7 @@ public class RetrivePresentTokenIndMsg implements Message {
 
 	@Override
 	public String toMseeage() {
-		return head + SEPARATOR + classId + SEPARATOR + className;
+		return head + SEPARATOR + wrapDataField(classId) + SEPARATOR
+				+ wrapDataField(className) + SEPARATOR + END;
 	}
 }

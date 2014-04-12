@@ -1,6 +1,6 @@
 package message;
 
-public class JoinClassApprovalResMsg implements Message {
+public class JoinClassApprovalResMsg extends AbstractMessage {
 
 	private static final String head = "JOIN_CLASS_APPROVAL_RES";
 	private final long approverCookieId;
@@ -36,8 +36,9 @@ public class JoinClassApprovalResMsg implements Message {
 
 	@Override
 	public String toMseeage() {
-		return head + SEPARATOR + approverCookieId + SEPARATOR + classId
-				+ SEPARATOR + userNameToAdd + SEPARATOR + approved;
+		throw new UnsupportedOperationException("Not to client");
+		// return head + SEPARATOR + approverCookieId + SEPARATOR + classId
+		// + SEPARATOR + userNameToAdd + SEPARATOR + approved;
 	}
 
 	public static Message parse(final String message) {
@@ -45,8 +46,11 @@ public class JoinClassApprovalResMsg implements Message {
 		if (fields.length != 5 || !head.equals(fields[0])) {
 			return null;
 		}
-		return new JoinClassApprovalResMsg(Long.valueOf(fields[1]),
-				Long.valueOf(fields[2]), fields[3],
-				Boolean.parseBoolean(fields[4]));
+		if (!validDataField(fields)) {
+			return null;
+		}
+		return new JoinClassApprovalResMsg(Long.valueOf(getData(fields[1])),
+				Long.valueOf(getData(fields[2])), getData(fields[3]),
+				Boolean.parseBoolean(getData(fields[4])));
 	}
 }

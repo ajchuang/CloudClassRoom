@@ -1,6 +1,6 @@
 package message;
 
-public class KickUserIndMsg implements Message {
+public class KickUserIndMsg extends AbstractMessage {
 
 	private static final String head = "KICK_USER_IND";
 	private final String status;
@@ -17,7 +17,8 @@ public class KickUserIndMsg implements Message {
 
 	@Override
 	public String toMseeage() {
-		return head + SEPARATOR + status + SEPARATOR + classId + SEPARATOR
-				+ className;
+		return head + SEPARATOR + wrapDataField(status) + SEPARATOR
+				+ wrapDataField(classId) + SEPARATOR + wrapDataField(className)
+				+ SEPARATOR + END;
 	}
 }

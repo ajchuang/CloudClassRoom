@@ -15,4 +15,6 @@ public interface ServerDAO {
 	void addStudentToClass(final long classId, final String student);
 
 	void leaveClass(final long classId, final String student);
+
+	void assignPresenter(long classId, String presenter);
 }

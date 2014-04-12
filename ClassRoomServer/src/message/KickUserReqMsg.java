@@ -1,6 +1,6 @@
 package message;
 
-public class KickUserReqMsg implements Message {
+public class KickUserReqMsg extends AbstractMessage {
 
 	private static final String head = "KICK_USER_REQ";
 	private final long cookieId;
@@ -29,8 +29,9 @@ public class KickUserReqMsg implements Message {
 
 	@Override
 	public String toMseeage() {
-		return head + SEPARATOR + cookieId + SEPARATOR + classId + SEPARATOR
-				+ studentToKick;
+		throw new UnsupportedOperationException("Not to client");
+		// return head + SEPARATOR + cookieId + SEPARATOR + classId + SEPARATOR
+		// + studentToKick;
 	}
 
 	public static Message parse(final String message) {
@@ -38,7 +39,10 @@ public class KickUserReqMsg implements Message {
 		if (fields.length != 4 || !head.equals(fields[0])) {
 			return null;
 		}
-		return new KickUserReqMsg(Long.valueOf(fields[1]),
-				Long.valueOf(fields[2]), fields[3]);
+		if (!validDataField(fields)) {
+			return null;
+		}
+		return new KickUserReqMsg(Long.valueOf(getData(fields[1])),
+				Long.valueOf(getData(fields[2])), getData(fields[3]));
 	}
 }

@@ -83,11 +83,18 @@ public class Class {
 	 * @return false if the class doesn't contain the new presenter
 	 */
 	public boolean assignPresenter(final User newPresenter) {
-		if (instructor.getUserName().equals(presenter.getUserName())) {
+		return assignPresenter(newPresenter.getUserName());
+	}
+
+	public boolean assignPresenter(final String newPresenter) {
+		System.out.println("new presenter " + newPresenter);
+
+		if (instructor.getUserName().equals(newPresenter)) {
 			presenter = instructor;
 			return true;
 		}
-		final Student s = students.get(newPresenter.getUserName());
+		System.out.println("Presenter is not instructor");
+		final Student s = students.get(newPresenter);
 		if (s != null) {
 			presenter = s;
 			return true;

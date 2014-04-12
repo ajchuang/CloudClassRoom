@@ -1,7 +1,6 @@
 package message;
 
-
-public class LoginReqMsg implements Message {
+public class LoginReqMsg extends AbstractMessage {
 	private static final String head = "LOGIN_REQ";
 	private final String userName;
 	private final String password;
@@ -22,7 +21,8 @@ public class LoginReqMsg implements Message {
 
 	@Override
 	public String toMseeage() {
-		return head + SEPARATOR + userName + SEPARATOR + password;
+		throw new UnsupportedOperationException("Not to client");
+		// return head + SEPARATOR + userName + SEPARATOR + password;
 	}
 
 	public static Message parse(final String message) {
@@ -30,6 +30,9 @@ public class LoginReqMsg implements Message {
 		if (fields.length != 3 || !head.equals(fields[0])) {
 			return null;
 		}
-		return new LoginReqMsg(fields[1], fields[2]);
+		if (!validDataField(fields)) {
+			return null;
+		}
+		return new LoginReqMsg(getData(fields[1]), getData(fields[2]));
 	}
 }

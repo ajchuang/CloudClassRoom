@@ -3,7 +3,7 @@ create table if not exists User (name string, pass string, role string)
 insert into User (name, pass, role) values ('Rui Chen','rc2639','S')
 insert into User (name, pass, role) values ('Li Li','6998','I')
 
-create table if not exists Class (id number(19), name string, instructor string)
-insert into Class (id, name, instructor) values (6998,'Mobile','Li Li')
+create table if not exists Class (id number(19), name string, instructor string, presenter string)
+insert into Class (id, name, instructor) values (6998,'Mobile','Li Li', 'Li Li')
 
 create table if not exists Class_Student (class_id number(19), student string)

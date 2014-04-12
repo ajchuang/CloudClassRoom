@@ -22,12 +22,15 @@ public class SqlLiteConsole {
 			// "create table if not exists Class (name string, pass string, role string); ");
 			// execSqlCmd(m_dbConn,
 			// "create table if not exists Class (id number(19), name string, instructor string); ");
-			 execSqlCmd(m_dbConn,
-			 "create table if not exists Class_Student (class_id number(19), student string); ");
+			// execSqlCmd(m_dbConn,
+			// "create table if not exists Class_Student (class_id number(19), student string); ");
 			//execSqlCmd(m_dbConn,
 			//"insert into User (name, pass, role) values ('Li Li','6998','I'); ");
 			//execSqlCmd(m_dbConn,
 			//"insert into Class (id, name, instructor) values (6998,'Mobile','Li Li'); ");
+			//execSqlCmd(m_dbConn,"insert into class_student (class_id, student) values (6998, 'Rui Chen')");
+			//execSqlCmd(m_dbConn,"alter table class add presenter string");
+			execSqlCmd(m_dbConn,"update class set presenter='Rui Chen'");
 			/*
 			final ResultSet result = execSqlQuery(m_dbConn,
 					"SELECT * FROM User");

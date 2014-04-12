@@ -1,6 +1,7 @@
 package message;
 
-public class ChangePresentTokenReqMsg implements Message {
+//server to client
+public class ChangePresentTokenReqMsg extends AbstractMessage {
 
 	private static final String head = "CHANGE_PRESENT_TOKEN_REQ";
 	private final String userName;
@@ -29,7 +30,8 @@ public class ChangePresentTokenReqMsg implements Message {
 
 	@Override
 	public String toMseeage() {
-		return head + SEPARATOR + userName + SEPARATOR + classId + SEPARATOR
-				+ className;
+		return head + SEPARATOR + wrapDataField(userName) + SEPARATOR
+				+ wrapDataField(classId) + SEPARATOR + wrapDataField(className)
+				+ SEPARATOR + END;
 	}
 }

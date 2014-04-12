@@ -4,7 +4,7 @@ package message;
  * Server to client (instructor)
  * 
  */
-public class JoinClassApprovalReqMsg implements Message {
+public class JoinClassApprovalReqMsg extends AbstractMessage {
 
 	private static final String head = "JOIN_CLASS_APPROVAL_REQ";
 	private final String requestUser;
@@ -33,7 +33,8 @@ public class JoinClassApprovalReqMsg implements Message {
 
 	@Override
 	public String toMseeage() {
-		return head + SEPARATOR + requestUser + SEPARATOR + classId + SEPARATOR
-				+ className;
+		return head + SEPARATOR + wrapDataField(requestUser) + SEPARATOR
+				+ wrapDataField(classId) + SEPARATOR + wrapDataField(className)
+				+ SEPARATOR + END;
 	}
 }

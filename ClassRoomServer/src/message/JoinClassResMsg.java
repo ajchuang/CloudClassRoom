@@ -1,6 +1,6 @@
 package message;
 
-public class JoinClassResMsg implements Message {
+public class JoinClassResMsg extends AbstractMessage {
 
 	private static final String head = "JOIN_CLASS_RES";
 	private final long classId;
@@ -29,8 +29,9 @@ public class JoinClassResMsg implements Message {
 
 	@Override
 	public String toMseeage() {
-		return head + SEPARATOR + classId + SEPARATOR + className + SEPARATOR
-				+ status;
+		return head + SEPARATOR + wrapDataField(classId) + SEPARATOR
+				+ wrapDataField(className) + SEPARATOR + wrapDataField(status)
+				+ SEPARATOR + END;
 	}
 
 }

@@ -1,6 +1,6 @@
 package message;
 
-public class RetrivePresentTokenReqMsg implements Message {
+public class RetrivePresentTokenReqMsg extends AbstractMessage {
 
 	private static final String head = "RETRIVE_PRESENT_TOKEN_REQ";
 	private final long cookieId;
@@ -22,7 +22,8 @@ public class RetrivePresentTokenReqMsg implements Message {
 
 	@Override
 	public String toMseeage() {
-		return head + SEPARATOR + cookieId + SEPARATOR + classId;
+		throw new UnsupportedOperationException("Not to client");
+		// return head + SEPARATOR + cookieId + SEPARATOR + classId;
 	}
 
 	public static Message parse(final String message) {
@@ -30,7 +31,10 @@ public class RetrivePresentTokenReqMsg implements Message {
 		if (fields.length != 3 || !head.equals(fields[0])) {
 			return null;
 		}
-		return new RetrivePresentTokenReqMsg(Long.valueOf(fields[1]),
-				Long.valueOf(fields[2]));
+		if (!validDataField(fields)) {
+			return null;
+		}
+		return new RetrivePresentTokenReqMsg(Long.valueOf(getData(fields[1])),
+				Long.valueOf(getData(fields[2])));
 	}
 }

@@ -1,6 +1,6 @@
 package message;
 
-public class GetPresentTokenResMsg implements Message {
+public class GetPresentTokenResMsg extends AbstractMessage {
 
 	private static final String head = "GET_PRESENT_TOKEN_RES";
 	private final long classId;
@@ -29,7 +29,8 @@ public class GetPresentTokenResMsg implements Message {
 
 	@Override
 	public String toMseeage() {
-		return head + SEPARATOR + classId + SEPARATOR + className + SEPARATOR
-				+ status;
+		return head + SEPARATOR + wrapDataField(classId) + SEPARATOR
+				+ wrapDataField(className) + SEPARATOR + wrapDataField(status)
+				+ SEPARATOR + END;
 	}
 }

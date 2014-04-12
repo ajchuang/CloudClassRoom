@@ -1,6 +1,6 @@
 package message;
 
-public class PushContentResMsg implements Message {
+public class PushContentResMsg extends AbstractMessage {
 
 	private static final String head = "PUSH_CONTENT_RES";
 	private final String status;
@@ -16,7 +16,7 @@ public class PushContentResMsg implements Message {
 
 	@Override
 	public String toMseeage() {
-		return head + SEPARATOR + status;
+		return head + SEPARATOR + wrapDataField(status) + SEPARATOR + END;
 	}
 
 }

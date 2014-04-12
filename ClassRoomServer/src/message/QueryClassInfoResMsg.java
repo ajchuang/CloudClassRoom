@@ -2,7 +2,7 @@ package message;
 
 import java.util.Collection;
 
-public class QueryClassInfoResMsg implements Message {
+public class QueryClassInfoResMsg extends AbstractMessage {
 	private static final String head = "QUERY_CLASS_INFO_RES";
 	private final String status;
 	private final String instructor;
@@ -20,11 +20,13 @@ public class QueryClassInfoResMsg implements Message {
 
 	@Override
 	public String toMseeage() {
-		final StringBuilder str = new StringBuilder(head + SEPARATOR + status
-				+ SEPARATOR + instructor + SEPARATOR + numOfStudent);
+		final StringBuilder str = new StringBuilder(head + SEPARATOR
+				+ wrapDataField(status) + SEPARATOR + wrapDataField(instructor)
+				+ SEPARATOR + wrapDataField(numOfStudent));
 		for (final String student : students) {
-			str.append(SEPARATOR + student);
+			str.append(SEPARATOR + wrapDataField(student));
 		}
+		str.append(SEPARATOR + END);
 		return str.toString();
 	}
 }

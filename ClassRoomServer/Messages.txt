@@ -1,0 +1,160 @@
+﻿
+Separated by \n (since it is also the end mark of input/output stream, therefore, reading a message now needs multiple reads from input stream)
+every data field is lead by ':'
+every message ends with 'END'
+
+example:
+send
+LOGIN_REQ
+:Rui Chen
+:rc2639
+END
+
+receive
+LOGIN_RES
+:SUCCESS
+:1
+END
+
+2. user log­in (登入)
+a. client → LOGIN_REQ (USER_NAME, PASSWORD) → server
+b. server → LOGIN_RES (STATUS, COOKIE_ID) → client
+status:
+INVALID_USER cookie=-1
+LOGIN_FAIL
+DUPLICATE (already logged in)
+LOGGED_IN
+
+3. user log­out (使用者登入相關)
+a. client → LOGOUT_REQ (COOKIE_ID) → server
+b. server → LOGOUT_RES (STATUS) → client
+status:
+INVALID_COOKIE
+LOGOUT_FAIL (not currently logged in)
+LOGGED_OUT
+
+4. create class (create 一個 user cluster, 指定 default instructor)
+a. client → CREATE_CLASS_REQ (CLASS_NAME, COOKIE_ID) → server
+b. server → CREATE_CLASS_RES (STATUS, CLASS_ID) → client
+status:
+NOT_LOGIN classId=-1
+NO_PERMISSION classId=-1
+DUPLICATE_NAME classId=-1
+SUCCESS
+
+5. list class (列出現在 user 可以加入的 class)
+a. client → LIST_CLASS_REQ (COOKIE_ID) → server
+b. server → LIST_CLASS_RES (STATUS, nCLASS, (CLASS_ID, 
+CLASS_NAME, INST_NAME),...) → client
+Status:
+NOT_LOGIN nClass=0
+SUCCESS
+
+6. delete class (消除這個 user cluster)
+a. client → DEL_CLASS_REQ (COOKIE, CLASS_ID) → server
+b. server→ DEL_CLASS_RES (STATUS) → client
+status:
+NOT_LOGIN
+NO_PERMISSION
+INVALID_CLASS_ID
+SUCCESS
+
+7. join class (讓 user 可以加入這個 cluster, permission control 也在這裡做)
+a. client → JOIN_CLASS_REQ (COOKIE, CLASS_ID) → server
+b. server → JOIN_CLASS_APPROVAL_REQ (requesting user,ClassId, ClassName) → instructor (if passed all checks), or offline message
+c. instructor -> JOIN_CLASS_APPROVAL_RES(approverCookieId, classId,usernameToAdd,decision)—>server
+d. server ->JOIN_CLASS_RES (classId, className, status) → requesting client (if message c passes all check, otherwise do nothing)
+or
+b’. server → JOIN_CLASS_RES (classId, className, status) → requesting client
+(if any check fails)
+b’ Status:
+NOT_LOGIN className=””
+INVALID_CLASS_ID classname=””
+NO_PERMISSION (not a student)
+ALREADY_IN_CLASS
+DENIED
+SUCCESS
+
+8. query class info
+a. client → QUERY_CLASS_INFO_REQ (COOKIE_ID, classId) → 
+b. server → QUERY_CLASS_INFO_RES (STATUS, INSTRUCTOR_NAME, nSTUDENTS, USER_NAME_01….) → client
+status:
+NOT_LOGIN instuctorName=”” nStudent=0
+INVALID_CLASS_ID instuctorName=”” nStudent=0
+SUCCESS
+
+9. leave class (離開這個 cluster)
+a. client → QUIT_CLASS_REQ (COOKIE_ID, CLASS_ID) → server
+b. server → QUIT_CLASS_RES (STATUS) → client
+status:
+NOT_LOGIN
+INVALID_CLASS_ID
+NOT_IN_CLASS
+SUCCESS
+
+
+10. kick user from class (由 instructor 強迫某個 user 退出)
+a. inst_client → KICK_USER_REQ (COOKIE_ID, CLASS_ID, USER_NAME) → server
+b. server → KICK_USER_RES (STATUS) → client_inst
+status:
+NOT_LOGIN
+INVALID_CLASS_ID
+NO_PERMISSION (not the instructor of that class)
+NOT_IN_CLASS (student not in class)
+SUCCESS
+c. server → KICK_USER_IND (STATUS,classId,className) → client_student (could be offline)
+status:
+SUCCESS
+
+11. push content (把 instructor 的 content push 給所有 student)
+a.presenter_client → PUSH_CONTENT_REQ (COOKIE_ID, CLASS_ID, CONTENT_ID, CONTENT_TYPE, nBytes, BYTES…) → server
+b. server → PUSH_CONTENT_RES (STATUS) → presenter_client
+status:
+NOT_LOGIN
+INVALID_CLASS_ID
+NO_PERMISSION (not the presenter)
+ALREADY_IN_CLASS (class already has the content id)
+SUCCESS
+c.server → PUSH_CONTENT_NOTIFY (CLASS_ID, CONTENT_ID) → student_client  (only to logged in student in the class, or all students in the class?)
+d.student_client → PUSH_CONTENT_GET_REQ (COOKIE_ID, CLASS_ID, CONTENT_ID) → server
+e.server → PUSH_CONTENT_GET_RES (STATUS, CONTENT_ID, CONTENT_TYPE, nBytes, BYTES) → student_client
+status:
+NOT_LOGIN content type=””, nbytes=0
+INVALID_CLASS_ID content type=””, nbytes=0
+NOT_IN_CLASS (user not in class) content type=””, nbytes=0
+CONTENT_NOT_IN_CLASS content type=””, nbytes=0
+SUCCESS
+
+13. request presenter right (由 instructor 來 approve) → no presenter case allowed
+a. client → GET_PRESENT_TOKEN_REQ (COOKIE_ID,CLASS_ID)→ server
+b. server →CHANGE_PRESENT_TOKEN_REQ (USER_name, CLASS_ID)→ instructor (if passed all checks), or offline message
+c. instructor CHANGE_PRESENT_TOKEN_RES (approverCookieId, classId,usernameToAdd,decision)—>server
+d. server ->GET_PRESENT_TOKEN_RES (classId, className, status) → requesting client (if message c passes all check, otherwise do nothing)
+or
+b’. server → GET_PRESENT_TOKEN_RES (classId, className, status) → requesting client
+(if any check fails)
+b’ Status:
+NOT_LOGIN className=””
+INVALID_CLASS_ID classname=””
+NO_PERMISSION (is instructor, no need to use this command)
+NOT_IN_CLASS
+ALREADY_PRESENTER
+DENIED
+SUCCESS
+
+14. instructor 暴力取回法 presenter switch (push content 的 user 換人)
+a. instructor → RETRIEVE_PRESENT_TOKEN_REQ (COOKIE_ID, CLASS_ID) → server
+b. server → RETRIEVE_PRESENT_TOKEN_IND (classId, className) → presenter_client (doesn’t need status because receiving this message always means you have lost presenter permission)
+c. server → RETRIEVE_PRESENT_TOKEN_RES (STATUS) → instructor
+NOT_LOGIN 
+INVALID_CLASS_ID 
+NO_PERMISSION 
+ALREADY_PRESENTER
+SUCCESS
+
+
+
+
+
+
+

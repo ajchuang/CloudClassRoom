@@ -1,6 +1,6 @@
 package message;
 
-public class PushContentGetReqMsg implements Message {
+public class PushContentGetReqMsg extends AbstractMessage {
 
 	private static final String head = "JOIN_CLASS_REQ";
 	private final long cookieId;
@@ -28,8 +28,9 @@ public class PushContentGetReqMsg implements Message {
 
 	@Override
 	public String toMseeage() {
-		return head + SEPARATOR + cookieId + SEPARATOR + classId + SEPARATOR
-				+ contentId;
+		throw new UnsupportedOperationException("Not to client");
+		// return head + SEPARATOR + cookieId + SEPARATOR + classId + SEPARATOR
+		// + contentId;
 	}
 
 	public static Message parse(final String message) {
@@ -37,7 +38,11 @@ public class PushContentGetReqMsg implements Message {
 		if (fields.length != 4 || !head.equals(fields[0])) {
 			return null;
 		}
-		return new PushContentGetReqMsg(Long.valueOf(fields[1]),
-				Long.valueOf(fields[2]), Long.valueOf(fields[3]));
+		if (!validDataField(fields)) {
+			return null;
+		}
+		return new PushContentGetReqMsg(Long.valueOf(getData(fields[1])),
+				Long.valueOf(getData(fields[2])),
+				Long.valueOf(getData(fields[3])));
 	}
 }

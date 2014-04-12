@@ -1,6 +1,7 @@
 package server;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -10,7 +11,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import server.ServerModel.SocketAndMessage;
+import server.ServerModel.MessageToClient;
 
 import message.ChangePresentTokenResMsg;
 import message.CreateClassReqMsg;
@@ -56,6 +57,25 @@ public class ServerThread implements Runnable {
 		}
 	}
 
+	private void sendMessageOrNotification(
+			final Collection<MessageToClient> messages) {
+		try {
+			for (final MessageToClient output : messages) {
+				if (output.socket != null) {
+
+					sendMessages(output.messagesToSend, new PrintWriter(
+							output.socket.getOutputStream(), true));
+				}
+				if (output.user != null) {
+					// Push notification. when it is done, no need to send
+					// offline messages
+				}
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	public void run() {
 		System.out.println("Started a new server thread");
 		try {
@@ -65,15 +85,28 @@ public class ServerThread implements Runnable {
 			final InputStream inStream = incoming.getInputStream();
 			final BufferedReader in = new BufferedReader(new InputStreamReader(
 					inStream));
+			StringBuilder pendingMessage = new StringBuilder();
 			String msgFromClient;
 			while (true) {
 				try {
 					msgFromClient = in.readLine();
 					System.out.println("Received message " + msgFromClient);
+					if (!Message.END.equals(msgFromClient)) {
+						if (pendingMessage.toString().isEmpty()) {
+							pendingMessage.append(msgFromClient);
+						} else {
+							pendingMessage.append(Message.SEPARATOR
+									+ msgFromClient);
+						}
+						continue;
+					}
+					final String message = pendingMessage.toString();
+					System.out.println("parsing message "+message);
+					pendingMessage = new StringBuilder();
 					// process client message according to client state and the
 					// message
 					final Message messageFromClient = MessageFactory
-							.parse(msgFromClient);
+							.parse(message);
 					if (messageFromClient instanceof LoginReqMsg) {
 						sendMessages(server.login(
 								(LoginReqMsg) messageFromClient, incoming), out);
@@ -94,26 +127,16 @@ public class ServerThread implements Runnable {
 								server.deleteClass((DeleteClassReqMsg) messageFromClient),
 								out);
 					} else if (messageFromClient instanceof JoinClassReqMsg) {
-						final List<SocketAndMessage> outputs = server
+						final List<MessageToClient> outputs = server
 								.joinClassRequest(incoming,
 										(JoinClassReqMsg) messageFromClient);
-						for (final SocketAndMessage output : outputs) {
-							sendMessages(
-									output.messagesToSend,
-									new PrintWriter(output.socket
-											.getOutputStream(), true));
-						}
+						sendMessageOrNotification(outputs);
 					} else if (messageFromClient instanceof JoinClassApprovalResMsg) {
-						final List<SocketAndMessage> outputs = server
+						final List<MessageToClient> outputs = server
 								.joinClassResult(
 										incoming,
 										(JoinClassApprovalResMsg) messageFromClient);
-						for (final SocketAndMessage output : outputs) {
-							sendMessages(
-									output.messagesToSend,
-									new PrintWriter(output.socket
-											.getOutputStream(), true));
-						}
+						sendMessageOrNotification(outputs);
 					} else if (messageFromClient instanceof QueryClassInfoReqMsg) {
 						sendMessages(
 								server.queryClassInfo((QueryClassInfoReqMsg) messageFromClient),
@@ -123,62 +146,37 @@ public class ServerThread implements Runnable {
 								server.quitClass((QuitClassReqMsg) messageFromClient),
 								out);
 					} else if (messageFromClient instanceof KickUserReqMsg) {
-						final List<SocketAndMessage> outputs = server
+						final List<MessageToClient> outputs = server
 								.kickUserFromClass(incoming,
 										(KickUserReqMsg) messageFromClient);
-						for (final SocketAndMessage output : outputs) {
-							sendMessages(
-									output.messagesToSend,
-									new PrintWriter(output.socket
-											.getOutputStream(), true));
-						}
+						sendMessageOrNotification(outputs);
 					} else if (messageFromClient instanceof PushContentReqMsg) {
-						final List<SocketAndMessage> outputs = server
+						final List<MessageToClient> outputs = server
 								.pushContent(incoming,
 										(PushContentReqMsg) messageFromClient);
-						for (final SocketAndMessage output : outputs) {
-							sendMessages(
-									output.messagesToSend,
-									new PrintWriter(output.socket
-											.getOutputStream(), true));
-						}
+						sendMessageOrNotification(outputs);
 					} else if (messageFromClient instanceof PushContentGetReqMsg) {
 						sendMessages(
 								server.getContent((PushContentGetReqMsg) messageFromClient),
 								out);
 					} else if (messageFromClient instanceof GetPresentTokenReqMsg) {
-						final List<SocketAndMessage> outputs = server
+						final List<MessageToClient> outputs = server
 								.getPresenterRequest(
 										incoming,
 										(GetPresentTokenReqMsg) messageFromClient);
-						for (final SocketAndMessage output : outputs) {
-							sendMessages(
-									output.messagesToSend,
-									new PrintWriter(output.socket
-											.getOutputStream(), true));
-						}
+						sendMessageOrNotification(outputs);
 					} else if (messageFromClient instanceof ChangePresentTokenResMsg) {
-						final List<SocketAndMessage> outputs = server
+						final List<MessageToClient> outputs = server
 								.changePresentResult(
 										incoming,
 										(ChangePresentTokenResMsg) messageFromClient);
-						for (final SocketAndMessage output : outputs) {
-							sendMessages(
-									output.messagesToSend,
-									new PrintWriter(output.socket
-											.getOutputStream(), true));
-						}
+						sendMessageOrNotification(outputs);
 					} else if (messageFromClient instanceof RetrivePresentTokenReqMsg) {
-						final List<SocketAndMessage> outputs = server
+						final List<MessageToClient> outputs = server
 								.retrivePresentToken(
 										incoming,
 										(RetrivePresentTokenReqMsg) messageFromClient);
-						for (final SocketAndMessage output : outputs) {
-							sendMessages(
-									output.messagesToSend,
-									new PrintWriter(output.socket
-											.getOutputStream(), true));
-						}
+						sendMessageOrNotification(outputs);
 					}
 				} catch (final UnknownMessageException e) {
 					System.out.println("Unknown message ");

@@ -1,6 +1,6 @@
 package message;
 
-public class LogoutReqMsg implements Message {
+public class LogoutReqMsg extends AbstractMessage {
 
 	private static final String head = "LOGOUT_REQ";
 	private final long cookieId;
@@ -16,7 +16,8 @@ public class LogoutReqMsg implements Message {
 
 	@Override
 	public String toMseeage() {
-		return head + SEPARATOR + cookieId;
+		throw new UnsupportedOperationException("Not to client");
+		// return head + SEPARATOR + cookieId;
 	}
 
 	public static Message parse(final String message) {
@@ -24,6 +25,9 @@ public class LogoutReqMsg implements Message {
 		if (fields.length != 2 || !head.equals(fields[0])) {
 			return null;
 		}
-		return new LogoutReqMsg(Long.valueOf(fields[1]));
+		if (!validDataField(fields)) {
+			return null;
+		}
+		return new LogoutReqMsg(Long.valueOf(getData(fields[1])));
 	}
 }

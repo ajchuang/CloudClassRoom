@@ -1,6 +1,6 @@
 package message;
 
-public class PushContentReqMsg implements Message {
+public class PushContentReqMsg extends AbstractMessage {
 
 	private static final String head = "PUSH_CONTENT_REQ";
 	private final long cookieId;
@@ -56,14 +56,18 @@ public class PushContentReqMsg implements Message {
 		if (fields.length < 6 || !head.equals(fields[0])) {
 			return null;
 		}
-		final int nBytes = Integer.parseInt(fields[5]);
+		if (!validDataField(fields)) {
+			return null;
+		}
+		final int nBytes = Integer.parseInt(getData(fields[5]));
 		final byte[] bytes = new byte[nBytes];
 		for (int i = 0; i < nBytes; i++) {
-			bytes[i] = Byte.parseByte(fields[6 + i]);
+			bytes[i] = Byte.parseByte(getData(fields[6 + i]));
 		}
 
-		return new PushContentReqMsg(Long.parseLong(fields[1]),
-				Long.parseLong(fields[2]), Long.parseLong(fields[3]),
-				fields[4], nBytes, bytes);
+		return new PushContentReqMsg(Long.parseLong(getData(fields[1])),
+				Long.parseLong(getData(fields[2])),
+				Long.parseLong(getData(fields[3])), getData(fields[4]), nBytes,
+				bytes);
 	}
 }
