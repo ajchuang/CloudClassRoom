@@ -12,11 +12,14 @@ public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListen
     
     // UI components
     private JTextArea    m_editArea;
+    private JTextArea    m_shareArea;
+    
     private JFileChooser m_fileChooser = new JFileChooser();
     
     JButton     m_openBtn;
     JButton     m_saveBtn;
     JButton     m_shareBtn;
+    JTabbedPane m_tabPan;
     
     // Action objects
     private Action m_openAction  = new OpenAction ();
@@ -31,22 +34,33 @@ public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListen
     
     //============================================================== constructor
     public PC_SimpleEditor () {
+        
+        m_tabPan = new JTabbedPane (JTabbedPane.TOP);
+        
         //... Create scrollable text area.
-        m_editArea = new JTextArea(15, 80);
-        m_editArea.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
+        m_editArea = new JTextArea (15, 80);
+        m_editArea.setBorder (BorderFactory.createEmptyBorder(2,2,2,2));
         m_editArea.setFont(new Font("monospaced", Font.PLAIN, 14));
         m_editArea.addKeyListener (this);
-        JScrollPane scrollingText = new JScrollPanev (m_editArea);
+        
+        m_shareArea = new JTextArea (15, 80);
+        m_shareArea.setBorder (BorderFactory.createEmptyBorder(2,2,2,2));
+        m_shareArea.setFont(new Font("monospaced", Font.PLAIN, 14));
+        m_shareArea.setEditable (false);
+        
+        JScrollPane scrollingText1 = new JScrollPane (m_editArea);
+        JScrollPane scrollingText2 = new JScrollPane (m_shareArea);
+        m_tabPan.add ("Edit",  scrollingText1);
+        m_tabPan.add ("Shared", scrollingText2);
         
         //-- Create a content pane, set layout, add component.
-        JPanel content = new JPanel();
-        content.setLayout(new BorderLayout());
-        content.add(scrollingText, BorderLayout.CENTER);
+        JPanel content = new JPanel ();
+        content.setLayout (new BorderLayout ());
         
         //... Create menubar
-        JMenuBar menuBar = new JMenuBar();
-        JMenu fileMenu = menuBar.add(new JMenu("File"));
-        fileMenu.setMnemonic('F');
+        JMenuBar menuBar = new JMenuBar ();
+        JMenu fileMenu = menuBar.add (new JMenu ("File"));
+        fileMenu.setMnemonic ('F');
         fileMenu.add (m_openAction);       // Note use of actions, not text.
         fileMenu.add (m_saveAction);
         fileMenu.addSeparator (); 
@@ -59,6 +73,9 @@ public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListen
         //... Set window content and menu.
         setContentPane (content);
         setJMenuBar(menuBar);
+        
+        // add the table pane
+        add (m_tabPan, BorderLayout.CENTER);
         
         // Toolbar config
         JToolBar toolBar = new JToolBar ();
@@ -83,11 +100,11 @@ public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListen
         toolBar.addSeparator ();
         
         //... Set other window characteristics.
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
         setTitle ("PC_SimpleEditor");
-        pack();
-        setLocationRelativeTo(null);
-        setVisible(true);
+        pack ();
+        setLocationRelativeTo (null);
+        setVisible (true);
     }
     
     class OpenAction extends AbstractAction {
@@ -98,15 +115,15 @@ public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListen
         }
         
         public void actionPerformed(ActionEvent e) {
-            int retval = m_fileChooser.showOpenDialog(PC_SimpleEditor.this);
+            int retval = m_fileChooser.showOpenDialog (PC_SimpleEditor.this);
             if (retval == JFileChooser.APPROVE_OPTION) {
-                File f = m_fileChooser.getSelectedFile();
+                File f = m_fileChooser.getSelectedFile ();
                 try {
-                    FileReader reader = new FileReader(f);
-                    m_editArea.read(reader, "");  // Use TextComponent read
+                    FileReader reader = new FileReader (f);
+                    m_editArea.read (reader, "");  // Use TextComponent read
                 } catch (IOException ioex) {
-                    System.out.println(e);
-                    System.exit(1);
+                    System.out.println (e);
+                    System.exit (1);
                 }
             }
         }
@@ -114,21 +131,21 @@ public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListen
     
     class SaveAction extends AbstractAction {
         
-        SaveAction() {
-            super("Save...");
-            putValue(MNEMONIC_KEY, new Integer('S'));
+        SaveAction () {
+            super ("Save...");
+            putValue (MNEMONIC_KEY, new Integer('S'));
         }
         
         public void actionPerformed(ActionEvent e) {
-            int retval = m_fileChooser.showSaveDialog(PC_SimpleEditor.this);
+            int retval = m_fileChooser.showSaveDialog (PC_SimpleEditor.this);
             if (retval == JFileChooser.APPROVE_OPTION) {
-                File f = m_fileChooser.getSelectedFile();
+                File f = m_fileChooser.getSelectedFile ();
                 try {
-                    FileWriter writer = new FileWriter(f);
-                    m_editArea.write(writer);  // Use TextComponent write
+                    FileWriter writer = new FileWriter (f);
+                    m_editArea.write (writer);  // Use TextComponent write
                 } catch (IOException ioex) {
-                    JOptionPane.showMessageDialog(PC_SimpleEditor.this, ioex);
-                    System.exit(1);
+                    JOptionPane.showMessageDialog (PC_SimpleEditor.this, ioex);
+                    System.exit (1);
                 }
             }
         }
