@@ -1,3 +1,2 @@
 #!/bin/bash
-
-java PC_SimpleEditor
+java -cp ../:./ PC_SimpleEditor

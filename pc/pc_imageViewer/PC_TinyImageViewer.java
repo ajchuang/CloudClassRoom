@@ -4,14 +4,16 @@
 // Although it is not written in the line 0, but we have modified this file a lot.
 // 1. Add Socket-IPC capability
 // 2. Make it a slave app of the CloudClassRoom local server
-// We simple use the UI of the old app, and the internal logics are renovated.
+// 3. Renovate the whole UI.
+// We simple use the part of the UI of the old app, and the internal logics are also renovated.
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.io.*;
 import java.net.*;
+import pc_common.*;
 
-public class PC_TinyImageViewer extends JFrame implements ActionListener {
+public class PC_TinyImageViewer extends JFrame implements ActionListener, PC_SimpleMsgHandler {
 	
     // UI components
     JTabbedPane m_tabPan;
@@ -23,7 +25,8 @@ public class PC_TinyImageViewer extends JFrame implements ActionListener {
     PC_ImagePanel m_remotePanel;
     
     String m_currentLocalFile;
-
+    String m_currentRemoteFile;
+    
     public static void main (String[] args) {
 		
 		PC_TinyImageViewer img = new PC_TinyImageViewer ();
@@ -36,7 +39,13 @@ public class PC_TinyImageViewer extends JFrame implements ActionListener {
     
 	public PC_TinyImageViewer () {
         
-        super ("Image Demo");
+        super ("Simple Image Viewer");
+        
+        setupUiComponents ();
+        PC_SimpleReceiver.startReceiver (8001, this);
+	}
+    
+    void setupUiComponents () {
         
         setLayout (new BorderLayout ());
         
@@ -71,7 +80,7 @@ public class PC_TinyImageViewer extends JFrame implements ActionListener {
         m_tabPan.add ("Remote", m_remotePanel);
     
         add (m_tabPan, BorderLayout.CENTER);
-	}
+    }
     
     public void actionPerformed (ActionEvent e) {
         
@@ -108,6 +117,17 @@ public class PC_TinyImageViewer extends JFrame implements ActionListener {
             ee.printStackTrace ();
         }
     }
+    
+    @Override
+    public void simpleMsgHandler (String msg) {
+        System.out.println (msg);
+        
+        // We handle: UPDATE:<path>
+        if (msg.startsWith ("UPDATE:")) {
+            String path = msg.substring (7);
+            m_remotePanel.drawNewFile (path);
+        }
+    } 
 	
     // inner class used to control the 
 	private class PC_ImagePanel extends JPanel  {
@@ -128,20 +148,23 @@ public class PC_TinyImageViewer extends JFrame implements ActionListener {
                 
                 int w = m_image.getWidth (null);
                 int h = m_image.getHeight (null);
-                int r = 1, r1 = 1, r2 = 1;
-                
-                if (w > getWidth ())
-                    r1 = w/getWidth () + 1;
-                if (h > getHeight ())
-                    r2 = h/getHeight () + 1;
-                    
-                if (r1 > r2)
-                    r = r1;
-                else
-                    r = r2;
+                int r = scaleRatio (w, h);    
                     
                 g.drawImage (m_image, 0, 0, w/r, h/r, null);
             }
+        }
+        
+        int scaleRatio (int w, int h) {
+            
+            int r1 = 1, r2 = 1;
+            
+            if (w > getWidth ())
+                r1 = w/getWidth () + 1;
+                
+            if (h > getHeight ())
+                r2 = h/getHeight () + 1;
+                    
+            return (r1 > r2) ? r1:r2;
         }
 	}
 }

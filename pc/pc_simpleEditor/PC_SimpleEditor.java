@@ -7,8 +7,9 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.io.*;
 import java.net.*;
+import pc_common.*;
 
-public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListener {
+public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListener, PC_SimpleMsgHandler {
     
     // UI components
     private JTextArea    m_editArea;
@@ -27,13 +28,16 @@ public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListen
     private Action m_shareAction = new ShareAction ();
     private Action m_exitAction  = new ExitAction ();
     
-    //===================================================================== main
-    public static void main(String[] args) {
+    public static void main (String[] args) {
         new PC_SimpleEditor ();
     }
     
-    //============================================================== constructor
     public PC_SimpleEditor () {
+        setupUiComponent ();
+        PC_SimpleReceiver.startReceiver (8002, this);
+    }
+    
+    void setupUiComponent () {
         
         m_tabPan = new JTabbedPane (JTabbedPane.TOP);
         
@@ -216,7 +220,7 @@ public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListen
         
         // Updating the last line
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-            
+            /*
             try {
                 int lastLine = m_editArea.getLineCount () - 2;
                 int sPos = m_editArea.getLineStartOffset (lastLine);
@@ -231,8 +235,25 @@ public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListen
             } catch (Exception ee) {
                 ee.printStackTrace ();
             }
+            */
         }
     }
+    
+    @Override
+    public void simpleMsgHandler (String msg) {
+        
+        // We handle: UPDATE:<path>
+        if (msg.startsWith ("UPDATE:")) {
+            String path = msg.substring (7);
+            
+            try {
+                FileReader reader = new FileReader (path);
+                m_shareArea.read (reader, "");  // Use TextComponent read
+            } catch (IOException e) {
+                e.printStackTrace ();
+            }
+        } 
+    } 
     
     public void sendLine (String msg) {
         
