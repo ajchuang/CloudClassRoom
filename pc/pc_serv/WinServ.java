@@ -198,6 +198,7 @@ public class WinServ implements Runnable {
         
         // starting login UI
         WinServ_LoginWindow loginWin = new WinServ_LoginWindow ();
+        WinServ_ControlPanel ctrlPanel = WinServ_ControlPanel.getCtrlPanel ();
         
         return;
     }
