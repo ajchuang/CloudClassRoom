@@ -50,18 +50,20 @@ public class WinServ_ControlPanel extends JFrame implements ActionListener {
     }
     
     private WinServ_ControlPanel () {
-        
+        configDataComponents ();
+        configUiComponents ();
+    }
+    
+    void configDataComponents () {
         m_classes = new Vector<String> ();
         m_classes.add ("<no classes>");
         
         m_peopleInClass = new Vector<String> ();
         m_peopleInClass.add ("<no one here>");
-        
-        configUiComponents ();
     }
     
     void configUiComponents () {
-        //-- Create a content pane, set layout, add component.
+        
         JPanel content = new JPanel ();
         content.setLayout (new BorderLayout ());
         setContentPane (content);

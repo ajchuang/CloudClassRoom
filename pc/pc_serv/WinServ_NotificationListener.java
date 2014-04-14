@@ -5,15 +5,26 @@ import java.io.*;
 
 public class WinServ_NotificationListener implements Runnable {
     
-    int m_port; 
     static int DEFAULT_NFT_SIZE = 1024;
     
-    public WinServ_NotificationListener (int port) {
+    int m_port; 
+    String m_addr;
+    Socket m_socket;
+    PrintWriter m_outputStream;
+    BufferedReader m_inputStream;
+    
+    public WinServ_NotificationListener (String addr, int port) {
+        m_addr = addr;
         m_port = port;
     }
     
-    public void process_NTF (String str) {
+    public void sendMsgToServer (WinServ_ReqCommand cmd) {
         
+    }
+    
+    public void process_NTF (WinServ_ReqCommand cmd) {
+        
+        /*
         String toks[] = str.split (" ");
         WinServ.logInfo ("process_NTF: " + toks[0]);
         
@@ -31,23 +42,33 @@ public class WinServ_NotificationListener implements Runnable {
                 WinServ.logExp (e, false);
             }
         }
+        */
     }
     
     public void run () {
         
         try {
-            DatagramSocket socket = new DatagramSocket (m_port);
-            
+            m_socket = new Socket (m_addr, m_port);
+            m_outputStream = new PrintWriter (m_socket.getOutputStream ());
+            m_inputStream = new BufferedReader (new InputStreamReader (m_socket.getInputStream ()));
+                        
             while (true) {
-                byte[] receiveData = new byte[DEFAULT_NFT_SIZE];
-                DatagramPacket receivePacket = new DatagramPacket (receiveData, receiveData.length);
-                socket.receive (receivePacket);
                 
-                // notification data received.
-                // check what the type of the message is, and send to the main thread and request information
-                String str = new String (receivePacket.getData(), "UTF-8");
-                System.out.println ("[NTF] " + str);
-                process_NTF (str);
+                String data;
+                WinServ_ReqCommand cmd = new WinServ_ReqCommand ();
+                
+                while ((data = m_inputStream.readLine ()) != null) {
+                    data.trim ();
+                    WinServ.logInfo ("Received: " + data);
+                
+                    if (data.equals ("END") == true) 
+                        break;
+                    else {
+                        cmd.pushStr (data);
+                    }
+                }
+                
+                process_NTF (cmd);
             }
         } catch (Exception e) {
             WinServ.logExp (e, true);

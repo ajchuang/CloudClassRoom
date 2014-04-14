@@ -189,7 +189,7 @@ public class WinServ implements Runnable {
     public static void main (String args[]) throws Exception {
         
         // starting server notification server.
-        Thread ntf = new Thread (new WinServ_NotificationListener (DEFAULT_COMM_PORT));
+        Thread ntf = new Thread (new WinServ_NotificationListener ("localhost", DEFAULT_COMM_PORT));
         ntf.start ();
         
         // starting local working server
