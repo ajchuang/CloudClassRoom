@@ -12,8 +12,11 @@ public class WinServ_DataRepo {
     boolean m_isInstructor;
     boolean m_isPresenter;
     
-    Vector<String> m_classes;
-    Vector<String> m_peopleInClass;
+    Vector<String>  m_classes;
+    Vector<Integer> m_classIds;
+    
+    Vector<String>  m_peopleInClass;
+    Vector<Integer> m_peopleInClassIds;
 
     public static WinServ_DataRepo getDataRepo () {
         
@@ -30,8 +33,12 @@ public class WinServ_DataRepo {
         m_isLoggedIn = false;
         m_isInstructor = false;
         m_isPresenter = false;
+        
         m_classes = new Vector<String> ();
+        m_classIds = new Vector<Integer> ();
+        
         m_peopleInClass = new Vector<String> ();
+        m_peopleInClassIds = new Vector<Integer> ();
     }
     
     // setters & getters

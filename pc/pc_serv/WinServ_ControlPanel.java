@@ -239,12 +239,27 @@ public class WinServ_ControlPanel extends JFrame implements ActionListener {
             cmd.pushStr ("END");
             ntfServ.sendMsgToServer (cmd);
         } else if (src == m_createClassBtn) {
-            WinServ_ReqCommand cmd = new WinServ_ReqCommand ();
-            cmd.pushStr ("CREATE_CLASS_REQ");
-            cmd.pushStr (":temp_class_name"); //TOD: to fix
-            cmd.pushStr (":" + cookieId);
-            cmd.pushStr ("END");
-            ntfServ.sendMsgToServer (cmd);
+            
+            // small UI to let user input the name
+            String s = 
+                (String)JOptionPane.showInputDialog (
+                    this,
+                    "Input class name", "User Input",
+                    JOptionPane.PLAIN_MESSAGE,
+                    null, null, "class name");
+
+            //If a string was returned, say so.
+            if ((s != null) && (s.length() > 0)) {
+                WinServ_ReqCommand cmd = new WinServ_ReqCommand ();
+                cmd.pushStr ("CREATE_CLASS_REQ");
+                cmd.pushStr (":temp_class_name"); //TOD: to fix
+                cmd.pushStr (":" + cookieId);
+                cmd.pushStr ("END");
+                ntfServ.sendMsgToServer (cmd);
+                return;
+            } else {
+                // bad input
+            }
         } else if (src == m_deleteClassBtn) {
             WinServ_ReqCommand cmd = new WinServ_ReqCommand ();
             cmd.pushStr ("DEL_CLASS_REQ");
@@ -260,6 +275,9 @@ public class WinServ_ControlPanel extends JFrame implements ActionListener {
             cmd.pushStr ("END");
             ntfServ.sendMsgToServer (cmd);
         } else if (src == m_kickStudentBtn) {
+            // TODO
+            int student_idx = m_studentList.getSelectedIndex ();
+            
         } else if (src == m_queryClassBtn) {
         } else if (src == m_leaveClassBtn) {
         } else if (src == m_reqPresenterBtn) {
