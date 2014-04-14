@@ -188,8 +188,20 @@ public class WinServ implements Runnable {
     
     public static void main (String args[]) throws Exception {
         
+        String  remoteHost;
+        int     remotePort;
+        
+        if (args.length == 2) {
+            remoteHost = args[0];
+            remotePort = Integer.parseInt (args[1]);
+            
+        } else {
+            remoteHost = "localhost";
+            remotePort = DEFAULT_COMM_PORT;
+        }
+        
         // starting server notification server.
-        Thread ntf = new Thread (new WinServ_NotificationListener ("localhost", DEFAULT_COMM_PORT));
+        Thread ntf = new Thread (WinServ_NtfServer.ntfFactory (remoteHost, remotePort));
         ntf.start ();
         
         // starting local working server
@@ -198,7 +210,6 @@ public class WinServ implements Runnable {
         
         // starting login UI
         WinServ_LoginWindow loginWin = new WinServ_LoginWindow ();
-        WinServ_ControlPanel ctrlPanel = WinServ_ControlPanel.getCtrlPanel ();
         
         return;
     }

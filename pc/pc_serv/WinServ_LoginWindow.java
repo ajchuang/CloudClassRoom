@@ -5,7 +5,7 @@ import java.awt.event.*;
 import java.net.*;
 import java.io.*;
 
-public class WinServ_LoginWindow extends JFrame implements ActionListener {
+public class WinServ_LoginWindow extends JFrame implements ActionListener, WinServ_MsgHandler {
 
     // Logic members
     boolean m_isAutheticating = false;
@@ -19,7 +19,8 @@ public class WinServ_LoginWindow extends JFrame implements ActionListener {
     JButton m_cancelBtn;
 
     public WinServ_LoginWindow () {
-
+        
+        // config UI
         setLayout (new GridBagLayout ());
 
         m_nameLabel = new JLabel (new String ("Name: "));
@@ -87,6 +88,8 @@ public class WinServ_LoginWindow extends JFrame implements ActionListener {
         pack ();
         setDefaultCloseOperation (JFrame.DO_NOTHING_ON_CLOSE);
         setVisible (true);
+        
+        
     }
     
     public void actionPerformed (ActionEvent e) {
@@ -115,8 +118,6 @@ public class WinServ_LoginWindow extends JFrame implements ActionListener {
                 // send msg to server
                 sendLoginMsg (name, pwd);
                 
-                dispose ();
-                
             } else {
             
                 // block UI
@@ -135,22 +136,37 @@ public class WinServ_LoginWindow extends JFrame implements ActionListener {
         
         try {
             
-            Socket s = new Socket ("localhost", WinServ.getPort ());
+            WinServ_ReqCommand loginCmd = new WinServ_ReqCommand ();
             
-            PrintWriter writer = new PrintWriter (s.getOutputStream (), true);
-            writer.println ("LOGIN_REQ");
-            writer.println (Integer.toString (name.length ()));        
-            writer.println (name);
-            writer.println (Integer.toString (pass.length ()));        
-            writer.println (pass);
-            writer.println ("END");
-            s.close ();
+            loginCmd.pushStr ("LOGIN_REQ");
+            loginCmd.pushStr (":" + name);
+            loginCmd.pushStr (":" + pass);
+            loginCmd.pushStr ("END");
+            
+            // REGISTER NW receiver
+            WinServ_NtfServer ntfServ = WinServ_NtfServer.getNtfServ ();
+            ntfServ.registerMsgHandler ("LOGIN_RES", this);
+            
+            // send event
+            ntfServ.sendMsgToServer (loginCmd);
             
         } catch (Exception e) {
-            e.printStackTrace ();
-            System.exit (0);
+            WinServ.logExp (e, true);
         }        
+    }
+    
+    // @lfred: receiving server message
+    public void handleServerMsg (WinServ_ReqCommand cmd) {
         
+        WinServ.logInfo ("handleServerMsg @ login Window");
         
+        // if login OKAY,
+        // REGISTER NW receiver
+        WinServ_NtfServer ntfServ = WinServ_NtfServer.getNtfServ ();
+        ntfServ.unregisterMsgHandler ("LOGIN_RES", this);
+        
+        // create new window, and close the login window
+        WinServ_ControlPanel ctrlPanel = WinServ_ControlPanel.getCtrlPanel ();
+        dispose ();
     }
 }

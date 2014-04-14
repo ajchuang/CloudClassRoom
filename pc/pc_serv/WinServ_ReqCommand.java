@@ -13,7 +13,11 @@ public class WinServ_ReqCommand {
         m_data.add (s);
     }
     
-    String getStrAt (int idx) {
+    public int totalStrNum () {
+        return m_data.size ();
+    }
+    
+    public String getStrAt (int idx) {
         if (idx < m_data.size())
             return m_data.elementAt (idx);
         else {
