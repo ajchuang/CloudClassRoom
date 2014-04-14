@@ -200,6 +200,9 @@ public class WinServ implements Runnable {
             remotePort = DEFAULT_COMM_PORT;
         }
         
+        // starting data repo
+        WinServ_DataRepo.getDataRepo ();
+        
         // starting server notification server.
         Thread ntf = new Thread (WinServ_NtfServer.ntfFactory (remoteHost, remotePort));
         ntf.start ();

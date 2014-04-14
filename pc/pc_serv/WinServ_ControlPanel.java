@@ -8,14 +8,14 @@ import java.util.*;
 public class WinServ_ControlPanel extends JFrame implements ActionListener {
     
     // classes control buttons
-    JList   m_classList;
+    JList<String> m_classList;
     JButton m_listClassBtn;
     JButton m_createClassBtn;
     JButton m_deleteClassBtn;
     JButton m_joinClassBtn;
     
     // in-class control button
-    JList   m_studentList;
+    JList<String> m_studentList;
     JButton m_kickStudentBtn;
     JButton m_queryClassBtn;
     JButton m_leaveClassBtn;
@@ -27,7 +27,7 @@ public class WinServ_ControlPanel extends JFrame implements ActionListener {
     // general button
     JButton m_logoutBtn;    
     
-    // data variables
+    // data variables. TODO: fix this with data repo
     boolean m_isLoggedIn;
     boolean m_isInstructor;
     boolean m_isPresenter;
@@ -92,7 +92,7 @@ public class WinServ_ControlPanel extends JFrame implements ActionListener {
         panel_allClasses.setLayout (classes_gridbag);
         
         // process all class panels
-        m_classList = new JList (m_classes);
+        m_classList = new JList<String> (m_classes);
         m_classList.setSelectionMode (ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         m_classList.setLayoutOrientation (JList.HORIZONTAL_WRAP);
         m_classList.setVisibleRowCount (-1);
@@ -155,7 +155,7 @@ public class WinServ_ControlPanel extends JFrame implements ActionListener {
         panel_inClass.setLayout (inClasses_gridbag);
         
         // process all class panels
-        m_studentList = new JList (m_peopleInClass);
+        m_studentList = new JList<String> (m_peopleInClass);
         m_studentList.setSelectionMode (ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         m_studentList.setLayoutOrientation (JList.HORIZONTAL_WRAP);
         m_studentList.setVisibleRowCount (-1);
