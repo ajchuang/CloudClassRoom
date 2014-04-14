@@ -5,10 +5,13 @@ public class WinServ_DataRepo {
     static WinServ_DataRepo sm_repo = null;
     
     String m_userName;
+    int    m_cookieId;
+    int    m_currentClassId;
     
     boolean m_isLoggedIn;
     boolean m_isInstructor;
     boolean m_isPresenter;
+    
     Vector<String> m_classes;
     Vector<String> m_peopleInClass;
 
@@ -42,6 +45,22 @@ public class WinServ_DataRepo {
     
     public boolean isLoggedIn () {
         return m_isLoggedIn;
+    }
+    
+    public void setCookieId (int id) {
+        m_cookieId = id;
+    }
+    
+    public int getCookieId () {
+        return m_cookieId;
+    }
+    
+    public void setClassId (int id) {
+        m_currentClassId = id;
+    }
+    
+    public int getClassId () {
+        return m_currentClassId;
     }
     
     public void setLoggedIn (boolean login) {

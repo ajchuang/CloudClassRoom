@@ -218,6 +218,51 @@ public class WinServ_ControlPanel extends JFrame implements ActionListener {
         setVisible (true);
     }
     
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed (ActionEvent e) {
+        
+        WinServ_DataRepo repo = WinServ_DataRepo.getDataRepo ();
+        WinServ_NtfServer ntfServ = WinServ_NtfServer.getNtfServ ();
+        Object src = e.getSource (); 
+        int cookieId = repo.getCookieId ();
+        
+        if (src == m_logoutBtn) {
+            WinServ_ReqCommand cmd = new WinServ_ReqCommand ();
+            cmd.pushStr ("LOGOUT_REQ");
+            cmd.pushStr (":" + cookieId);
+            cmd.pushStr ("END");
+            ntfServ.sendMsgToServer (cmd);
+            System.exit (0);
+        } else if (src == m_listClassBtn) {
+            WinServ_ReqCommand cmd = new WinServ_ReqCommand ();
+            cmd.pushStr ("LIST_CLASS_REQ");
+            cmd.pushStr (":" + cookieId);
+            cmd.pushStr ("END");
+            ntfServ.sendMsgToServer (cmd);
+        } else if (src == m_createClassBtn) {
+            WinServ_ReqCommand cmd = new WinServ_ReqCommand ();
+            cmd.pushStr ("CREATE_CLASS_REQ");
+            cmd.pushStr (":temp_class_name"); //TOD: to fix
+            cmd.pushStr (":" + cookieId);
+            cmd.pushStr ("END");
+            ntfServ.sendMsgToServer (cmd);
+        } else if (src == m_deleteClassBtn) {
+            WinServ_ReqCommand cmd = new WinServ_ReqCommand ();
+            cmd.pushStr ("DEL_CLASS_REQ");
+            cmd.pushStr (":" + cookieId);
+            cmd.pushStr (":123"); //TOD: to fix
+            cmd.pushStr ("END");
+            ntfServ.sendMsgToServer (cmd);
+        } else if (src == m_joinClassBtn) {
+            WinServ_ReqCommand cmd = new WinServ_ReqCommand ();
+            cmd.pushStr ("JOIN_CLASS_REQ");
+            cmd.pushStr (":123"); //TOD: to fix
+            cmd.pushStr (":" + cookieId);
+            cmd.pushStr ("END");
+            ntfServ.sendMsgToServer (cmd);
+        } else if (src == m_kickStudentBtn) {
+        } else if (src == m_queryClassBtn) {
+        } else if (src == m_leaveClassBtn) {
+        } else if (src == m_reqPresenterBtn) {
+        }
     }
 }
