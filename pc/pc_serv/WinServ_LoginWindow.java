@@ -88,8 +88,6 @@ public class WinServ_LoginWindow extends JFrame implements ActionListener, WinSe
         pack ();
         setDefaultCloseOperation (JFrame.DO_NOTHING_ON_CLOSE);
         setVisible (true);
-        
-        
     }
     
     public void actionPerformed (ActionEvent e) {
@@ -160,14 +158,49 @@ public class WinServ_LoginWindow extends JFrame implements ActionListener, WinSe
     public void handleServerMsg (WinServ_ReqCommand cmd) {
         
         WinServ.logInfo ("handleServerMsg @ login Window");
+        m_isAutheticating = false;
+        
+        String ln1 = cmd.getStrAt (0);
+    
+        if (ln1.equals ("LOGIN_RES") == false) {
+            WinServ.logErr ("Bad response - " + ln1);
+            System.exit (0);
+        }
+        
+        String ln2 = cmd.getStrAt (1);
+        
+        if (ln2.equals (":"+ "LOGGED_IN")) {
+            int cookieId = Integer.parseInt (cmd.getStrAt (2).substring (1));
+            
+            // update repo
+            WinServ_DataRepo repo = WinServ_DataRepo.getDataRepo ();
+            repo.setLoggedIn (true);
+            repo.setCookieId (cookieId);
+            
+            // clear the message registration
+            WinServ_NtfServer ntfServ = WinServ_NtfServer.getNtfServ ();
+            ntfServ.unregisterMsgHandler ("LOGIN_RES", this);
+        
+            // create new window, and close the login window
+            WinServ_ControlPanel ctrlPanel = WinServ_ControlPanel.getCtrlPanel ();
+            dispose ();
+            
+        } else {
+            // error information
+            WinServ.logInfo ("Login failed: " + ln2);
+            JOptionPane.showMessageDialog (this, "Login failed. Try again.");
+            
+            // re-enable the login box
+            m_loginBtn.setEnabled   (true);
+            m_cancelBtn.setEnabled  (true);
+            m_nameText.setEditable  (true);
+            m_pwdText.setEditable   (true);
+        }
+        
+        
         
         // if login OKAY,
         // REGISTER NW receiver
-        WinServ_NtfServer ntfServ = WinServ_NtfServer.getNtfServ ();
-        ntfServ.unregisterMsgHandler ("LOGIN_RES", this);
         
-        // create new window, and close the login window
-        WinServ_ControlPanel ctrlPanel = WinServ_ControlPanel.getCtrlPanel ();
-        dispose ();
     }
 }

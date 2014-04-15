@@ -5,7 +5,20 @@ import javax.swing.*;
 
 import java.util.*;
 
-public class WinServ_ControlPanel extends JFrame implements ActionListener {
+public class WinServ_ControlPanel extends JFrame implements ActionListener, WinServ_MsgHandler {
+    
+    final static String COLON             = ":";
+    final static String SUCCESS           = "SUCCESS";
+    final static String END               = "END";
+    final static String LOGOUT_REQ        = "LOGOUT_REQ";
+    final static String LIST_CLASS_REQ    = "LIST_CLASS_REQ";
+    final static String LIST_CLASS_RES    = "LIST_CLASS_RES";
+    final static String CREATE_CLASS_REQ  = "CREATE_CLASS_REQ";
+    final static String CREATE_CLASS_RES  = "CREATE_CLASS_RES";
+    final static String JOIN_CLASS_REQ    = "JOIN_CLASS_REQ";
+    final static String JOIN_CLASS_RES    = "JOIN_CLASS_RES";
+    final static String DEL_CLASS_REQ     = "DEL_CLASS_REQ";
+    final static String DEL_CLASS_RES     = "DEL_CLASS_RES";
     
     // classes control buttons
     JList<String> m_classList;
@@ -107,42 +120,46 @@ public class WinServ_ControlPanel extends JFrame implements ActionListener {
         panel_allClasses.add (m_classList);
         
         m_listClassBtn = new JButton ("List Class");
+        m_listClassBtn.addActionListener (this);
         classes_c.gridwidth = 1;                //reset to the default
         classes_c.gridheight = 1;
         classes_c.weighty = 1.0;
         classes_c.gridx = 4;
         classes_c.gridy = 0;
-        classes_c.fill = GridBagConstraints.NONE;
+        classes_c.fill = GridBagConstraints.BOTH;
         classes_gridbag.setConstraints (m_listClassBtn, classes_c);
         panel_allClasses.add (m_listClassBtn);
         
         m_createClassBtn = new JButton ("Create Class");
+        m_createClassBtn.addActionListener (this);
         classes_c.gridwidth = 1;                //reset to the default
         classes_c.gridheight = 1;
         classes_c.weighty = 1.0;
         classes_c.gridx = 4;
         classes_c.gridy = 1;
-        classes_c.fill = GridBagConstraints.NONE;
+        classes_c.fill = GridBagConstraints.BOTH;
         classes_gridbag.setConstraints (m_createClassBtn, classes_c);
         panel_allClasses.add (m_createClassBtn);
         
         m_deleteClassBtn = new JButton ("Delete Class");
+        m_deleteClassBtn.addActionListener (this);
         classes_c.gridwidth = 1;                //reset to the default
         classes_c.gridheight = 1;
         classes_c.weighty = 1.0;
         classes_c.gridx = 4;
         classes_c.gridy = 2;
-        classes_c.fill = GridBagConstraints.NONE;
+        classes_c.fill = GridBagConstraints.BOTH;
         classes_gridbag.setConstraints (m_deleteClassBtn, classes_c);
         panel_allClasses.add (m_deleteClassBtn);
         
         m_joinClassBtn = new JButton ("Join Class");
+        m_joinClassBtn.addActionListener (this);
         classes_c.gridwidth = 1;                //reset to the default
         classes_c.gridheight = 1;
         classes_c.weighty = 1.0;
         classes_c.gridx = 4;
         classes_c.gridy = 3;
-        classes_c.fill = GridBagConstraints.NONE;
+        classes_c.fill = GridBagConstraints.BOTH;
         classes_gridbag.setConstraints (m_joinClassBtn, classes_c);
         panel_allClasses.add (m_joinClassBtn);
          
@@ -170,47 +187,50 @@ public class WinServ_ControlPanel extends JFrame implements ActionListener {
         panel_inClass.add (m_studentList);
         
         m_kickStudentBtn = new JButton ("Kick Student");
+        m_kickStudentBtn.addActionListener (this);
         inClasses_c.gridwidth = 1;                
         inClasses_c.gridheight = 1;
         inClasses_c.weighty = 1.0;
         inClasses_c.gridx = 4;
         inClasses_c.gridy = 0;
-        inClasses_c.fill = GridBagConstraints.NONE;
+        inClasses_c.fill = GridBagConstraints.BOTH;
         inClasses_gridbag.setConstraints (m_kickStudentBtn, inClasses_c);
         panel_inClass.add (m_kickStudentBtn);
         
         m_queryClassBtn = new JButton ("Query class");
+        m_queryClassBtn.addActionListener (this);
         inClasses_c.gridwidth = 1;                
         inClasses_c.gridheight = 1;
         inClasses_c.weighty = 1.0;
         inClasses_c.gridx = 4;
         inClasses_c.gridy = 1;
-        inClasses_c.fill = GridBagConstraints.NONE;
+        inClasses_c.fill = GridBagConstraints.BOTH;
         inClasses_gridbag.setConstraints (m_queryClassBtn, inClasses_c);
         panel_inClass.add (m_queryClassBtn);
         
         m_leaveClassBtn = new JButton ("Leave class");
+        m_leaveClassBtn.addActionListener (this);
         inClasses_c.gridwidth = 1;                
         inClasses_c.gridheight = 1;
         inClasses_c.weighty = 1.0;
         inClasses_c.gridx = 4;
         inClasses_c.gridy = 2;
-        inClasses_c.fill = GridBagConstraints.NONE;
+        inClasses_c.fill = GridBagConstraints.BOTH;
         inClasses_gridbag.setConstraints (m_leaveClassBtn, inClasses_c);
         panel_inClass.add (m_leaveClassBtn);
         
         m_reqPresenterBtn = new JButton ("Request Presenter");
+        m_reqPresenterBtn.addActionListener (this);
         inClasses_c.gridwidth = 1;           
         inClasses_c.gridheight = 1;
         inClasses_c.weighty = 1.0;
         inClasses_c.gridx = 4;
         inClasses_c.gridy = 3;
-        inClasses_c.fill = GridBagConstraints.NONE;
+        inClasses_c.fill = GridBagConstraints.BOTH;
         inClasses_gridbag.setConstraints (m_reqPresenterBtn, inClasses_c);
         panel_inClass.add (m_reqPresenterBtn);
         
         // Finalize UI config
-        setSize (640, 480);
         setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
         setTitle ("Cloud Classroom Control Panel");
         pack ();
@@ -226,18 +246,24 @@ public class WinServ_ControlPanel extends JFrame implements ActionListener {
         int cookieId = repo.getCookieId ();
         
         if (src == m_logoutBtn) {
+            
             WinServ_ReqCommand cmd = new WinServ_ReqCommand ();
-            cmd.pushStr ("LOGOUT_REQ");
-            cmd.pushStr (":" + cookieId);
-            cmd.pushStr ("END");
+            cmd.pushStr (LOGOUT_REQ);
+            cmd.pushStr (COLON + cookieId);
+            cmd.pushStr (END);
             ntfServ.sendMsgToServer (cmd);
             System.exit (0);
+            
         } else if (src == m_listClassBtn) {
+            
             WinServ_ReqCommand cmd = new WinServ_ReqCommand ();
-            cmd.pushStr ("LIST_CLASS_REQ");
-            cmd.pushStr (":" + cookieId);
-            cmd.pushStr ("END");
+            cmd.pushStr (LIST_CLASS_REQ);
+            cmd.pushStr (COLON + cookieId);
+            cmd.pushStr (END);
+            
+            ntfServ.registerMsgHandler (LIST_CLASS_RES, this);
             ntfServ.sendMsgToServer (cmd);
+            
         } else if (src == m_createClassBtn) {
             
             // small UI to let user input the name
@@ -251,10 +277,13 @@ public class WinServ_ControlPanel extends JFrame implements ActionListener {
             //If a string was returned, say so.
             if ((s != null) && (s.length() > 0)) {
                 WinServ_ReqCommand cmd = new WinServ_ReqCommand ();
-                cmd.pushStr ("CREATE_CLASS_REQ");
-                cmd.pushStr (":temp_class_name"); //TOD: to fix
-                cmd.pushStr (":" + cookieId);
-                cmd.pushStr ("END");
+                cmd.pushStr (CREATE_CLASS_REQ);
+                cmd.pushStr (COLON + s);
+                cmd.pushStr (COLON + cookieId);
+                cmd.pushStr (END);
+                
+                // do the NW
+                ntfServ.registerMsgHandler (CREATE_CLASS_RES, this);
                 ntfServ.sendMsgToServer (cmd);
                 return;
             } else {
@@ -262,17 +291,24 @@ public class WinServ_ControlPanel extends JFrame implements ActionListener {
             }
         } else if (src == m_deleteClassBtn) {
             WinServ_ReqCommand cmd = new WinServ_ReqCommand ();
-            cmd.pushStr ("DEL_CLASS_REQ");
-            cmd.pushStr (":" + cookieId);
-            cmd.pushStr (":123"); //TOD: to fix
-            cmd.pushStr ("END");
+            cmd.pushStr (DEL_CLASS_REQ);
+            cmd.pushStr (COLON + cookieId);
+            cmd.pushStr (COLON + "123"); //TOD: to fix
+            cmd.pushStr (END);
+            
+            ntfServ.registerMsgHandler (DEL_CLASS_RES, this);
             ntfServ.sendMsgToServer (cmd);
         } else if (src == m_joinClassBtn) {
+            
+            // create message
             WinServ_ReqCommand cmd = new WinServ_ReqCommand ();
-            cmd.pushStr ("JOIN_CLASS_REQ");
-            cmd.pushStr (":123"); //TOD: to fix
-            cmd.pushStr (":" + cookieId);
-            cmd.pushStr ("END");
+            cmd.pushStr (JOIN_CLASS_REQ);
+            cmd.pushStr (COLON + "123"); //TOD: to fix
+            cmd.pushStr (COLON + cookieId);
+            cmd.pushStr (END);
+            
+            // NW things
+            ntfServ.registerMsgHandler (JOIN_CLASS_RES, this);
             ntfServ.sendMsgToServer (cmd);
         } else if (src == m_kickStudentBtn) {
             // TODO
@@ -282,5 +318,41 @@ public class WinServ_ControlPanel extends JFrame implements ActionListener {
         } else if (src == m_leaveClassBtn) {
         } else if (src == m_reqPresenterBtn) {
         }
+    }
+    
+    public void handleServerMsg (WinServ_ReqCommand cmd) {
+        
+        WinServ_DataRepo repo = WinServ_DataRepo.getDataRepo ();
+        WinServ_NtfServer ntfServ = WinServ_NtfServer.getNtfServ ();
+        int cookieId = repo.getCookieId ();
+        
+        String type = cmd.getStrAt (0);
+        
+        if (type.equals (LIST_CLASS_RES)) {
+            parseListClassRes (cmd);
+            ntfServ.unregisterMsgHandler (type, this);
+        }
+    }
+    
+    boolean parseListClassRes (WinServ_ReqCommand cmd) {
+        
+        String status = cmd.getStrAt (1);
+        
+        if (status.equals (COLON + SUCCESS) == false)
+            return false;
+        
+        int numClass  = Integer.parseInt (cmd.getStrAt(2).substring(1));
+        int ln = 3;
+        
+        for (int i=0; i<numClass; ++i) {
+            
+            String id   = cmd.getStrAt (ln++);
+            String name = cmd.getStrAt (ln++);
+            String inst = cmd.getStrAt (ln++);
+            
+            WinServ.logInfo ("Classname: " + name + " Inst: " + inst);
+        }
+        
+        return true;
     }
 }
