@@ -107,7 +107,7 @@ public class WinServ_ControlPanel extends JFrame implements ActionListener, WinS
         // process all class panels
         m_classList = new JList<String> (m_classes);
         m_classList.setSelectionMode (ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-        m_classList.setLayoutOrientation (JList.HORIZONTAL_WRAP);
+        m_classList.setLayoutOrientation (JList.VERTICAL_WRAP);
         m_classList.setVisibleRowCount (-1);
         classes_c.gridwidth = 3;                //reset to the default
         classes_c.gridheight = 5;
@@ -174,7 +174,7 @@ public class WinServ_ControlPanel extends JFrame implements ActionListener, WinS
         // process all class panels
         m_studentList = new JList<String> (m_peopleInClass);
         m_studentList.setSelectionMode (ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-        m_studentList.setLayoutOrientation (JList.HORIZONTAL_WRAP);
+        m_studentList.setLayoutOrientation (JList.VERTICAL_WRAP);
         m_studentList.setVisibleRowCount (-1);
         inClasses_c.gridwidth = 3;                
         inClasses_c.gridheight = 5;
@@ -290,14 +290,26 @@ public class WinServ_ControlPanel extends JFrame implements ActionListener, WinS
                 // bad input
             }
         } else if (src == m_deleteClassBtn) {
+            
+            int selectIdx = m_classList.getSelectedIndex ();
+            
+            if (selectIdx == -1) {
+                return;
+            }
+            
+            int ids = repo.getClassIds().elementAt (selectIdx);
+            
+            // create message
             WinServ_ReqCommand cmd = new WinServ_ReqCommand ();
             cmd.pushStr (DEL_CLASS_REQ);
             cmd.pushStr (COLON + cookieId);
-            cmd.pushStr (COLON + "123"); //TOD: to fix
+            cmd.pushStr (COLON + ids); //TOD: to fix
             cmd.pushStr (END);
             
+            // NW things
             ntfServ.registerMsgHandler (DEL_CLASS_RES, this);
             ntfServ.sendMsgToServer (cmd);
+            
         } else if (src == m_joinClassBtn) {
             
             // create message
@@ -315,6 +327,9 @@ public class WinServ_ControlPanel extends JFrame implements ActionListener, WinS
             int student_idx = m_studentList.getSelectedIndex ();
             
         } else if (src == m_queryClassBtn) {
+            
+            
+            
         } else if (src == m_leaveClassBtn) {
         } else if (src == m_reqPresenterBtn) {
         }
@@ -331,6 +346,8 @@ public class WinServ_ControlPanel extends JFrame implements ActionListener, WinS
         if (type.equals (LIST_CLASS_RES)) {
             parseListClassRes (cmd);
             ntfServ.unregisterMsgHandler (type, this);
+        } else if (type.equals (DEL_CLASS_RES)) {
+            ntfServ.unregisterMsgHandler (type, this);
         }
     }
     
@@ -341,17 +358,26 @@ public class WinServ_ControlPanel extends JFrame implements ActionListener, WinS
         if (status.equals (COLON + SUCCESS) == false)
             return false;
         
+        WinServ_DataRepo repo = WinServ_DataRepo.getDataRepo ();
         int numClass  = Integer.parseInt (cmd.getStrAt(2).substring(1));
         int ln = 3;
         
+        // clear data before proceeding
+        repo.clearClasses ();
+        
         for (int i=0; i<numClass; ++i) {
             
-            String id   = cmd.getStrAt (ln++);
+            String id   = cmd.getStrAt (ln++).substring (1);
             String name = cmd.getStrAt (ln++);
             String inst = cmd.getStrAt (ln++);
             
-            WinServ.logInfo ("Classname: " + name + " Inst: " + inst);
+            WinServ.logInfo ("id: " + id);
+            repo.insertClass (name, Integer.parseInt (id), inst);
         }
+        
+        // update List view
+        m_classList.clearSelection ();
+        m_classList.setListData (repo.getClasses ());
         
         return true;
     }

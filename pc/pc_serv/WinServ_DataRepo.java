@@ -14,6 +14,7 @@ public class WinServ_DataRepo {
     
     Vector<String>  m_classes;
     Vector<Integer> m_classIds;
+    Vector<String>  m_classInsts;
     
     Vector<String>  m_peopleInClass;
     Vector<Integer> m_peopleInClassIds;
@@ -36,6 +37,7 @@ public class WinServ_DataRepo {
         
         m_classes = new Vector<String> ();
         m_classIds = new Vector<Integer> ();
+        m_classInsts = new Vector<String> ();
         
         m_peopleInClass = new Vector<String> ();
         m_peopleInClassIds = new Vector<Integer> ();
@@ -62,11 +64,11 @@ public class WinServ_DataRepo {
         return m_cookieId;
     }
     
-    public void setClassId (int id) {
+    public void setCurrentClassId (int id) {
         m_currentClassId = id;
     }
     
-    public int getClassId () {
+    public int getCurrentClassId () {
         return m_currentClassId;
     }
     
@@ -90,37 +92,47 @@ public class WinServ_DataRepo {
         m_isPresenter = present;
     }
     
-    public Vector<String> getClasses () {
+    // class operators
+    public final Vector<String> getClasses () {
         return m_classes;
     }
     
-    public void setClasses (Vector<String> input) {
-        
-        m_classes.clear ();
-        
-        for (String s : input) {
-            m_classes.add (s);
-        }
+    public final Vector<Integer> getClassIds () {
+        return m_classIds;
+    }
+    
+    public final Vector<String> getClassInsts () {
+        return m_classInsts;
+    }
+    
+    public void insertClass (String name, int id, String inst) {
+        m_classes.add (name);
+        m_classIds.add (id);
+        m_classInsts.add (inst);
     }
     
     public void clearClasses () {
         m_classes.clear ();
+        m_classIds.clear ();
+        m_classInsts.clear ();
     }
     
-    public Vector<String> getPeopleInClass () {
+    // prople operators
+    public final Vector<String> getPeopleNamesInClass () {
         return m_peopleInClass;
     }
     
-    public void setPeopleInClass (Vector<String> pepl) {
-        
-        m_peopleInClass.clear ();
-        
-        for (String s : pepl) {
-            m_peopleInClass.add (s);
-        }
+    public final Vector<Integer> getPeopleIdInClass () {
+        return m_peopleInClassIds;
+    }
+    
+    public void insertPersonInClass (String name, int id) {
+        m_peopleInClass.add (name);
+        m_peopleInClassIds.add (id);
     }
     
     public void clearPeopleInClass () {
         m_peopleInClass.clear ();
+        m_peopleInClassIds.clear ();
     }
 }
