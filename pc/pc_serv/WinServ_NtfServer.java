@@ -116,6 +116,7 @@ public class WinServ_NtfServer implements Runnable {
             WinServ.logInfo ("sendMsgToServer - Begin");
         
             for (int i = 0; i < cmd.totalStrNum (); ++i) {
+                WinServ.logInfo ("send: " + cmd.getStrAt (i));
                 m_outputStream.println (cmd.getStrAt (i));
             }
         
@@ -146,8 +147,9 @@ public class WinServ_NtfServer implements Runnable {
     public void run () {
         
         try {
+            WinServ.logInfo ("Connecting to server " + m_addr + ":" + m_port);
             m_socket = new Socket (m_addr, m_port);
-            m_outputStream = new PrintWriter (m_socket.getOutputStream ());
+            m_outputStream = new PrintWriter (m_socket.getOutputStream (), true);
             m_inputStream = new BufferedReader (new InputStreamReader (m_socket.getInputStream ()));
                         
             while (true) {

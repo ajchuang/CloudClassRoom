@@ -141,7 +141,7 @@ public class WinServ_LoginWindow extends JFrame implements ActionListener, WinSe
             loginCmd.pushStr ("LOGIN_REQ");
             loginCmd.pushStr (":" + name);
             loginCmd.pushStr (":" + pass);
-            loginCmd.pushStr (":PC");
+            //loginCmd.pushStr (":PC");
             loginCmd.pushStr ("END");
             
             // REGISTER NW receiver
