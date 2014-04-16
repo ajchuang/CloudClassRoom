@@ -2,30 +2,30 @@ package server;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
-
-import message.Message;
+import java.util.Set;
 
 public class Class {
 
-	public static final class ClassContent {
-		private final String contentType;
-		private final byte[] contents;
+	//public static final class ClassContent {
+	//	private final String contentType;
+	//	private final byte[] contents;
 
-		public ClassContent(final String contentType, final byte[] contents) {
-			super();
-			this.contentType = contentType;
-			this.contents = contents;
-		}
+	//	public ClassContent(final String contentType, final byte[] contents) {
+	//		super();
+	//		this.contentType = contentType;
+	//		this.contents = contents;
+	//	}
 
-		public String getContentType() {
-			return contentType;
-		}
+	//	public String getContentType() {
+	//		return contentType;
+	//	}
 
-		public byte[] getContents() {
-			return contents;
-		}
-	}
+	//	public byte[] getContents() {
+	//		return contents;
+	//	}
+	//}
 
 	private final long classId;
 	private final String className;
@@ -33,7 +33,8 @@ public class Class {
 
 	private final Map<String, Student> students;
 	private User presenter;
-	private final Map<Long, ClassContent> contents;
+	//content ids
+	private final Set<Long> contents;
 
 	public Class(final long classId, final String className,
 			final Instructor creator) {
@@ -48,7 +49,7 @@ public class Class {
 		this.students = students;
 		// default presenter is the creator
 		presenter = instructor;
-		contents = new HashMap<Long, ClassContent>();
+		contents = new HashSet<Long>();
 	}
 
 	public Instructor getInstructor() {
@@ -103,17 +104,16 @@ public class Class {
 	}
 
 	public boolean hasContent(final long contentId) {
-		return contents.containsKey(contentId);
+		return contents.contains(contentId);
 	}
 
-	public void pushContent(final long contentId, final String contentType,
-			final byte[] content) {
-		contents.put(contentId, new ClassContent(contentType, content));
+	public void pushContent(final long contentId) {
+		contents.add(contentId);
 	}
 
-	public ClassContent getContent(final long contentId) {
-		return contents.get(contentId);
-	}
+	//public ClassContent getContent(final long contentId) {
+	//	return contents.get(contentId);
+	//}
 
 	public Collection<Student> getStudents() {
 		return students.values();
@@ -129,11 +129,6 @@ public class Class {
 
 	public String getClassName() {
 		return className;
-	}
-
-	public String toInfoMessage() {
-		return classId + Message.SEPARATOR + className + Message.SEPARATOR
-				+ instructor.userName;
 	}
 
 	@Override

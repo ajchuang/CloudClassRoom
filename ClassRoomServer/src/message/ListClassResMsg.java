@@ -2,14 +2,16 @@ package message;
 
 import java.util.Collection;
 
+import server.Class;
+
 public class ListClassResMsg extends AbstractMessage {
 	private static final String head = "LIST_CLASS_RES";
 
 	private final QueryResultStatus status;
-	private final Collection<String> classInfos;
+	private final Collection<Class> classInfos;
 
 	public ListClassResMsg(final QueryResultStatus status,
-			final Collection<String> classInfos) {
+			final Collection<Class> classInfos) {
 		super();
 		this.status = status;
 		this.classInfos = classInfos;
@@ -20,8 +22,11 @@ public class ListClassResMsg extends AbstractMessage {
 		final StringBuilder str = new StringBuilder(head + SEPARATOR
 				+ wrapDataField(status.toString()) + SEPARATOR
 				+ wrapDataField(classInfos.size()));
-		for (final String classInfo : classInfos) {
-			str.append(SEPARATOR + wrapDataField(classInfo));
+		for (final Class c : classInfos) {
+			str.append(SEPARATOR + wrapDataField(c.getClassId())
+					+ Message.SEPARATOR + wrapDataField(c.getClassName())
+					+ Message.SEPARATOR
+					+ wrapDataField(c.getInstructor().getUserName()));
 		}
 		str.append(SEPARATOR + END);
 		return str.toString();

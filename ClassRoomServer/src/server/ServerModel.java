@@ -18,8 +18,6 @@ import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
 
-import server.Class.ClassContent;
-
 import message.ChangePresentTokenReqMsg;
 import message.ChangePresentTokenResMsg;
 import message.ClassAdminStatus;
@@ -88,7 +86,7 @@ class ServerModel {
 				nextClassId = c.getClassId() + 1;
 			}
 		}
-		System.out.println("Server started");
+		System.out.println("Server completely started");
 	}
 
 	/**
@@ -205,14 +203,9 @@ class ServerModel {
 		final ClientSession validClient = getLoggedInUser(request.getCookieId());
 		if (validClient == null) {
 			return new ListClassResMsg(QueryResultStatus.NOT_LOGIN,
-					Collections.<String> emptyList());
+					Collections.<Class> emptyList());
 		}
-		final List<String> classInfos = new ArrayList<String>();
-		for (final Class c : classes.values()) {
-			classInfos.add(c.toInfoMessage());
-		}
-		System.out.println(classInfos);
-		return new ListClassResMsg(QueryResultStatus.SUCCESS, classInfos);
+		return new ListClassResMsg(QueryResultStatus.SUCCESS, classes.values());
 	}
 
 	static final class MessageToClient {
@@ -475,8 +468,7 @@ class ServerModel {
 					requestingSocket, new PushContentResMsg(
 							ClassAdminStatus.ALREADY_IN_CLASS.toString())));
 		}
-		classToAdd.pushContent(request.getContentId(),
-				request.getContentType(), request.getBytes());
+		classToAdd.pushContent(request.getContentId());
 		// TODO not push to database for now
 		final PushContentResMsg toInstructor = new PushContentResMsg(
 				ClassAdminStatus.SUCCESS.toString());
@@ -500,38 +492,39 @@ class ServerModel {
 		return result;
 	}
 
-	synchronized PushContentGetResMsg getContent(
-			final PushContentGetReqMsg request) {
-		final ClientSession validClient = getLoggedInUser(request.getCookieId());
-		if (validClient == null) {
-			return new PushContentGetResMsg(
-					ClassAdminStatus.NOT_LOGIN.toString(),
-					request.getContentId(), "", new byte[0]);
-		}
-		final Class classToQuery = classes.get(request.getClassId());
-		if (classToQuery == null) {
-			return new PushContentGetResMsg(
-					ClassAdminStatus.INVALID_CLASS_ID.toString(),
-					request.getContentId(), "", new byte[0]);
-		}
-		if (!classToQuery.getInstructor().getUserName()
-				.equals(validClient.getUser().getUserName())
-				&& !classToQuery.inClass(validClient.getUser().getUserName())) {
-			return new PushContentGetResMsg(
-					ClassAdminStatus.NOT_IN_CLASS.toString(),
-					request.getContentId(), "", new byte[0]);
-		}
-		if (!classToQuery.hasContent(request.getContentId())) {
-			return new PushContentGetResMsg(
-					ClassAdminStatus.CONTENT_NOT_IN_CLASS.toString(),
-					request.getContentId(), "", new byte[0]);
-		}
-		final ClassContent content = classToQuery.getContent(request
-				.getContentId());
-		return new PushContentGetResMsg(ClassAdminStatus.SUCCESS.toString(),
-				request.getContentId(), content.getContentType(),
-				content.getContents());
-	}
+	
+	//synchronized PushContentGetResMsg getContent(
+	//		final PushContentGetReqMsg request) {
+	//	final ClientSession validClient = getLoggedInUser(request.getCookieId());
+	//	if (validClient == null) {
+	//		return new PushContentGetResMsg(
+	//				ClassAdminStatus.NOT_LOGIN.toString(),
+	//				request.getContentId(), "", new byte[0]);
+	//	}
+	//	final Class classToQuery = classes.get(request.getClassId());
+	//	if (classToQuery == null) {
+	//		return new PushContentGetResMsg(
+	//				ClassAdminStatus.INVALID_CLASS_ID.toString(),
+	//				request.getContentId(), "", new byte[0]);
+	//	}
+	//	if (!classToQuery.getInstructor().getUserName()
+	//			.equals(validClient.getUser().getUserName())
+	//			&& !classToQuery.inClass(validClient.getUser().getUserName())) {
+	//		return new PushContentGetResMsg(
+	//				ClassAdminStatus.NOT_IN_CLASS.toString(),
+	//				request.getContentId(), "", new byte[0]);
+	//	}
+	//	if (!classToQuery.hasContent(request.getContentId())) {
+	//		return new PushContentGetResMsg(
+	//				ClassAdminStatus.CONTENT_NOT_IN_CLASS.toString(),
+	//				request.getContentId(), "", new byte[0]);
+	//	}
+	//	final ClassContent content = classToQuery.getContent(request
+	//			.getContentId());
+	//	return new PushContentGetResMsg(ClassAdminStatus.SUCCESS.toString(),
+	//			request.getContentId(), content.getContentType(),
+	//			content.getContents());
+	//}
 
 	// return list in case we want to send message to multiple clients
 	synchronized List<MessageToClient> retrivePresentToken(

@@ -90,7 +90,10 @@ public class ServerThread implements Runnable {
 			while (true) {
 				try {
 					msgFromClient = in.readLine();
-					System.out.println("Received message " + msgFromClient);
+					if (msgFromClient == null) {
+						break;
+					}
+					System.out.println("Input from client " + msgFromClient);
 					if (!Message.END.equals(msgFromClient)) {
 						if (pendingMessage.toString().isEmpty()) {
 							pendingMessage.append(msgFromClient);
@@ -101,7 +104,7 @@ public class ServerThread implements Runnable {
 						continue;
 					}
 					final String message = pendingMessage.toString();
-					System.out.println("parsing message "+message);
+					System.out.println("parsing message " + message);
 					pendingMessage = new StringBuilder();
 					// process client message according to client state and the
 					// message
@@ -155,10 +158,12 @@ public class ServerThread implements Runnable {
 								.pushContent(incoming,
 										(PushContentReqMsg) messageFromClient);
 						sendMessageOrNotification(outputs);
-					} else if (messageFromClient instanceof PushContentGetReqMsg) {
-						sendMessages(
-								server.getContent((PushContentGetReqMsg) messageFromClient),
-								out);
+						// } else if (messageFromClient instanceof
+						// PushContentGetReqMsg) {
+						// sendMessages(
+						// server.getContent((PushContentGetReqMsg)
+						// messageFromClient),
+						// out);
 					} else if (messageFromClient instanceof GetPresentTokenReqMsg) {
 						final List<MessageToClient> outputs = server
 								.getPresenterRequest(

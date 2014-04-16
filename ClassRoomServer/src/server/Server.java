@@ -20,6 +20,7 @@ public class Server {
 			ServerSocket s = new ServerSocket(port);
 			while (true) {
 				Socket incoming = s.accept();
+				System.out.println("Get a new incoming socket");
 				Runnable r = new ServerThread(incoming, server);
 				Thread t = new Thread(r);
 				t.start();

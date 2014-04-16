@@ -55,10 +55,10 @@ public class MessageFactory {
 		if (msg != null) {
 			return msg;
 		}
-		msg = PushContentGetReqMsg.parse(message);
-		if (msg != null) {
-			return msg;
-		}
+		//msg = PushContentGetReqMsg.parse(message);
+		//if (msg != null) {
+		//	return msg;
+		//}
 		msg = GetPresentTokenReqMsg.parse(message);
 		if (msg != null) {
 			return msg;
