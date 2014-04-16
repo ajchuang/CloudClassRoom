@@ -1,5 +1,5 @@
 package server;
-
+/*
 import java.util.Arrays;
 
 import javapns.Push;
@@ -8,9 +8,7 @@ import javapns.communication.exceptions.KeystoreException;
 
 public class Test {
 
-	/**
-	 * @param args
-	 */
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		final String str = "ABC\n" + "DEF" + "\n";
@@ -27,3 +25,4 @@ public class Test {
 	}
 
 }
+*/
