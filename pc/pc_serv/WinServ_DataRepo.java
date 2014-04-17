@@ -16,6 +16,7 @@ public class WinServ_DataRepo {
     Vector<Integer> m_classIds;
     Vector<String>  m_classInsts;
     
+    String          m_instInClass;
     Vector<String>  m_peopleInClass;
     Vector<Integer> m_peopleInClassIds;
 
@@ -118,6 +119,14 @@ public class WinServ_DataRepo {
     }
     
     // prople operators
+    public String getInstName () {
+        return m_instInClass;
+    }
+    
+    public void setInstName (String n) {
+        m_instInClass = n;
+    }
+    
     public final Vector<String> getPeopleNamesInClass () {
         return m_peopleInClass;
     }

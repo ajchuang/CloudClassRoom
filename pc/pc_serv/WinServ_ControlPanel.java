@@ -5,7 +5,8 @@ import javax.swing.*;
 
 import java.util.*;
 
-public class WinServ_ControlPanel extends JFrame implements ActionListener, WinServ_MsgHandler {
+public class WinServ_ControlPanel extends JFrame 
+    implements ActionListener, WinServ_MsgHandler, ChangeListener {
     
     final static String COLON             = ":";
     final static String SUCCESS           = "SUCCESS";
@@ -19,6 +20,8 @@ public class WinServ_ControlPanel extends JFrame implements ActionListener, WinS
     final static String JOIN_CLASS_RES    = "JOIN_CLASS_RES";
     final static String DEL_CLASS_REQ     = "DEL_CLASS_REQ";
     final static String DEL_CLASS_RES     = "DEL_CLASS_RES";
+    final static String QUERY_CLASS_INFO_REQ = "QUERY_CLASS_INFO_REQ";
+    final static String QUERY_CLASS_INFO_RES = "QUERY_CLASS_INFO_RES";
     
     // classes control buttons
     JList<String> m_classList;
@@ -41,11 +44,11 @@ public class WinServ_ControlPanel extends JFrame implements ActionListener, WinS
     JButton m_logoutBtn;    
     
     // data variables. TODO: fix this with data repo
-    boolean m_isLoggedIn;
-    boolean m_isInstructor;
-    boolean m_isPresenter;
-    Vector<String> m_classes;
-    Vector<String> m_peopleInClass;
+    //boolean m_isLoggedIn;
+    //boolean m_isInstructor;
+    //boolean m_isPresenter;
+    //Vector<String> m_classes;
+    //Vector<String> m_peopleInClass;
     
     static WinServ_ControlPanel sm_ctrlPanel;
     
@@ -68,11 +71,11 @@ public class WinServ_ControlPanel extends JFrame implements ActionListener, WinS
     }
     
     void configDataComponents () {
-        m_classes = new Vector<String> ();
-        m_classes.add ("<no classes>");
+        //m_classes = new Vector<String> ();
+        //m_classes.add ("<no classes>");
         
-        m_peopleInClass = new Vector<String> ();
-        m_peopleInClass.add ("<no one here>");
+        //m_peopleInClass = new Vector<String> ();
+        //m_peopleInClass.add ("<no one here>");
     }
     
     void configUiComponents () {
@@ -95,6 +98,7 @@ public class WinServ_ControlPanel extends JFrame implements ActionListener, WinS
         
         // tabs
         m_tabPan = new JTabbedPane (JTabbedPane.TOP);
+        m_tabPan.addChangeListener (this);
         add (m_tabPan);
         
         JPanel panel_allClasses = new JPanel ();
@@ -105,7 +109,7 @@ public class WinServ_ControlPanel extends JFrame implements ActionListener, WinS
         panel_allClasses.setLayout (classes_gridbag);
         
         // process all class panels
-        m_classList = new JList<String> (m_classes);
+        m_classList = new JList<String> ();
         m_classList.setSelectionMode (ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         m_classList.setLayoutOrientation (JList.VERTICAL_WRAP);
         m_classList.setVisibleRowCount (-1);
@@ -172,7 +176,7 @@ public class WinServ_ControlPanel extends JFrame implements ActionListener, WinS
         panel_inClass.setLayout (inClasses_gridbag);
         
         // process all class panels
-        m_studentList = new JList<String> (m_peopleInClass);
+        m_studentList = new JList<String> ();
         m_studentList.setSelectionMode (ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         m_studentList.setLayoutOrientation (JList.VERTICAL_WRAP);
         m_studentList.setVisibleRowCount (-1);
@@ -312,10 +316,18 @@ public class WinServ_ControlPanel extends JFrame implements ActionListener, WinS
             
         } else if (src == m_joinClassBtn) {
             
+            int selectIdx = m_classList.getSelectedIndex ();
+            
+            if (selectIdx == -1) {
+                return;
+            }
+            
+            int ids = repo.getClassIds().elementAt (selectIdx);
+            
             // create message
             WinServ_ReqCommand cmd = new WinServ_ReqCommand ();
             cmd.pushStr (JOIN_CLASS_REQ);
-            cmd.pushStr (COLON + "123"); //TOD: to fix
+            cmd.pushStr (COLON + ids);
             cmd.pushStr (COLON + cookieId);
             cmd.pushStr (END);
             
@@ -328,10 +340,34 @@ public class WinServ_ControlPanel extends JFrame implements ActionListener, WinS
             
         } else if (src == m_queryClassBtn) {
             
+            int selectIdx = m_classList.getSelectedIndex ();
             
+            if (selectIdx == -1) {
+                return;
+            }
+            
+            int ids = repo.getClassIds().elementAt (selectIdx);
+            
+            WinServ_ReqCommand cmd = new WinServ_ReqCommand ();
+            cmd.pushStr (QUERY_CLASS_INFO_REQ);
+            cmd.pushStr (COLON + ids);
+            cmd.pushStr (COLON + cookieId);
+            cmd.pushStr (END);
+            
+            // NW things
+            ntfServ.registerMsgHandler (QUERY_CLASS_INFO_RES, this);
+            ntfServ.sendMsgToServer (cmd);
             
         } else if (src == m_leaveClassBtn) {
         } else if (src == m_reqPresenterBtn) {
+        }
+    }
+    
+    public void stateChanged(ChangeEvent e) {
+        
+        // UI sugar
+        if (m_classList.getSelectedIndex () == -1 && m_tabPan.getSelectedIndex () == 1) {
+            m_tabPan.setSelectedIndex (0);
         }
     }
     
@@ -347,6 +383,13 @@ public class WinServ_ControlPanel extends JFrame implements ActionListener, WinS
             parseListClassRes (cmd);
             ntfServ.unregisterMsgHandler (type, this);
         } else if (type.equals (DEL_CLASS_RES)) {
+            parseDelClassRes (cmd);
+            ntfServ.unregisterMsgHandler (type, this);
+        } else if (type.equals (JOIN_CLASS_RES)) {
+            parseJoinClassRes (cmd);
+            ntfServ.unregisterMsgHandler (type, this);
+        } else if (type.equals (QUERY_CLASS_INFO_RES)) {
+            parseQueryClassInfoRes (cmd);
             ntfServ.unregisterMsgHandler (type, this);
         }
     }
@@ -378,6 +421,53 @@ public class WinServ_ControlPanel extends JFrame implements ActionListener, WinS
         // update List view
         m_classList.clearSelection ();
         m_classList.setListData (repo.getClasses ());
+        
+        return true;
+    }
+    
+    boolean parseDelClassRes (WinServ_ReqCommand cmd) {
+        
+        String status = cmd.getStrAt (1);
+        
+        if (status.equals (COLON + SUCCESS) == false)
+            return false;
+        
+        return true;
+    }
+    
+    boolean parseJoinClassRes (WinServ_ReqCommand cmd) {
+        
+        String status = cmd.getStrAt (1);
+        
+        if (status.equals (COLON + SUCCESS) == false)
+            return false;
+        
+        return true;
+    }
+    
+    boolean parseQueryClassInfoRes (WinServ_ReqCommand cmd) {
+        
+        int idx = 1;
+        WinServ_DataRepo repo = WinServ_DataRepo.getDataRepo ();
+        String status = cmd.getStrAt (idx++);
+        
+        if (status.equals (COLON + SUCCESS) == false)
+            return false;
+        
+        String inst = cmd.getStrAt (idx++).substring(1);
+        repo.setInstName (inst);
+        repo.insertPersonInClass (inst, 0);
+        
+        int stdntCnt = Integer.parseInt (cmd.getStrAt (idx++).substring (1));
+        
+        for (int i=0; i<stdntCnt; ++i) {
+            String name = cmd.getStrAt (idx++).substring (1);
+            repo.insertPersonInClass (name, 0);
+        }
+        
+        // update List view
+        m_studentList.clearSelection ();
+        m_studentList.setListData (repo.getPeopleNamesInClass ());
         
         return true;
     }
