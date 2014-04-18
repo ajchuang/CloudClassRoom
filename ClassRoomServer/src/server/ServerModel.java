@@ -134,7 +134,12 @@ class ServerModel {
 		} else {
 			final ClientState newState = client.login(loginReq.getPassword(),
 					socket);
-			final long cookieId = getCookieId(client, loginReq.getUserName());
+			final long cookieId;
+			if (ClientState.LOGIN_FAIL.equals(newState)) {
+				cookieId = -1;
+			} else {
+				cookieId = getCookieId(client, loginReq.getUserName());
+			}
 			result.add(new LoginResultMsg(newState.toString(), cookieId));
 			if (ClientState.LOGGED_IN.equals(newState)) {
 				// add offline message after login
@@ -492,39 +497,38 @@ class ServerModel {
 		return result;
 	}
 
-	
-	//synchronized PushContentGetResMsg getContent(
-	//		final PushContentGetReqMsg request) {
-	//	final ClientSession validClient = getLoggedInUser(request.getCookieId());
-	//	if (validClient == null) {
-	//		return new PushContentGetResMsg(
-	//				ClassAdminStatus.NOT_LOGIN.toString(),
-	//				request.getContentId(), "", new byte[0]);
-	//	}
-	//	final Class classToQuery = classes.get(request.getClassId());
-	//	if (classToQuery == null) {
-	//		return new PushContentGetResMsg(
-	//				ClassAdminStatus.INVALID_CLASS_ID.toString(),
-	//				request.getContentId(), "", new byte[0]);
-	//	}
-	//	if (!classToQuery.getInstructor().getUserName()
-	//			.equals(validClient.getUser().getUserName())
-	//			&& !classToQuery.inClass(validClient.getUser().getUserName())) {
-	//		return new PushContentGetResMsg(
-	//				ClassAdminStatus.NOT_IN_CLASS.toString(),
-	//				request.getContentId(), "", new byte[0]);
-	//	}
-	//	if (!classToQuery.hasContent(request.getContentId())) {
-	//		return new PushContentGetResMsg(
-	//				ClassAdminStatus.CONTENT_NOT_IN_CLASS.toString(),
-	//				request.getContentId(), "", new byte[0]);
-	//	}
-	//	final ClassContent content = classToQuery.getContent(request
-	//			.getContentId());
-	//	return new PushContentGetResMsg(ClassAdminStatus.SUCCESS.toString(),
-	//			request.getContentId(), content.getContentType(),
-	//			content.getContents());
-	//}
+	// synchronized PushContentGetResMsg getContent(
+	// final PushContentGetReqMsg request) {
+	// final ClientSession validClient = getLoggedInUser(request.getCookieId());
+	// if (validClient == null) {
+	// return new PushContentGetResMsg(
+	// ClassAdminStatus.NOT_LOGIN.toString(),
+	// request.getContentId(), "", new byte[0]);
+	// }
+	// final Class classToQuery = classes.get(request.getClassId());
+	// if (classToQuery == null) {
+	// return new PushContentGetResMsg(
+	// ClassAdminStatus.INVALID_CLASS_ID.toString(),
+	// request.getContentId(), "", new byte[0]);
+	// }
+	// if (!classToQuery.getInstructor().getUserName()
+	// .equals(validClient.getUser().getUserName())
+	// && !classToQuery.inClass(validClient.getUser().getUserName())) {
+	// return new PushContentGetResMsg(
+	// ClassAdminStatus.NOT_IN_CLASS.toString(),
+	// request.getContentId(), "", new byte[0]);
+	// }
+	// if (!classToQuery.hasContent(request.getContentId())) {
+	// return new PushContentGetResMsg(
+	// ClassAdminStatus.CONTENT_NOT_IN_CLASS.toString(),
+	// request.getContentId(), "", new byte[0]);
+	// }
+	// final ClassContent content = classToQuery.getContent(request
+	// .getContentId());
+	// return new PushContentGetResMsg(ClassAdminStatus.SUCCESS.toString(),
+	// request.getContentId(), content.getContentType(),
+	// content.getContents());
+	// }
 
 	// return list in case we want to send message to multiple clients
 	synchronized List<MessageToClient> retrivePresentToken(
