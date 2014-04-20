@@ -471,10 +471,16 @@ public class WinServ_ControlPanel extends JFrame
     
     boolean parseListClassRes (WinServ_ReqCommand cmd) {
         
-        String status = cmd.getStrAt (1);
+        String status = cmd.getStrAt (1).substring (1);
         
-        if (status.equals (COLON + SUCCESS) == false)
+        if (status.equals (SUCCESS) == false) {
+            JOptionPane.showMessageDialog (
+                this,
+                "List classes failed: " + status,
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
             return false;
+        }
         
         WinServ_DataRepo repo = WinServ_DataRepo.getDataRepo ();
         int numClass  = Integer.parseInt (cmd.getStrAt(2).substring(1));
@@ -502,10 +508,15 @@ public class WinServ_ControlPanel extends JFrame
     
     boolean parseDelClassRes (WinServ_ReqCommand cmd) {
         
-        String status = cmd.getStrAt (1);
+        String status = cmd.getStrAt (1).substring (1);
         
-        if (status.equals (COLON + SUCCESS) == false) {
+        if (status.equals (SUCCESS) == false) {
             WinServ_WaitDialog.closeDialog ();
+            JOptionPane.showMessageDialog (
+                this,
+                "Delete class failed: " + status,
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
             return false;
         }
         
@@ -516,10 +527,14 @@ public class WinServ_ControlPanel extends JFrame
     
     boolean parseJoinClassRes (WinServ_ReqCommand cmd) {
         
-        String status = cmd.getStrAt (1);
+        String status = cmd.getStrAt (1).substring (1);
         
-        if (status.equals (COLON + SUCCESS) == false) {
-            WinServ.logErr ("Join class error: " + status);
+        if (status.equals (SUCCESS) == false) {
+            JOptionPane.showMessageDialog (
+                this,
+                "Join class failed: " + status,
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
             return false;
         }
         
@@ -536,10 +551,16 @@ public class WinServ_ControlPanel extends JFrame
         
         int idx = 1;
         WinServ_DataRepo repo = WinServ_DataRepo.getDataRepo ();
-        String status = cmd.getStrAt (idx++);
+        String status = cmd.getStrAt (idx++).substring (1);
         
-        if (status.equals (COLON + SUCCESS) == false)
+        if (status.equals (SUCCESS) == false) {
+            JOptionPane.showMessageDialog (
+                this,
+                "Query class failed: " + status,
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
             return false;
+        }
         
         String inst = cmd.getStrAt (idx++).substring(1);
         repo.setInstName (inst);
