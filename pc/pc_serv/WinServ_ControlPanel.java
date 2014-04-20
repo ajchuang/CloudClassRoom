@@ -2,6 +2,7 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.event.*;
 
 import java.util.*;
 
@@ -18,8 +19,8 @@ public class WinServ_ControlPanel extends JFrame
     final static String CREATE_CLASS_RES  = "CREATE_CLASS_RES";
     final static String JOIN_CLASS_REQ    = "JOIN_CLASS_REQ";
     final static String JOIN_CLASS_RES    = "JOIN_CLASS_RES";
-    final static String DEL_CLASS_REQ     = "DEL_CLASS_REQ";
-    final static String DEL_CLASS_RES     = "DEL_CLASS_RES";
+    final static String DEL_CLASS_REQ     = "DELETE_CLASS_REQ";
+    final static String DEL_CLASS_RES     = "DELETE_CLASS_RES";
     final static String QUERY_CLASS_INFO_REQ = "QUERY_CLASS_INFO_REQ";
     final static String QUERY_CLASS_INFO_RES = "QUERY_CLASS_INFO_RES";
     
@@ -42,13 +43,6 @@ public class WinServ_ControlPanel extends JFrame
     
     // general button
     JButton m_logoutBtn;    
-    
-    // data variables. TODO: fix this with data repo
-    //boolean m_isLoggedIn;
-    //boolean m_isInstructor;
-    //boolean m_isPresenter;
-    //Vector<String> m_classes;
-    //Vector<String> m_peopleInClass;
     
     static WinServ_ControlPanel sm_ctrlPanel;
     
@@ -104,8 +98,8 @@ public class WinServ_ControlPanel extends JFrame
         JPanel panel_allClasses = new JPanel ();
         m_tabPan.add ("all classes", panel_allClasses);
         
-        GridBagLayout classes_gridbag = new GridBagLayout();
-        GridBagConstraints classes_c = new GridBagConstraints();
+        GridBagLayout classes_gridbag = new GridBagLayout ();
+        GridBagConstraints classes_c = new GridBagConstraints ();
         panel_allClasses.setLayout (classes_gridbag);
         
         // process all class panels
@@ -113,8 +107,9 @@ public class WinServ_ControlPanel extends JFrame
         m_classList.setSelectionMode (ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         m_classList.setLayoutOrientation (JList.VERTICAL_WRAP);
         m_classList.setVisibleRowCount (-1);
-        classes_c.gridwidth = 3;                //reset to the default
-        classes_c.gridheight = 5;
+        m_classList.setPrototypeCellValue ("This is a ver long long long long long string");
+        classes_c.gridwidth = 4;                //reset to the default
+        classes_c.gridheight = 9;
         classes_c.weighty = 1.0;
         classes_c.weightx = 1.0;
         classes_c.gridx = 0;
@@ -128,7 +123,8 @@ public class WinServ_ControlPanel extends JFrame
         classes_c.gridwidth = 1;                //reset to the default
         classes_c.gridheight = 1;
         classes_c.weighty = 1.0;
-        classes_c.gridx = 4;
+        classes_c.weightx = 1.0;
+        classes_c.gridx = 5;
         classes_c.gridy = 0;
         classes_c.fill = GridBagConstraints.BOTH;
         classes_gridbag.setConstraints (m_listClassBtn, classes_c);
@@ -139,7 +135,8 @@ public class WinServ_ControlPanel extends JFrame
         classes_c.gridwidth = 1;                //reset to the default
         classes_c.gridheight = 1;
         classes_c.weighty = 1.0;
-        classes_c.gridx = 4;
+        classes_c.weightx = 1.0;
+        classes_c.gridx = 5;
         classes_c.gridy = 1;
         classes_c.fill = GridBagConstraints.BOTH;
         classes_gridbag.setConstraints (m_createClassBtn, classes_c);
@@ -150,7 +147,8 @@ public class WinServ_ControlPanel extends JFrame
         classes_c.gridwidth = 1;                //reset to the default
         classes_c.gridheight = 1;
         classes_c.weighty = 1.0;
-        classes_c.gridx = 4;
+        classes_c.weightx = 1.0;
+        classes_c.gridx = 5;
         classes_c.gridy = 2;
         classes_c.fill = GridBagConstraints.BOTH;
         classes_gridbag.setConstraints (m_deleteClassBtn, classes_c);
@@ -161,7 +159,8 @@ public class WinServ_ControlPanel extends JFrame
         classes_c.gridwidth = 1;                //reset to the default
         classes_c.gridheight = 1;
         classes_c.weighty = 1.0;
-        classes_c.gridx = 4;
+        classes_c.weightx = 1.0;
+        classes_c.gridx = 5;
         classes_c.gridy = 3;
         classes_c.fill = GridBagConstraints.BOTH;
         classes_gridbag.setConstraints (m_joinClassBtn, classes_c);
@@ -180,12 +179,12 @@ public class WinServ_ControlPanel extends JFrame
         m_studentList.setSelectionMode (ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         m_studentList.setLayoutOrientation (JList.VERTICAL_WRAP);
         m_studentList.setVisibleRowCount (-1);
-        inClasses_c.gridwidth = 3;                
-        inClasses_c.gridheight = 5;
-        inClasses_c.weighty = 1.0;
+        inClasses_c.gridwidth = 4;                
+        inClasses_c.gridheight = 9;
+        inClasses_c.weighty = 0.9;
         inClasses_c.weightx = 1.0;
         inClasses_c.gridx = 0;
-        inClasses_c.gridy = 0;
+        inClasses_c.gridy = 1;
         inClasses_c.fill = GridBagConstraints.BOTH;
         inClasses_gridbag.setConstraints (m_studentList, inClasses_c);
         panel_inClass.add (m_studentList);
@@ -194,8 +193,8 @@ public class WinServ_ControlPanel extends JFrame
         m_kickStudentBtn.addActionListener (this);
         inClasses_c.gridwidth = 1;                
         inClasses_c.gridheight = 1;
-        inClasses_c.weighty = 1.0;
-        inClasses_c.gridx = 4;
+        inClasses_c.weighty = 0.1;
+        inClasses_c.gridx = 0;
         inClasses_c.gridy = 0;
         inClasses_c.fill = GridBagConstraints.BOTH;
         inClasses_gridbag.setConstraints (m_kickStudentBtn, inClasses_c);
@@ -205,9 +204,9 @@ public class WinServ_ControlPanel extends JFrame
         m_queryClassBtn.addActionListener (this);
         inClasses_c.gridwidth = 1;                
         inClasses_c.gridheight = 1;
-        inClasses_c.weighty = 1.0;
-        inClasses_c.gridx = 4;
-        inClasses_c.gridy = 1;
+        inClasses_c.weighty = 0.1;
+        inClasses_c.gridx = 1;
+        inClasses_c.gridy = 0;
         inClasses_c.fill = GridBagConstraints.BOTH;
         inClasses_gridbag.setConstraints (m_queryClassBtn, inClasses_c);
         panel_inClass.add (m_queryClassBtn);
@@ -216,9 +215,9 @@ public class WinServ_ControlPanel extends JFrame
         m_leaveClassBtn.addActionListener (this);
         inClasses_c.gridwidth = 1;                
         inClasses_c.gridheight = 1;
-        inClasses_c.weighty = 1.0;
-        inClasses_c.gridx = 4;
-        inClasses_c.gridy = 2;
+        inClasses_c.weighty = 0.1;
+        inClasses_c.gridx = 2;
+        inClasses_c.gridy = 0;
         inClasses_c.fill = GridBagConstraints.BOTH;
         inClasses_gridbag.setConstraints (m_leaveClassBtn, inClasses_c);
         panel_inClass.add (m_leaveClassBtn);
@@ -227,9 +226,9 @@ public class WinServ_ControlPanel extends JFrame
         m_reqPresenterBtn.addActionListener (this);
         inClasses_c.gridwidth = 1;           
         inClasses_c.gridheight = 1;
-        inClasses_c.weighty = 1.0;
-        inClasses_c.gridx = 4;
-        inClasses_c.gridy = 3;
+        inClasses_c.weighty = 0.1;
+        inClasses_c.gridx = 3;
+        inClasses_c.gridy = 0;
         inClasses_c.fill = GridBagConstraints.BOTH;
         inClasses_gridbag.setConstraints (m_reqPresenterBtn, inClasses_c);
         panel_inClass.add (m_reqPresenterBtn);
@@ -259,6 +258,8 @@ public class WinServ_ControlPanel extends JFrame
             System.exit (0);
             
         } else if (src == m_listClassBtn) {
+            
+            WinServ_WaitDialog.dialogFactory ("Please wait...");
             
             WinServ_ReqCommand cmd = new WinServ_ReqCommand ();
             cmd.pushStr (LIST_CLASS_REQ);
@@ -363,12 +364,16 @@ public class WinServ_ControlPanel extends JFrame
         }
     }
     
-    public void stateChanged(ChangeEvent e) {
+    public void stateChanged (ChangeEvent e) {
         
-        // UI sugar
-        if (m_classList.getSelectedIndex () == -1 && m_tabPan.getSelectedIndex () == 1) {
-            m_tabPan.setSelectedIndex (0);
+        /*
+        if (m_classList != null && m_tabPan != null) {
+            // UI sugar
+            if (m_classList.getSelectedIndex () == -1 && m_tabPan.getSelectedIndex () == 1) {
+                m_tabPan.setSelectedIndex (0);
+            }
         }
+        */
     }
     
     public void handleServerMsg (WinServ_ReqCommand cmd) {
@@ -378,19 +383,24 @@ public class WinServ_ControlPanel extends JFrame
         int cookieId = repo.getCookieId ();
         
         String type = cmd.getStrAt (0);
+        ntfServ.unregisterMsgHandler (type, this);
+        
         
         if (type.equals (LIST_CLASS_RES)) {
+            WinServ_WaitDialog.closeDialog ();
             parseListClassRes (cmd);
-            ntfServ.unregisterMsgHandler (type, this);
+        } else if (type.equals (CREATE_CLASS_RES)) {            
+            parseCreateClassReq (cmd);
         } else if (type.equals (DEL_CLASS_RES)) {
             parseDelClassRes (cmd);
-            ntfServ.unregisterMsgHandler (type, this);
         } else if (type.equals (JOIN_CLASS_RES)) {
+            WinServ_WaitDialog.closeDialog ();
             parseJoinClassRes (cmd);
-            ntfServ.unregisterMsgHandler (type, this);
         } else if (type.equals (QUERY_CLASS_INFO_RES)) {
+            WinServ_WaitDialog.closeDialog ();
             parseQueryClassInfoRes (cmd);
-            ntfServ.unregisterMsgHandler (type, this);
+        } else {
+            WinServ.logErr ("Unhandled message: " + type);
         }
     }
     
@@ -411,8 +421,8 @@ public class WinServ_ControlPanel extends JFrame
         for (int i=0; i<numClass; ++i) {
             
             String id   = cmd.getStrAt (ln++).substring (1);
-            String name = cmd.getStrAt (ln++);
-            String inst = cmd.getStrAt (ln++);
+            String name = cmd.getStrAt (ln++).substring (1);
+            String inst = cmd.getStrAt (ln++).substring (1);
             
             WinServ.logInfo ("id: " + id);
             repo.insertClass (name, Integer.parseInt (id), inst);
@@ -429,8 +439,12 @@ public class WinServ_ControlPanel extends JFrame
         
         String status = cmd.getStrAt (1);
         
-        if (status.equals (COLON + SUCCESS) == false)
+        if (status.equals (COLON + SUCCESS) == false) {
+            WinServ_WaitDialog.closeDialog ();
             return false;
+        }
+        
+        issueListCmd ();
         
         return true;
     }
@@ -441,7 +455,7 @@ public class WinServ_ControlPanel extends JFrame
         
         if (status.equals (COLON + SUCCESS) == false)
             return false;
-        
+
         return true;
     }
     
@@ -470,5 +484,28 @@ public class WinServ_ControlPanel extends JFrame
         m_studentList.setListData (repo.getPeopleNamesInClass ());
         
         return true;
+    }
+    
+    boolean parseCreateClassReq (WinServ_ReqCommand cmd) {
+        WinServ.logInfo ("parseCreateClassReq");
+        issueListCmd ();
+        return true;
+    }
+    
+    void issueListCmd () {
+        WinServ_DataRepo repo = WinServ_DataRepo.getDataRepo ();
+        WinServ_NtfServer ntfServ = WinServ_NtfServer.getNtfServ ();
+        int cookieId = repo.getCookieId ();
+        
+        WinServ_WaitDialog.dialogFactory ("Please wait...");
+     
+        // issue list command after create
+        WinServ_ReqCommand cmd = new WinServ_ReqCommand ();
+        cmd.pushStr (LIST_CLASS_REQ);
+        cmd.pushStr (COLON + cookieId);
+        cmd.pushStr (END);
+            
+        ntfServ.registerMsgHandler (LIST_CLASS_RES, this);
+        ntfServ.sendMsgToServer (cmd);
     }
 }

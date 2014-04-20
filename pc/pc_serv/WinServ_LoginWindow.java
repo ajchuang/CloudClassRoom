@@ -169,7 +169,7 @@ public class WinServ_LoginWindow extends JFrame implements ActionListener, WinSe
         
         String ln2 = cmd.getStrAt (1);
         
-        if (ln2.equals (":"+ "LOGGED_IN")) {
+        if (ln2.equals (":"+ "LOGGED_IN") || ln2.equals (":"+ "DUPLICATE")) {
             int cookieId = Integer.parseInt (cmd.getStrAt (2).substring (1));
             
             // update repo
