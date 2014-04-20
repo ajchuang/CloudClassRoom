@@ -6,6 +6,8 @@ public class WinServ_DataRepo {
     
     String m_userName;
     int    m_cookieId;
+    
+    String m_currentClassName;
     int    m_currentClassId;
     
     boolean m_isLoggedIn;
@@ -65,12 +67,17 @@ public class WinServ_DataRepo {
         return m_cookieId;
     }
     
-    public void setCurrentClassId (int id) {
+    public void setCurrentClass (int id, String name) {
         m_currentClassId = id;
+        m_currentClassName = name;
     }
     
     public int getCurrentClassId () {
         return m_currentClassId;
+    }
+    
+    public String getCurrentClassName () {
+        return m_currentClassName;
     }
     
     public void setLoggedIn (boolean login) {

@@ -23,6 +23,11 @@ public class WinServ_ControlPanel extends JFrame
     final static String DEL_CLASS_RES     = "DELETE_CLASS_RES";
     final static String QUERY_CLASS_INFO_REQ = "QUERY_CLASS_INFO_REQ";
     final static String QUERY_CLASS_INFO_RES = "QUERY_CLASS_INFO_RES";
+    final static String QUIT_CLASS_REQ = "QUIT_CLASS_REQ";
+    final static String QUIT_CLASS_RES = "QUIT_CLASS_RES";
+    
+    final static String GET_PRESENT_TOKEN_REQ = "GET_PRESENT_TOKEN_REQ";
+    final static String GET_PRESENT_TOKEN_RES = "GET_PRESENT_TOKEN_RES";
     
     // classes control buttons
     JList<String> m_classList;
@@ -292,13 +297,22 @@ public class WinServ_ControlPanel extends JFrame
                 ntfServ.sendMsgToServer (cmd);
                 return;
             } else {
-                // bad input
+                JOptionPane.showMessageDialog (
+                    this,
+                    "Input error. Please check again.",
+                    "Input Error",
+                    JOptionPane.ERROR_MESSAGE);
             }
         } else if (src == m_deleteClassBtn) {
             
             int selectIdx = m_classList.getSelectedIndex ();
             
             if (selectIdx == -1) {
+                JOptionPane.showMessageDialog (
+                    this,
+                    "Input error, select a class first.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
@@ -320,6 +334,11 @@ public class WinServ_ControlPanel extends JFrame
             int selectIdx = m_classList.getSelectedIndex ();
             
             if (selectIdx == -1) {
+                JOptionPane.showMessageDialog (
+                    this,
+                    "Input error, select a class first.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
@@ -328,8 +347,8 @@ public class WinServ_ControlPanel extends JFrame
             // create message
             WinServ_ReqCommand cmd = new WinServ_ReqCommand ();
             cmd.pushStr (JOIN_CLASS_REQ);
-            cmd.pushStr (COLON + ids);
             cmd.pushStr (COLON + cookieId);
+            cmd.pushStr (COLON + ids);
             cmd.pushStr (END);
             
             // NW things
@@ -344,6 +363,11 @@ public class WinServ_ControlPanel extends JFrame
             int selectIdx = m_classList.getSelectedIndex ();
             
             if (selectIdx == -1) {
+                JOptionPane.showMessageDialog (
+                    this,
+                    "Input error, select a class first.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
@@ -351,8 +375,8 @@ public class WinServ_ControlPanel extends JFrame
             
             WinServ_ReqCommand cmd = new WinServ_ReqCommand ();
             cmd.pushStr (QUERY_CLASS_INFO_REQ);
-            cmd.pushStr (COLON + ids);
             cmd.pushStr (COLON + cookieId);
+            cmd.pushStr (COLON + ids);
             cmd.pushStr (END);
             
             // NW things
@@ -360,7 +384,48 @@ public class WinServ_ControlPanel extends JFrame
             ntfServ.sendMsgToServer (cmd);
             
         } else if (src == m_leaveClassBtn) {
+            
+            if (repo.getCurrentClassName () == null) {
+                JOptionPane.showMessageDialog (
+                    this,
+                    "You've not joined any class",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            int selectIdx = repo.getCurrentClassId ();
+            WinServ_ReqCommand cmd = new WinServ_ReqCommand ();
+            cmd.pushStr (QUIT_CLASS_REQ);
+            cmd.pushStr (COLON + cookieId);
+            cmd.pushStr (COLON + selectIdx);
+            cmd.pushStr (END);
+            
+            // NW things
+            ntfServ.registerMsgHandler (QUERY_CLASS_INFO_RES, this);
+            ntfServ.sendMsgToServer (cmd);
         } else if (src == m_reqPresenterBtn) {
+            
+            if (repo.getCurrentClassName () == null) {
+                JOptionPane.showMessageDialog (
+                    this,
+                    "You've not joined any class",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            int selectIdx = repo.getCurrentClassId ();
+            WinServ_ReqCommand cmd = new WinServ_ReqCommand ();
+            cmd.pushStr (GET_PRESENT_TOKEN_REQ);
+            cmd.pushStr (COLON + cookieId);
+            cmd.pushStr (COLON + selectIdx);
+            cmd.pushStr (END);
+            
+            // NW things
+            ntfServ.registerMsgHandler (QUERY_CLASS_INFO_RES, this);
+            ntfServ.sendMsgToServer (cmd);
+            
         }
     }
     
@@ -453,8 +518,16 @@ public class WinServ_ControlPanel extends JFrame
         
         String status = cmd.getStrAt (1);
         
-        if (status.equals (COLON + SUCCESS) == false)
+        if (status.equals (COLON + SUCCESS) == false) {
+            WinServ.logErr ("Join class error: " + status);
             return false;
+        }
+        
+        WinServ_DataRepo repo = WinServ_DataRepo.getDataRepo ();
+        String ln1 = cmd.getStrAt (2).substring (1);
+        String ln2 = cmd.getStrAt (3).substring (1);
+        
+        // TODO: set repo params
 
         return true;
     }
