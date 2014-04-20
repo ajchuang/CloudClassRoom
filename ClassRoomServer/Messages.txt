@@ -74,6 +74,7 @@ NO_PERMISSION (not a student)
 ALREADY_IN_CLASS
 DENIED
 SUCCESS
+decision: 'true' or 'false'
 
 8. query class info
 a. client → QUERY_CLASS_INFO_REQ (COOKIE_ID, classId) → 
