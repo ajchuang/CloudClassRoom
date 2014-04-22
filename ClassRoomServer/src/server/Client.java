@@ -20,7 +20,7 @@ public class Client {
 		PrintWriter out;
 		BufferedReader serverInputStream;
 		final String ipAddress = "localhost";
-		final int port =4119;
+		final int port = 4119;
 		try {
 			s = new Socket(ipAddress, port);
 			final OutputStream outStream = s.getOutputStream();
@@ -28,7 +28,7 @@ public class Client {
 			final InputStream inStream = s.getInputStream();
 			serverInputStream = new BufferedReader(new InputStreamReader(
 					inStream));
-			out.println("LOGIN_REQ\nRui Chen\nrc2639");
+			out.println("LOGIN_REQ\n:Rui Chen\n:rc2639\nEND");
 		} catch (UnknownHostException e) {
 			throw new RuntimeException(e);
 		} catch (IOException e) {
