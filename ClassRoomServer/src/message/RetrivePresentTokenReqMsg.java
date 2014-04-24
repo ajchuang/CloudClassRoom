@@ -2,7 +2,7 @@ package message;
 
 public class RetrivePresentTokenReqMsg extends AbstractMessage {
 
-	private static final String head = "RETRIVE_PRESENT_TOKEN_REQ";
+	private static final String head = "RETRIEVE_PRESENT_TOKEN_REQ";
 	private final long cookieId;
 	private final long classId;
 

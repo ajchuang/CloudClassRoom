@@ -29,6 +29,7 @@ public class Client {
 			serverInputStream = new BufferedReader(new InputStreamReader(
 					inStream));
 			out.println("LOGIN_REQ\n:Rui Chen\n:rc2639\nEND");
+			s.close();
 		} catch (UnknownHostException e) {
 			throw new RuntimeException(e);
 		} catch (IOException e) {

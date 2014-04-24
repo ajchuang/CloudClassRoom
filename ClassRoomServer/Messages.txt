@@ -1,4 +1,4 @@
-﻿
+
 Separated by \n (since it is also the end mark of input/output stream, therefore, reading a message now needs multiple reads from input stream)
 every data field is lead by ':'
 every message ends with 'END'
@@ -30,7 +30,7 @@ a. client → LOGOUT_REQ (COOKIE_ID) → server
 b. server → LOGOUT_RES (STATUS) → client
 status:
 INVALID_COOKIE
-LOGOUT_FAIL (not currently logged in)
+LOGOUT_FAIL (client session suspended: when client socket closed)
 LOGGED_OUT
 
 4. create class (create 一個 user cluster, 指定 default instructor)
@@ -48,11 +48,11 @@ b. server → LIST_CLASS_RES (STATUS, nCLASS, (CLASS_ID,
 CLASS_NAME, INST_NAME),...) → client
 Status:
 NOT_LOGIN nClass=0
-SUCCESS
+SUCCESS 
 
 6. delete class (消除這個 user cluster)
-a. client → DEL_CLASS_REQ (COOKIE, CLASS_ID) → server
-b. server→ DEL_CLASS_RES (STATUS) → client
+a. client → DELETE_CLASS_REQ (COOKIE_ID, CLASS_ID) → server
+b. server→ DELETE_CLASS_RES (STATUS) → client
 status:
 NOT_LOGIN
 NO_PERMISSION
@@ -108,7 +108,7 @@ status:
 SUCCESS
 
 11. push content (把 instructor 的 content push 給所有 student)
-a.presenter_client → PUSH_CONTENT_REQ (COOKIE_ID, CLASS_ID, CONTENT_ID, CONTENT_TYPE, nBytes, BYTES…) → server
+a.presenter_client → PUSH_CONTENT_REQ (COOKIE_ID, CLASS_ID, CONTENT_ID, CONTENT_TYPE) → server
 b. server → PUSH_CONTENT_RES (STATUS) → presenter_client
 status:
 NOT_LOGIN

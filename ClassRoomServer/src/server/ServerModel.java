@@ -605,6 +605,10 @@ class ServerModel {
 		}
 		final ClientSession studentSession = getActiveClientData(request
 				.getUserNameToAdd());
+		if(studentSession == null){
+			System.out.println("studentsession null");
+			return Collections.<MessageToClient> emptyList();
+		}
 		if (!(studentSession.getUser() instanceof Student)) {
 			// not a student
 			return Collections.<MessageToClient> emptyList();

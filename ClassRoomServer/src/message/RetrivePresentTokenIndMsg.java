@@ -2,7 +2,7 @@ package message;
 
 public class RetrivePresentTokenIndMsg extends AbstractMessage {
 
-	private static final String head = "RETRIVE_PRESENT_TOKEN_IND";
+	private static final String head = "RETRIEVE_PRESENT_TOKEN_IND";
 	private final long classId;
 	private final String className;
 
