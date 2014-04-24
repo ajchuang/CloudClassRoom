@@ -11,6 +11,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Net.Sockets;
+using System.Net;
 
 // @lfred added
 using Microsoft.Office.Interop.PowerPoint;
@@ -39,24 +41,55 @@ namespace WpfApplication1
 
         private void exportCurrentSlide ()
         {
-            int idx = m_objPres.SlideShowWindow.View.Slide.SlideIndex;
-            m_objPres.SlideShowWindow.View.Slide.Export ("d:\\slides.png", "png", 1024, 768);            
+            string fName = "d:\\slides.png";
+
+            try
+            {
+                int idx = m_objPres.SlideShowWindow.View.Slide.SlideIndex;
+                m_objPres.SlideShowWindow.View.Slide.Export(fName, "png", 1024, 768);
+
+                // notify the server
+                Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+                IPAddress serverAddr = IPAddress.Parse("127.0.0.1");
+                IPEndPoint endPoint = new IPEndPoint(serverAddr, 7788);
+                byte[] send_buffer = Encoding.ASCII.GetBytes(fName);
+                sock.SendTo(send_buffer, endPoint);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine ("Exception happens");
+            }
         }
         
         private void prevBtn_Click(object sender, RoutedEventArgs e) {
             if (m_openPpt == null)
                 return;
 
-            m_objPres.SlideShowWindow.View.Previous();
-            exportCurrentSlide();
+            try
+            {
+                m_objPres.SlideShowWindow.View.Previous();
+                exportCurrentSlide();
+            }
+            catch (Exception ee)
+            {
+                Console.WriteLine("It's the first slide already");
+            }
         }
 
         private void nextBtn_Click(object sender, RoutedEventArgs e) {
+
             if (m_openPpt == null)
                 return;
-
-            m_objPres.SlideShowWindow.View.Next ();
-            exportCurrentSlide();            
+            try
+            {
+                m_objPres.SlideShowWindow.View.Next ();
+                exportCurrentSlide ();
+            }
+            catch (Exception ee)
+            {
+                Console.WriteLine ("No more slides");
+                Environment.Exit(0); 
+            }
         }
 
         private void openBtn_Click(object sender, RoutedEventArgs e) {
@@ -86,10 +119,7 @@ namespace WpfApplication1
         }
 
         private void closeBtn_click(object sender, RoutedEventArgs e) {
-            if (m_openPpt == null)
-                return;
-            else
-                m_openPpt = null;
+            Environment.Exit (0);           
         }
     }
 }
