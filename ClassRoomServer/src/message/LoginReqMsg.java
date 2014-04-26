@@ -58,7 +58,7 @@ public class LoginReqMsg extends AbstractMessage {
 		if (fields.length == 5) {
 			tokenId = getData(fields[4]);
 		} else {
-			if (!DeviceType.PC.equals(deviceType)) {
+			if (!DeviceType.DESKTOP.equals(deviceType)) {
 				return null;
 			}
 			tokenId = null;
