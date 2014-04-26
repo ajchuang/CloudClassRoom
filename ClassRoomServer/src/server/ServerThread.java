@@ -63,13 +63,12 @@ public class ServerThread implements Runnable {
 		try {
 			for (final MessageToClient output : messages) {
 				if (output.socket != null) {
-
 					sendMessages(output.messagesToSend, new PrintWriter(
 							output.socket.getOutputStream(), true));
 				}
-				if (output.user != null) {
-					// Push notification. when it is done, no need to send
-					// offline messages
+				else if (output.user != null) {
+					// TODO Push notification
+					System.out.println("push notification to " + output.user.getUser().getUserName());
 				}
 			}
 		} catch (IOException e) {

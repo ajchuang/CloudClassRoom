@@ -130,8 +130,7 @@ class ServerModel {
 			result.add(new LoginResultMsg(ClientState.INVALID_USER.toString(),
 					-1));
 		} else {
-			final ClientState newState = client.login(loginReq.getPassword(),
-					socket);
+			final ClientState newState = client.login(loginReq, socket);
 			final long cookieId;
 			if (!ClientState.LOGGED_IN.equals(newState)) {
 				cookieId = -1;
@@ -215,7 +214,7 @@ class ServerModel {
 		// if not null, send message from socket
 		final Socket socket;
 		// if not null, send by notification
-		final String user;
+		final ClientSession user;
 		final Message messagesToSend;
 
 		MessageToClient(final Socket socket, final Message messagesToSend) {
@@ -225,7 +224,7 @@ class ServerModel {
 			this.messagesToSend = messagesToSend;
 		}
 
-		MessageToClient(final String user, final Message messagesToSend) {
+		MessageToClient(final ClientSession user, final Message messagesToSend) {
 			super();
 			socket = null;
 			this.user = user;
@@ -285,8 +284,9 @@ class ServerModel {
 		} else {
 			// add offline message
 			instructorSession.addOfflineMessage(approvalReq);
-			return Collections.singletonList(new MessageToClient(
-					instructorSession.getUser().getUserName(), approvalReq));
+			return Collections.<MessageToClient> emptyList();
+			// return Collections.singletonList(new MessageToClient(
+			// instructorSession, approvalReq));
 		}
 	}
 
@@ -339,14 +339,17 @@ class ServerModel {
 				classToUpdate.getClassId(), classToUpdate.getClassName(),
 				decision);
 		if (ClientState.LOGGED_IN.equals(studentSession.getCurrentState())) {
-			// prepare a message to send
+			// logged in -> socket is in connection -> send message directly
 			return Collections.singletonList(new MessageToClient(studentSession
 					.getSocket(), result));
 		} else {
-			// add offline message
-			studentSession.addOfflineMessage(result);
-			return Collections.singletonList(new MessageToClient(studentSession
-					.getUser().getUserName(), result));
+			if (studentSession.canPushNotification()) {
+				return Collections.singletonList(new MessageToClient(
+						studentSession, result));
+			} else {
+				studentSession.addOfflineMessage(result);
+				return Collections.<MessageToClient> emptyList();
+			}
 		}
 	}
 
@@ -435,10 +438,11 @@ class ServerModel {
 			result.add(new MessageToClient(studentSession.getSocket(),
 					msgToStudent));
 		} else {
-			// add offline message
-			studentSession.addOfflineMessage(msgToStudent);
-			result.add(new MessageToClient(studentSession.getUser()
-					.getUserName(), msgToStudent));
+			if (studentSession.canPushNotification()) {
+				result.add(new MessageToClient(studentSession, msgToStudent));
+			} else {
+				studentSession.addOfflineMessage(msgToStudent);
+			}
 		}
 		return result;
 	}
@@ -485,10 +489,11 @@ class ServerModel {
 					result.add(new MessageToClient(client.getSocket(),
 							toStudent));
 				} else {
-					// off line
-					client.addOfflineMessage(toStudent);
-					result.add(new MessageToClient(client.getUser()
-							.getUserName(), toStudent));
+					if (client.canPushNotification()) {
+						result.add(new MessageToClient(client, toStudent));
+					} else {
+						client.addOfflineMessage(toStudent);
+					}
 				}
 			}
 		}
@@ -573,10 +578,11 @@ class ServerModel {
 			result.add(new MessageToClient(currentPresent.getSocket(),
 					toOldPresenter));
 		} else {
-			result.add(new MessageToClient(currentPresent.getUser()
-					.getUserName(), toOldPresenter));
-			// add offline message
-			currentPresent.addOfflineMessage(toOldPresenter);
+			if (currentPresent.canPushNotification()) {
+				result.add(new MessageToClient(currentPresent, toOldPresenter));
+			} else {
+				currentPresent.addOfflineMessage(toOldPresenter);
+			}
 		}
 		return result;
 	}
@@ -605,7 +611,7 @@ class ServerModel {
 		}
 		final ClientSession studentSession = getActiveClientData(request
 				.getUserNameToAdd());
-		if(studentSession == null){
+		if (studentSession == null) {
 			System.out.println("studentsession null");
 			return Collections.<MessageToClient> emptyList();
 		}
@@ -631,10 +637,13 @@ class ServerModel {
 			return Collections.singletonList(new MessageToClient(studentSession
 					.getSocket(), result));
 		} else {
-			// add offline message
-			studentSession.addOfflineMessage(result);
-			return Collections.singletonList(new MessageToClient(studentSession
-					.getUser().getUserName(), result));
+			if (studentSession.canPushNotification()) {
+				return Collections.singletonList(new MessageToClient(
+						studentSession, result));
+			} else {
+				studentSession.addOfflineMessage(result);
+				return Collections.<MessageToClient> emptyList();
+			}
 		}
 	}
 
@@ -680,8 +689,7 @@ class ServerModel {
 		} else {
 			// add offline message
 			instructorSession.addOfflineMessage(approvalReq);
-			return Collections.singletonList(new MessageToClient(
-					instructorSession.getUser().getUserName(), approvalReq));
+			return Collections.<MessageToClient> emptyList();
 		}
 	}
 

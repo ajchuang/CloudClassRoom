@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import message.LoginReqMsg;
 import message.Message;
 
 public class ClientSession {
@@ -23,6 +24,8 @@ public class ClientSession {
 	private final List<TimedState> states;
 	private final List<Message> offlineMessages;
 	private Socket socket;
+	private DeviceType deviceType;
+	private String tokenId;
 
 	public ClientSession(final User user) {
 		this.user = user;
@@ -30,6 +33,8 @@ public class ClientSession {
 		states = new LinkedList<TimedState>();
 		offlineMessages = new LinkedList<Message>();
 		addState(ClientState.NOT_CONNECTED);
+		deviceType = null;
+		tokenId = null;
 	}
 
 	public Socket getSocket() {
@@ -56,13 +61,17 @@ public class ClientSession {
 		return state.state;
 	}
 
-	public ClientState login(final String password, final Socket socket) {
+	public ClientState login(final LoginReqMsg loginReq, final Socket socket) {
+		final String password = loginReq.getPassword();
+
 		final ClientState state = getCurrentState();
 		if (ClientState.NOT_CONNECTED.equals(state)
 				|| ClientState.LOGIN_FAIL.equals(state)
 				|| ClientState.SUSPENDED.equals(state)) {
 			setSocket(socket);
 			if (user.getPassword().equals(password)) {
+				deviceType = loginReq.getDeviceType();
+				tokenId = loginReq.getTokenId();
 				addState(ClientState.LOGGED_IN);
 				return ClientState.LOGGED_IN;
 			} else {
@@ -132,5 +141,17 @@ public class ClientSession {
 
 	public User getUser() {
 		return user;
+	}
+
+	public DeviceType getDeviceType() {
+		return deviceType;
+	}
+
+	public String getTokenId() {
+		return tokenId;
+	}
+
+	public boolean canPushNotification() {
+		return deviceType != null && deviceType.isPushNotification();
 	}
 }

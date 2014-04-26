@@ -28,12 +28,17 @@ public class Client {
 			final InputStream inStream = s.getInputStream();
 			serverInputStream = new BufferedReader(new InputStreamReader(
 					inStream));
-			out.println("LOGIN_REQ\n:Rui Chen\n:rc2639\nEND");
+			out.println("LOGIN_REQ\n:Rui Chen\n:rc2639\n:Cell\n:sss\nEND");
+			out.close();
+			Thread.sleep(10000);
 			s.close();
 		} catch (UnknownHostException e) {
 			throw new RuntimeException(e);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
