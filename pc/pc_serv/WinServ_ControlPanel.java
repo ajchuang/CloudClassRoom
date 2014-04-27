@@ -23,8 +23,8 @@ public class WinServ_ControlPanel extends JFrame
     final static String DEL_CLASS_RES     = "DELETE_CLASS_RES";
     final static String QUERY_CLASS_INFO_REQ = "QUERY_CLASS_INFO_REQ";
     final static String QUERY_CLASS_INFO_RES = "QUERY_CLASS_INFO_RES";
-    final static String QUIT_CLASS_REQ = "QUIT_CLASS_REQ";
-    final static String QUIT_CLASS_RES = "QUIT_CLASS_RES";
+    final static String QUIT_CLASS_REQ    = "QUIT_CLASS_REQ";
+    final static String QUIT_CLASS_RES    = "QUIT_CLASS_RES";
     
     final static String GET_PRESENT_TOKEN_REQ = "GET_PRESENT_TOKEN_REQ";
     final static String GET_PRESENT_TOKEN_RES = "GET_PRESENT_TOKEN_RES";
@@ -47,7 +47,9 @@ public class WinServ_ControlPanel extends JFrame
     JTabbedPane m_tabPan;
     
     // general button
-    JButton m_logoutBtn;    
+    JButton m_logoutBtn;
+    JButton m_codeEditorBtn;
+    JButton m_imgViewerBtn;    
     
     static WinServ_ControlPanel sm_ctrlPanel;
     
@@ -94,6 +96,14 @@ public class WinServ_ControlPanel extends JFrame
         m_logoutBtn.addActionListener (this);
         toolBar.add (m_logoutBtn);
         toolBar.addSeparator ();
+        
+        m_codeEditorBtn = new JButton (new ImageIcon ("res/code.png"));
+        m_codeEditorBtn.addActionListener (this);
+        toolBar.add (m_codeEditorBtn);
+        
+        m_imgViewerBtn = new JButton (new ImageIcon ("res/pic.png"));
+        m_imgViewerBtn.addActionListener (this);
+        toolBar.add (m_imgViewerBtn);
         
         // tabs
         m_tabPan = new JTabbedPane (JTabbedPane.TOP);
@@ -253,7 +263,11 @@ public class WinServ_ControlPanel extends JFrame
         Object src = e.getSource (); 
         int cookieId = repo.getCookieId ();
         
-        if (src == m_logoutBtn) {
+        if (src == m_codeEditorBtn) {
+            PC_SimpleEditor.startEditor ();
+        } else if (src == m_imgViewerBtn) {
+            PC_TinyImageViewer.startImgViewer ();
+        } else if (src == m_logoutBtn) {
             
             WinServ_ReqCommand cmd = new WinServ_ReqCommand ();
             cmd.pushStr (LOGOUT_REQ);

@@ -15,8 +15,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Scanner;
-import java.util.Set;
 
 import message.ChangePresentTokenReqMsg;
 import message.ChangePresentTokenResMsg;
@@ -135,7 +133,7 @@ class ServerModel {
 			final ClientState newState = client.login(loginReq.getPassword(),
 					socket);
 			final long cookieId;
-			if (ClientState.LOGIN_FAIL.equals(newState)) {
+			if (!ClientState.LOGGED_IN.equals(newState)) {
 				cookieId = -1;
 			} else {
 				cookieId = getCookieId(client, loginReq.getUserName());
@@ -607,6 +605,10 @@ class ServerModel {
 		}
 		final ClientSession studentSession = getActiveClientData(request
 				.getUserNameToAdd());
+		if(studentSession == null){
+			System.out.println("studentsession null");
+			return Collections.<MessageToClient> emptyList();
+		}
 		if (!(studentSession.getUser() instanceof Student)) {
 			// not a student
 			return Collections.<MessageToClient> emptyList();
@@ -681,6 +683,10 @@ class ServerModel {
 			return Collections.singletonList(new MessageToClient(
 					instructorSession.getUser().getUserName(), approvalReq));
 		}
+	}
+
+	public void suspendClientSession(final String user) {
+		getActiveClientData(user).suspendClientSession();
 	}
 
 	// this never returns null

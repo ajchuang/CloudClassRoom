@@ -59,7 +59,8 @@ public class ClientSession {
 	public ClientState login(final String password, final Socket socket) {
 		final ClientState state = getCurrentState();
 		if (ClientState.NOT_CONNECTED.equals(state)
-				|| ClientState.LOGIN_FAIL.equals(state)) {
+				|| ClientState.LOGIN_FAIL.equals(state)
+				|| ClientState.SUSPENDED.equals(state)) {
 			setSocket(socket);
 			if (user.getPassword().equals(password)) {
 				addState(ClientState.LOGGED_IN);
@@ -123,6 +124,10 @@ public class ClientSession {
 
 	public void addOfflineMessage(final Message message) {
 		offlineMessages.add(message);
+	}
+
+	public void suspendClientSession() {
+		addState(ClientState.SUSPENDED);
 	}
 
 	public User getUser() {

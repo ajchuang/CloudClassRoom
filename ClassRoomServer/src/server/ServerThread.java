@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -111,6 +112,8 @@ public class ServerThread implements Runnable {
 					final Message messageFromClient = MessageFactory
 							.parse(message);
 					if (messageFromClient instanceof LoginReqMsg) {
+						userName = ((LoginReqMsg) messageFromClient)
+								.getUserName();
 						sendMessages(server.login(
 								(LoginReqMsg) messageFromClient, incoming), out);
 					} else if (messageFromClient instanceof LogoutReqMsg) {
@@ -187,27 +190,16 @@ public class ServerThread implements Runnable {
 					System.out.println("Unknown message ");
 				}
 			}
+		} catch (final SocketException e) {
+			System.out.println("Client closed socket");
+			if (userName != null) {
+				server.suspendClientSession(userName);
+				System.out.println("Client session suspended: " + userName);
+			}
 		} catch (Exception e) {
 			e.printStackTrace(System.out);
 			System.out.println(e);
 			// throw new RuntimeException(e);
-
-			// if (userName != null) {
-			// client closed the program or daemon thread timed out client
-			// session
-			// final ClientSession client = server
-			// .getActiveClientData(userName);
-			// if (ClientState.TIMED_OUT.equals(client.getCurrentState())) {
-			// System.out.println("Client " + userName
-			// + " disconnected due to time out");
-			// server.terminateSession(userName);
-			// } else {
-			// System.out
-			// .println("Client " + userName + " closed program");
-			// client.addState(ClientState.CLIENT_CLOSED);
-			// server.terminateSession(userName);
-			// }
-			// }
 		} finally {
 
 		}

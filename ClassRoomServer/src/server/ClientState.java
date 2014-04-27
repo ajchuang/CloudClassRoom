@@ -7,6 +7,7 @@ public enum ClientState {
 	//BLOCKED,
 	LOGGED_IN,
 	DUPLICATE,
+	SUSPENDED,
 	LOGGED_OUT,
 	TIMED_OUT,
 	CLIENT_CLOSED,

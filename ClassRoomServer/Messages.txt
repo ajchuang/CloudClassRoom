@@ -1,4 +1,4 @@
-﻿
+
 Separated by \n (since it is also the end mark of input/output stream, therefore, reading a message now needs multiple reads from input stream)
 every data field is lead by ':'
 every message ends with 'END'
@@ -36,7 +36,7 @@ a. client → LOGOUT_REQ (COOKIE_ID) → server
 b. server → LOGOUT_RES (STATUS) → client
 status:
 INVALID_COOKIE
-LOGOUT_FAIL (not currently logged in)
+LOGOUT_FAIL (client session suspended: when client socket closed)
 LOGGED_OUT
 
 4. create class (create 一個 user cluster, 指定 default instructor)
@@ -54,11 +54,11 @@ b. server → LIST_CLASS_RES (STATUS, nCLASS, (CLASS_ID,
 CLASS_NAME, INST_NAME),...) → client
 Status:
 NOT_LOGIN nClass=0
-SUCCESS
+SUCCESS 
 
 6. delete class (消除這個 user cluster)
-a. client → DEL_CLASS_REQ (COOKIE, CLASS_ID) → server
-b. server→ DEL_CLASS_RES (STATUS) → client
+a. client → DELETE_CLASS_REQ (COOKIE_ID, CLASS_ID) → server
+b. server→ DELETE_CLASS_RES (STATUS) → client
 status:
 NOT_LOGIN
 NO_PERMISSION
@@ -114,7 +114,7 @@ status:
 SUCCESS
 
 11. push content (把 instructor 的 content push 給所有 student)
-a.presenter_client → PUSH_CONTENT_REQ (COOKIE_ID, CLASS_ID, CONTENT_ID, CONTENT_TYPE, nBytes, BYTES…) → server
+a.presenter_client → PUSH_CONTENT_REQ (COOKIE_ID, CLASS_ID, CONTENT_ID, CONTENT_TYPE) → server
 b. server → PUSH_CONTENT_RES (STATUS) → presenter_client
 status:
 NOT_LOGIN
@@ -124,12 +124,12 @@ ALREADY_IN_CLASS (class already has the content id)
 SUCCESS
 c.server → PUSH_CONTENT_NOTIFY (CLASS_ID, CONTENT_ID) → student_client  (only to logged in student in the class, or all students in the class?)
 d.student_client → PUSH_CONTENT_GET_REQ (COOKIE_ID, CLASS_ID, CONTENT_ID) → server
-e.server → PUSH_CONTENT_GET_RES (STATUS, CONTENT_ID, CONTENT_TYPE, nBytes, BYTES) → student_client
+e.server → PUSH_CONTENT_GET_RES (STATUS, CONTENT_ID, CONTENT_TYPE) → student_client
 status:
-NOT_LOGIN content type=””, nbytes=0
-INVALID_CLASS_ID content type=””, nbytes=0
-NOT_IN_CLASS (user not in class) content type=””, nbytes=0
-CONTENT_NOT_IN_CLASS content type=””, nbytes=0
+NOT_LOGIN content type=””
+INVALID_CLASS_ID content type=””
+NOT_IN_CLASS (user not in class) content type=””
+CONTENT_NOT_IN_CLASS content type=””
 SUCCESS
 
 13. request presenter right (由 instructor 來 approve) → no presenter case allowed

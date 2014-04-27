@@ -1,0 +1,12 @@
+D:\00.Home.Alfred\__Projects__\CloudClassRoom\CloudClassRoom\obj\x86\Debug\CloudClassRoom.csproj.ResolveComReference.cache
+D:\00.Home.Alfred\__Projects__\CloudClassRoom\CloudClassRoom\obj\x86\Debug\CloudClassRoom.exe
+D:\00.Home.Alfred\__Projects__\CloudClassRoom\CloudClassRoom\obj\x86\Debug\CloudClassRoom.pdb
+D:\00.Home.Alfred\__Projects__\CloudClassRoom\CloudClassRoom\obj\x86\Debug\MainWindow.baml
+D:\00.Home.Alfred\__Projects__\CloudClassRoom\CloudClassRoom\obj\x86\Debug\MainWindow.g.cs
+D:\00.Home.Alfred\__Projects__\CloudClassRoom\CloudClassRoom\obj\x86\Debug\App.g.cs
+D:\00.Home.Alfred\__Projects__\CloudClassRoom\CloudClassRoom\obj\x86\Debug\CloudClassRoom_MarkupCompile.cache
+D:\00.Home.Alfred\__Projects__\CloudClassRoom\CloudClassRoom\obj\x86\Debug\CloudClassRoom.g.resources
+D:\00.Home.Alfred\__Projects__\CloudClassRoom\CloudClassRoom\obj\x86\Debug\CloudClassRoom.Properties.Resources.resources
+D:\00.Home.Alfred\__Projects__\CloudClassRoom\CloudClassRoom\obj\x86\Debug\CloudClassRoom.csproj.GenerateResource.Cache
+D:\00.Home.Alfred\__Projects__\CloudClassRoom\CloudClassRoom\bin\Debug\CloudClassRoom.exe
+D:\00.Home.Alfred\__Projects__\CloudClassRoom\CloudClassRoom\bin\Debug\CloudClassRoom.pdb
