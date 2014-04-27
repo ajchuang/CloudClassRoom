@@ -7,9 +7,8 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.io.*;
 import java.net.*;
-import pc_common.*;
 
-public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListener, PC_SimpleMsgHandler {
+public class PC_SimpleEditor extends JFrame implements ActionListener, PC_SimpleMsgHandler {
     
     // UI components
     private JTextArea    m_editArea;
@@ -20,6 +19,7 @@ public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListen
     JButton     m_openBtn;
     JButton     m_saveBtn;
     JButton     m_shareBtn;
+    JButton     m_exitBtn;
     JTabbedPane m_tabPan;
     
     // Action objects
@@ -28,11 +28,25 @@ public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListen
     private Action m_shareAction = new ShareAction ();
     private Action m_exitAction  = new ExitAction ();
     
-    public static void main (String[] args) {
-        new PC_SimpleEditor ();
+    static PC_SimpleEditor sm_editor = null;
+    
+    public static PC_SimpleEditor startEditor () {
+        
+        if (sm_editor == null) {
+            sm_editor = new PC_SimpleEditor ();
+            sm_editor.addWindowListener (new java.awt.event.WindowAdapter() {
+                public void windowClosing(WindowEvent winEvt) {
+                    sm_editor = null;
+                }
+            });
+        } else {
+            sm_editor.setVisible (true);
+        }
+        
+        return sm_editor;
     }
     
-    public PC_SimpleEditor () {
+    private PC_SimpleEditor () {
         setupUiComponent ();
         PC_SimpleReceiver.startReceiver (8002, this);
     }
@@ -45,7 +59,6 @@ public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListen
         m_editArea = new JTextArea (15, 80);
         m_editArea.setBorder (BorderFactory.createEmptyBorder(2,2,2,2));
         m_editArea.setFont(new Font("monospaced", Font.PLAIN, 14));
-        m_editArea.addKeyListener (this);
         
         m_shareArea = new JTextArea (15, 80);
         m_shareArea.setBorder (BorderFactory.createEmptyBorder(2,2,2,2));
@@ -88,13 +101,13 @@ public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListen
         toolBar.setFloatable (false);
         add (toolBar, BorderLayout.NORTH);
         
-        m_saveBtn = new JButton (new ImageIcon ("res/save.png"));
-        m_saveBtn.addActionListener (this);
-        toolBar.add (m_saveBtn);
-        
         m_openBtn = new JButton (new ImageIcon ("res/open.png"));
         m_openBtn.addActionListener (this);
         toolBar.add (m_openBtn);
+        
+        m_saveBtn = new JButton (new ImageIcon ("res/save.png"));
+        m_saveBtn.addActionListener (this);
+        toolBar.add (m_saveBtn);
         
         toolBar.addSeparator ();
         
@@ -103,8 +116,13 @@ public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListen
         toolBar.add (m_shareBtn);
         toolBar.addSeparator ();
         
+        m_exitBtn = new JButton (new ImageIcon ("res/logout.png"));
+        m_exitBtn.addActionListener (this);
+        toolBar.add (m_exitBtn);
+        toolBar.addSeparator ();
+        
         //... Set other window characteristics.
-        setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation (JFrame.DO_NOTHING_ON_CLOSE);
         setTitle ("PC_SimpleEditor");
         pack ();
         setLocationRelativeTo (null);
@@ -163,7 +181,7 @@ public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListen
         }
         
         public void actionPerformed (ActionEvent e) {
-            System.exit (0);
+            setVisible (false);
         }
     }
     
@@ -206,36 +224,8 @@ public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListen
             m_openAction.actionPerformed (null);
         } else if (ae.getSource () == m_shareBtn) {
             m_shareAction.actionPerformed (null);
-        }
-    }
-    
-    // section: required by KeyListener
-    public void keyPressed (KeyEvent e) {
-    }
-
-    public void keyTyped (KeyEvent e) {
-    }
-
-    public void keyReleased (KeyEvent e) {
-        
-        // Updating the last line
-        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-            /*
-            try {
-                int lastLine = m_editArea.getLineCount () - 2;
-                int sPos = m_editArea.getLineStartOffset (lastLine);
-                int ePos = m_editArea.getLineEndOffset (lastLine);
-                
-                String content = m_editArea.getText ();                
-                String send = content.substring (sPos, ePos - 1);
-                
-                System.out.println ("Sending: " + send);
-                sendLine (send);
-                
-            } catch (Exception ee) {
-                ee.printStackTrace ();
-            }
-            */
+        } else if (ae.getSource () == m_exitBtn) {
+            dispose ();
         }
     }
     
@@ -255,6 +245,7 @@ public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListen
         } 
     } 
     
+    @Deprecated
     public void sendLine (String msg) {
         
         /* @lfred: I would like to disable the sending line feature - to leverage Amazon s3
