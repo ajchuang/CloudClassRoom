@@ -18,11 +18,11 @@ END
 
 2. user log­in (登入)
 a. client → LOGIN_REQ (USER_NAME, PASSWORD, DEVICE_TYPE, TOKEN_ID) → server
-b. server → LOGIN_RES (STATUS, COOKIE_ID) → client
+b. server → LOGIN_RES (STATUS, COOKIE_ID, ROLE) → client
 
 device type:
 DEVICE_TYPE: PC, iOS
-TOKEN_ID: 0 for PC, real iOS token id for iOS device
+TOKEN_ID: arbitrary string for PC, or omitted; real iOS token id for iOS device
 
 status:
 INVALID_USER cookie=-1
@@ -30,6 +30,9 @@ LOGIN_FAIL
 DUPLICATE (already logged in)
 LOGGED_IN
 
+role:
+Student
+Instructor
 
 3. user log­out (使用者登入相關)
 a. client → LOGOUT_REQ (COOKIE_ID) → server

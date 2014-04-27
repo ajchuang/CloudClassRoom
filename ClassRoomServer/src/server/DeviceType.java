@@ -2,7 +2,7 @@ package server;
 
 public enum DeviceType {
 
-	CELL("Cell", true), DESKTOP("Desktop", false);
+	CELL("iOS", true), DESKTOP("PC", false);
 
 	private final String name;
 	private final boolean pushNotification;
