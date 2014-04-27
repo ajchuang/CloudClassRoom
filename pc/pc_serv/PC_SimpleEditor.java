@@ -19,6 +19,7 @@ public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListen
     JButton     m_openBtn;
     JButton     m_saveBtn;
     JButton     m_shareBtn;
+    JButton     m_exitBtn;
     JTabbedPane m_tabPan;
     
     // Action objects
@@ -38,6 +39,8 @@ public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListen
                     sm_editor = null;
                 }
             });
+        } else {
+            sm_editor.setVisible (true);
         }
     }
     
@@ -97,13 +100,13 @@ public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListen
         toolBar.setFloatable (false);
         add (toolBar, BorderLayout.NORTH);
         
-        m_saveBtn = new JButton (new ImageIcon ("res/save.png"));
-        m_saveBtn.addActionListener (this);
-        toolBar.add (m_saveBtn);
-        
         m_openBtn = new JButton (new ImageIcon ("res/open.png"));
         m_openBtn.addActionListener (this);
         toolBar.add (m_openBtn);
+        
+        m_saveBtn = new JButton (new ImageIcon ("res/save.png"));
+        m_saveBtn.addActionListener (this);
+        toolBar.add (m_saveBtn);
         
         toolBar.addSeparator ();
         
@@ -112,8 +115,13 @@ public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListen
         toolBar.add (m_shareBtn);
         toolBar.addSeparator ();
         
+        m_exitBtn = new JButton (new ImageIcon ("res/logout.png"));
+        m_exitBtn.addActionListener (this);
+        toolBar.add (m_exitBtn);
+        toolBar.addSeparator ();
+        
         //... Set other window characteristics.
-        setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation (JFrame.DO_NOTHING_ON_CLOSE);
         setTitle ("PC_SimpleEditor");
         pack ();
         setLocationRelativeTo (null);
@@ -172,7 +180,7 @@ public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListen
         }
         
         public void actionPerformed (ActionEvent e) {
-            System.exit (0);
+            setVisible (false);
         }
     }
     
@@ -215,6 +223,8 @@ public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListen
             m_openAction.actionPerformed (null);
         } else if (ae.getSource () == m_shareBtn) {
             m_shareAction.actionPerformed (null);
+        } else if (ae.getSource () == m_exitBtn) {
+            dispose ();
         }
     }
     

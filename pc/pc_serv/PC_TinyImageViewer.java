@@ -19,6 +19,8 @@ public class PC_TinyImageViewer extends JFrame implements ActionListener, PC_Sim
 	JButton m_openBtn;
     JButton m_shareBtn;
     JButton m_saveBtn;
+    JButton m_exitBtn;
+    
     
     PC_ImagePanel m_localPanel;
     PC_ImagePanel m_remotePanel;
@@ -34,14 +36,15 @@ public class PC_TinyImageViewer extends JFrame implements ActionListener, PC_Sim
             sm_imgViewer = new PC_TinyImageViewer ();
             sm_imgViewer.setSize (800, 600);
             sm_imgViewer.setVisible (true);
-            sm_imgViewer.setDefaultCloseOperation (EXIT_ON_CLOSE);
             sm_imgViewer.setResizable (false);
-            
             sm_imgViewer.addWindowListener (new java.awt.event.WindowAdapter() {
                 public void windowClosing(WindowEvent winEvt) {
+                    WinServ.logInfo ("Window closing.");
                     sm_imgViewer = null;
                 }
             });
+        } else {
+            sm_imgViewer.setVisible (true);
         }
 	}
     
@@ -61,10 +64,12 @@ public class PC_TinyImageViewer extends JFrame implements ActionListener, PC_Sim
         m_openBtn = new JButton (new ImageIcon ("res/open.png"));
         m_shareBtn = new JButton (new ImageIcon ("res/share.png"));
         m_saveBtn = new JButton (new ImageIcon ("res/save.png"));
+        m_exitBtn = new JButton (new ImageIcon ("res/logout.png"));
         
         m_shareBtn.addActionListener (this);
         m_openBtn.addActionListener (this);
         m_saveBtn.addActionListener (this);
+        m_exitBtn.addActionListener (this);
         
         // process the Toolbar
         JToolBar toolBar = new JToolBar ();
@@ -73,10 +78,10 @@ public class PC_TinyImageViewer extends JFrame implements ActionListener, PC_Sim
         toolBar.setFloatable (false);
     
         toolBar.add (m_openBtn);
-        //toolBar.add (m_saveBtn);
-        toolBar.addSeparator ();
+        toolBar.add (m_saveBtn);
         toolBar.add (m_shareBtn);
         toolBar.addSeparator ();
+        toolBar.add (m_exitBtn);
         add (toolBar, BorderLayout.NORTH);
         
         // create 2 panels and add to TABBED panel
@@ -87,6 +92,7 @@ public class PC_TinyImageViewer extends JFrame implements ActionListener, PC_Sim
         m_tabPan.add ("Local", m_localPanel);
         m_tabPan.add ("Remote", m_remotePanel);
     
+        setDefaultCloseOperation (JFrame.DO_NOTHING_ON_CLOSE);
         add (m_tabPan, BorderLayout.CENTER);
     }
     
@@ -110,6 +116,8 @@ public class PC_TinyImageViewer extends JFrame implements ActionListener, PC_Sim
                 sharingImageFile ();
             }
         } else if (e.getSource () == m_saveBtn) {
+        } else if (e.getSource () == m_exitBtn) {
+            sm_imgViewer.setVisible (false);
         }
     }
     
