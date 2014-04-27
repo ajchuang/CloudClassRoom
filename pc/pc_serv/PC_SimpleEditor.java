@@ -8,7 +8,7 @@ import javax.swing.*;
 import java.io.*;
 import java.net.*;
 
-public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListener, PC_SimpleMsgHandler {
+public class PC_SimpleEditor extends JFrame implements ActionListener, PC_SimpleMsgHandler {
     
     // UI components
     private JTextArea    m_editArea;
@@ -30,7 +30,7 @@ public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListen
     
     static PC_SimpleEditor sm_editor = null;
     
-    public static void startEditor () {
+    public static PC_SimpleEditor startEditor () {
         
         if (sm_editor == null) {
             sm_editor = new PC_SimpleEditor ();
@@ -42,9 +42,11 @@ public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListen
         } else {
             sm_editor.setVisible (true);
         }
+        
+        return sm_editor;
     }
     
-    public PC_SimpleEditor () {
+    private PC_SimpleEditor () {
         setupUiComponent ();
         PC_SimpleReceiver.startReceiver (8002, this);
     }
@@ -57,7 +59,6 @@ public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListen
         m_editArea = new JTextArea (15, 80);
         m_editArea.setBorder (BorderFactory.createEmptyBorder(2,2,2,2));
         m_editArea.setFont(new Font("monospaced", Font.PLAIN, 14));
-        m_editArea.addKeyListener (this);
         
         m_shareArea = new JTextArea (15, 80);
         m_shareArea.setBorder (BorderFactory.createEmptyBorder(2,2,2,2));
@@ -228,36 +229,6 @@ public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListen
         }
     }
     
-    // section: required by KeyListener
-    public void keyPressed (KeyEvent e) {
-    }
-
-    public void keyTyped (KeyEvent e) {
-    }
-
-    public void keyReleased (KeyEvent e) {
-        
-        // Updating the last line
-        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-            /*
-            try {
-                int lastLine = m_editArea.getLineCount () - 2;
-                int sPos = m_editArea.getLineStartOffset (lastLine);
-                int ePos = m_editArea.getLineEndOffset (lastLine);
-                
-                String content = m_editArea.getText ();                
-                String send = content.substring (sPos, ePos - 1);
-                
-                System.out.println ("Sending: " + send);
-                sendLine (send);
-                
-            } catch (Exception ee) {
-                ee.printStackTrace ();
-            }
-            */
-        }
-    }
-    
     @Override
     public void simpleMsgHandler (String msg) {
         
@@ -274,6 +245,7 @@ public class PC_SimpleEditor extends JFrame implements KeyListener, ActionListen
         } 
     } 
     
+    @Deprecated
     public void sendLine (String msg) {
         
         /* @lfred: I would like to disable the sending line feature - to leverage Amazon s3

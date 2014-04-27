@@ -21,7 +21,6 @@ public class PC_TinyImageViewer extends JFrame implements ActionListener, PC_Sim
     JButton m_saveBtn;
     JButton m_exitBtn;
     
-    
     PC_ImagePanel m_localPanel;
     PC_ImagePanel m_remotePanel;
     
@@ -30,25 +29,21 @@ public class PC_TinyImageViewer extends JFrame implements ActionListener, PC_Sim
     
     static PC_TinyImageViewer sm_imgViewer = null;
     
-    public static void startImgViewer () {
+    public static PC_TinyImageViewer startImgViewer () {
 		
         if (sm_imgViewer == null) {
             sm_imgViewer = new PC_TinyImageViewer ();
             sm_imgViewer.setSize (800, 600);
             sm_imgViewer.setVisible (true);
             sm_imgViewer.setResizable (false);
-            sm_imgViewer.addWindowListener (new java.awt.event.WindowAdapter() {
-                public void windowClosing(WindowEvent winEvt) {
-                    WinServ.logInfo ("Window closing.");
-                    sm_imgViewer = null;
-                }
-            });
         } else {
             sm_imgViewer.setVisible (true);
         }
+        
+        return sm_imgViewer;
 	}
     
-	public PC_TinyImageViewer () {
+	private PC_TinyImageViewer () {
         
         super ("Simple Image Viewer");
         
@@ -79,8 +74,11 @@ public class PC_TinyImageViewer extends JFrame implements ActionListener, PC_Sim
     
         toolBar.add (m_openBtn);
         toolBar.add (m_saveBtn);
+        toolBar.addSeparator ();
+        
         toolBar.add (m_shareBtn);
         toolBar.addSeparator ();
+        
         toolBar.add (m_exitBtn);
         add (toolBar, BorderLayout.NORTH);
         

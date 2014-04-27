@@ -29,6 +29,13 @@ public class WinServ_ControlPanel extends JFrame
     final static String GET_PRESENT_TOKEN_REQ = "GET_PRESENT_TOKEN_REQ";
     final static String GET_PRESENT_TOKEN_RES = "GET_PRESENT_TOKEN_RES";
     
+    final static String JOIN_CLASS_APPROVAL_REQ = "JOIN_CLASS_APPROVAL_REQ";
+    final static String JOIN_CLASS_APPROVAL_RES = "JOIN_CLASS_APPROVAL_RES";
+    
+    final static String KICK_USER_REQ = "KICK_USER_REQ";
+    final static String KICK_USER_RES = "KICK_USER_RES"; 
+    
+    
     // classes control buttons
     JList<String> m_classList;
     JButton m_listClassBtn;
@@ -72,11 +79,8 @@ public class WinServ_ControlPanel extends JFrame
     }
     
     void configDataComponents () {
-        //m_classes = new Vector<String> ();
-        //m_classes.add ("<no classes>");
-        
-        //m_peopleInClass = new Vector<String> ();
-        //m_peopleInClass.add ("<no one here>");
+        WinServ_NtfServer ntfServ = WinServ_NtfServer.getNtfServ ();
+        ntfServ.registerMsgHandler (JOIN_CLASS_APPROVAL_REQ, this); 
     }
     
     void configUiComponents () {
@@ -368,9 +372,35 @@ public class WinServ_ControlPanel extends JFrame
             // NW things
             ntfServ.registerMsgHandler (JOIN_CLASS_RES, this);
             ntfServ.sendMsgToServer (cmd);
+            
         } else if (src == m_kickStudentBtn) {
-            // TODO
-            int student_idx = m_studentList.getSelectedIndex ();
+            
+            int stdntIdx = m_studentList.getSelectedIndex ();
+            int classIdx = m_classList.getSelectedIndex ();
+            
+            if (stdntIdx == -1 || classIdx == -1) {
+                JOptionPane.showMessageDialog (
+                    this,
+                    "Input error, please select a student and a class first.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            String stdnt = repo.getPeopleNamesInClass().elementAt (stdntIdx);
+            int classId = repo.getClassIds().elementAt (classIdx).intValue ();
+            
+            // create message
+            WinServ_ReqCommand cmd = new WinServ_ReqCommand ();
+            cmd.pushStr (KICK_USER_REQ);
+            cmd.pushStr (COLON + cookieId);
+            cmd.pushStr (COLON + classId);
+            cmd.pushStr (COLON + stdnt);
+            cmd.pushStr (END);
+            
+            // NW things
+            ntfServ.registerMsgHandler (KICK_USER_RES, this);
+            ntfServ.sendMsgToServer (cmd);
             
         } else if (src == m_queryClassBtn) {
             
@@ -464,7 +494,6 @@ public class WinServ_ControlPanel extends JFrame
         String type = cmd.getStrAt (0);
         ntfServ.unregisterMsgHandler (type, this);
         
-        
         if (type.equals (LIST_CLASS_RES)) {
             WinServ_WaitDialog.closeDialog ();
             parseListClassRes (cmd);
@@ -478,9 +507,63 @@ public class WinServ_ControlPanel extends JFrame
         } else if (type.equals (QUERY_CLASS_INFO_RES)) {
             WinServ_WaitDialog.closeDialog ();
             parseQueryClassInfoRes (cmd);
+        } else if (type.equals (JOIN_CLASS_APPROVAL_REQ)) {
+            processApprovalReq (cmd);
+        } else if (type.equals (KICK_USER_RES)) {
+            processKickRsp (cmd);
         } else {
             WinServ.logErr ("Unhandled message: " + type);
         }
+    }
+    
+    void processKickRsp (WinServ_ReqCommand cmd) {
+        
+        WinServ_NtfServer ntfServ = WinServ_NtfServer.getNtfServ ();
+        ntfServ.unregisterMsgHandler (KICK_USER_RES, this);
+                
+        String status = cmd.getStrAt (1).substring (1);
+        
+        if (status.equals (SUCCESS)) {
+            JOptionPane.showMessageDialog (
+                this,
+                "Kick operation is completed.",
+                "Information",
+                JOptionPane.INFORMATION_MESSAGE);
+        }
+        
+        return;
+    }
+    
+    void processApprovalReq (WinServ_ReqCommand cmd) {
+        
+        WinServ_NtfServer ntfServ = WinServ_NtfServer.getNtfServ ();
+        WinServ_DataRepo repo = WinServ_DataRepo.getDataRepo ();
+        
+        String userName     = cmd.getStrAt (1).substring (1);
+        String classId      = cmd.getStrAt (2).substring (1);
+        String className    = cmd.getStrAt (2).substring (1);
+        
+        //default icon, custom title
+        int ans = 
+            JOptionPane.showConfirmDialog (
+                this,
+                "User " + userName + "would like to join class, " + className + "?",
+                "Approval Request",
+                JOptionPane.YES_NO_OPTION);
+        
+        WinServ_ReqCommand rsp = new WinServ_ReqCommand ();
+        rsp.pushStr (JOIN_CLASS_APPROVAL_RES);
+        rsp.pushStr (":" + repo.getCookieId ());
+        rsp.pushStr (":" + classId);
+        rsp.pushStr (":" + userName);
+                
+        if (ans == JOptionPane.YES_OPTION) {
+            rsp.pushStr (":true");
+        } else {
+            rsp.pushStr (":false");
+        }
+        
+        ntfServ.sendMsgToServer (rsp);
     }
     
     boolean parseListClassRes (WinServ_ReqCommand cmd) {
