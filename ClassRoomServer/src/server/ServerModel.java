@@ -56,7 +56,7 @@ import message.RetrivePresentTokenResMsg;
 class ServerModel {
 
 	// this will be initialized when server starts
-	private final Map<String, ClientSession> activeClients;
+	private final Map<String, ClientSession> allClients;
 	private final Map<Long, String> cookieToUser;
 	private final Map<Long, Class> classes;
 	private long nextCookieId;
@@ -65,7 +65,7 @@ class ServerModel {
 
 	ServerModel() {
 		dao = DAOFactory.getServerDAO();
-		activeClients = new HashMap<String, ClientSession>();
+		allClients = new HashMap<String, ClientSession>();
 		cookieToUser = new HashMap<Long, String>();
 		nextCookieId = 1;
 		nextClassId = 1;
@@ -74,7 +74,7 @@ class ServerModel {
 		System.out.println("Users: ");
 		for (final User user : users) {
 			System.out.println(user);
-			activeClients.put(user.getUserName(), new ClientSession(user));
+			allClients.put(user.getUserName(), new ClientSession(user));
 		}
 		classes = dao.loadClasses();
 		System.out.println("Classes");
@@ -117,7 +117,7 @@ class ServerModel {
 		if (ClientState.LOGGED_OUT.equals(newState)) {
 			// close cookie, create new client session
 			cookieToUser.remove(logoutReq.getCookieId());
-			activeClients.put(userName, new ClientSession(client.getUser()));
+			allClients.put(userName, new ClientSession(client.getUser()));
 		}
 		return new LogoutResultMsg(newState.toString());
 	}
@@ -126,9 +126,10 @@ class ServerModel {
 			final Socket socket) {
 		final ClientSession client = getActiveClientData(loginReq.getUserName());
 		final List<Message> result = new ArrayList<Message>();
+		String role = "";
 		if (client == null) {
 			result.add(new LoginResultMsg(ClientState.INVALID_USER.toString(),
-					-1));
+					-1,role));
 		} else {
 			final ClientState newState = client.login(loginReq, socket);
 			final long cookieId;
@@ -137,7 +138,12 @@ class ServerModel {
 			} else {
 				cookieId = getCookieId(client, loginReq.getUserName());
 			}
-			result.add(new LoginResultMsg(newState.toString(), cookieId));
+			if (client.getUser() instanceof Student){
+				role = "Student";
+			}else{
+				role = "Instructor";
+			}
+			result.add(new LoginResultMsg(newState.toString(), cookieId, role));
 			if (ClientState.LOGGED_IN.equals(newState)) {
 				// add offline message after login
 				result.addAll(client.getOfflineMessages());
@@ -483,7 +489,7 @@ class ServerModel {
 				request.getClassId(), request.getContentId());
 		final List<MessageToClient> result = new ArrayList<MessageToClient>();
 		result.add(new MessageToClient(requestingSocket, toInstructor));
-		for (final ClientSession client : activeClients.values()) {
+		for (final ClientSession client : allClients.values()) {
 			if (client.getUser() instanceof Student) {
 				if (ClientState.LOGGED_IN.equals(client.getCurrentState())) {
 					result.add(new MessageToClient(client.getSocket(),
@@ -699,6 +705,6 @@ class ServerModel {
 
 	// this never returns null
 	private ClientSession getActiveClientData(final String user) {
-		return activeClients.get(user);
+		return allClients.get(user);
 	}
 }
