@@ -139,7 +139,8 @@ public class WinServ_LoginWindow extends JFrame implements ActionListener, WinSe
             loginCmd.pushStr ("LOGIN_REQ");
             loginCmd.pushStr (":" + name);
             loginCmd.pushStr (":" + pass);
-            //loginCmd.pushStr (":PC");
+            loginCmd.pushStr (":PC");
+            loginCmd.pushStr (":0");
             loginCmd.pushStr ("END");
             
             // REGISTER NW receiver
@@ -167,15 +168,26 @@ public class WinServ_LoginWindow extends JFrame implements ActionListener, WinSe
             System.exit (0);
         }
         
-        String ln2 = cmd.getStrAt (1);
+        String ln2 = cmd.getStrAt (1).substring (1);
+        String ln3 = cmd.getStrAt (2).substring (1);
+        String ln4 = cmd.getStrAt (3).substring (1);
         
-        if (ln2.equals (":"+ "LOGGED_IN") || ln2.equals (":"+ "DUPLICATE")) {
-            int cookieId = Integer.parseInt (cmd.getStrAt (2).substring (1));
+        
+        if (ln2.equals ("LOGGED_IN") || ln2.equals ("DUPLICATE")) {
+            int cookieId = Integer.parseInt (ln3);
             
             // update repo
             WinServ_DataRepo repo = WinServ_DataRepo.getDataRepo ();
             repo.setLoggedIn (true);
             repo.setCookieId (cookieId);
+            
+            if (ln4.equals ("Instructor")) {
+                WinServ.logInfo ("I am inst");
+                repo.setInstructor (true);
+            } else {
+                WinServ.logInfo ("I am student");
+                repo.setInstructor (false);
+            }
             
             // clear the message registration
             WinServ_NtfServer ntfServ = WinServ_NtfServer.getNtfServ ();

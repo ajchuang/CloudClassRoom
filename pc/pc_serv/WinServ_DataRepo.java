@@ -1,4 +1,5 @@
 import java.util.*; 
+import javax.swing.JList;
 
 public class WinServ_DataRepo {
 
@@ -7,20 +8,14 @@ public class WinServ_DataRepo {
     String m_userName;
     int    m_cookieId;
     
-    String m_currentClassName;
-    int    m_currentClassId;
-    
     boolean m_isLoggedIn;
     boolean m_isInstructor;
     boolean m_isPresenter;
     
-    Vector<String>  m_classes;
-    Vector<Integer> m_classIds;
-    Vector<String>  m_classInsts;
+    Vector<WinServ_classData> m_classVec;
     
-    String          m_instInClass;
-    Vector<String>  m_peopleInClass;
-    Vector<Integer> m_peopleInClassIds;
+    String m_instInClass;
+    Vector<WinServ_studentData> m_stdntInClass;
 
     public static WinServ_DataRepo getDataRepo () {
         
@@ -38,12 +33,8 @@ public class WinServ_DataRepo {
         m_isInstructor = false;
         m_isPresenter = false;
         
-        m_classes = new Vector<String> ();
-        m_classIds = new Vector<Integer> ();
-        m_classInsts = new Vector<String> ();
-        
-        m_peopleInClass = new Vector<String> ();
-        m_peopleInClassIds = new Vector<Integer> ();
+        m_classVec = new Vector<WinServ_classData> ();
+        m_stdntInClass = new Vector<WinServ_studentData> ();
     }
     
     // setters & getters
@@ -67,18 +58,18 @@ public class WinServ_DataRepo {
         return m_cookieId;
     }
     
-    public void setCurrentClass (int id, String name) {
-        m_currentClassId = id;
-        m_currentClassName = name;
-    }
+    //public void setCurrentClass (int id, String name) {
+    //    m_currentClassId = id;
+    //    m_currentClassName = name;
+    //}
     
-    public int getCurrentClassId () {
-        return m_currentClassId;
-    }
+    //public int getCurrentClassId () {
+    //    return m_currentClassId;
+    //}
     
-    public String getCurrentClassName () {
-        return m_currentClassName;
-    }
+    //public String getCurrentClassName () {
+    //    return m_currentClassName;
+    //}
     
     public void setLoggedIn (boolean login) {
         m_isLoggedIn = login;
@@ -101,31 +92,23 @@ public class WinServ_DataRepo {
     }
     
     // class operators
-    public final Vector<String> getClasses () {
-        return m_classes;
+    public void setClassList (JList uiComp) {
+        uiComp.setListData (m_classVec);
     }
     
-    public final Vector<Integer> getClassIds () {
-        return m_classIds;
-    }
-    
-    public final Vector<String> getClassInsts () {
-        return m_classInsts;
+    public final WinServ_classData searchClassByInx (int idx) {
+        return m_classVec.elementAt (idx);
     }
     
     public void insertClass (String name, int id, String inst) {
-        m_classes.add (name);
-        m_classIds.add (id);
-        m_classInsts.add (inst);
+        m_classVec.add (new WinServ_classData (id, name, inst));
     }
     
     public void clearClasses () {
-        m_classes.clear ();
-        m_classIds.clear ();
-        m_classInsts.clear ();
+        m_classVec.clear ();
     }
     
-    // prople operators
+    // people operators
     public String getInstName () {
         return m_instInClass;
     }
@@ -134,21 +117,21 @@ public class WinServ_DataRepo {
         m_instInClass = n;
     }
     
-    public final Vector<String> getPeopleNamesInClass () {
-        return m_peopleInClass;
+    public void setStudentList (JList uiComp) {
+        uiComp.setListData (m_stdntInClass);
     }
     
-    public final Vector<Integer> getPeopleIdInClass () {
-        return m_peopleInClassIds;
+    
+    
+    public final WinServ_studentData searchStdntByInx (int idx) {
+        return m_stdntInClass.elementAt (idx);
     }
     
-    public void insertPersonInClass (String name, int id) {
-        m_peopleInClass.add (name);
-        m_peopleInClassIds.add (id);
+    public void insertStdntInClass (String name, int id) {
+        m_stdntInClass.add (new WinServ_studentData (id, name));
     }
     
     public void clearPeopleInClass () {
-        m_peopleInClass.clear ();
-        m_peopleInClassIds.clear ();
+        m_stdntInClass.clear ();
     }
 }
