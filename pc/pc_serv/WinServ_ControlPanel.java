@@ -41,6 +41,10 @@ public class WinServ_ControlPanel extends JFrame
     final static String CHANGE_PRESENT_TOKEN_REQ = "CHANGE_PRESENT_TOKEN_REQ";
     final static String CHANGE_PRESENT_TOKEN_RES = "CHANGE_PRESENT_TOKEN_RES";
      
+    final static String PUSH_CONTENT_REQ = "PUSH_CONTENT_REQ";
+    final static String PUSH_CONTENT_NOTIFY = "PUSH_CONTENT_NOTIFY";
+    final static String PUSH_CONTENT_GET_REQ = "PUSH_CONTENT_GET_REQ";
+    final static String PUSH_CONTENT_GET_RES = "PUSH_CONTENT_GET_RES";
     
     // classes control buttons
     JList<String> m_classList;

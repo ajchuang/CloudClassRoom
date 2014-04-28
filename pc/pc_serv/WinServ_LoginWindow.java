@@ -184,9 +184,11 @@ public class WinServ_LoginWindow extends JFrame implements ActionListener, WinSe
             if (ln4.equals ("Instructor")) {
                 WinServ.logInfo ("I am inst");
                 repo.setInstructor (true);
+                repo.setPresenter (true);
             } else {
                 WinServ.logInfo ("I am student");
                 repo.setInstructor (false);
+                repo.setPresenter (false);
             }
             
             // clear the message registration

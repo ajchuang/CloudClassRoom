@@ -14,6 +14,8 @@ import java.net.*;
 
 public class PC_TinyImageViewer extends JFrame implements ActionListener, PC_SimpleMsgHandler {
 	
+    final static String UPDATE = "UPDATE:";
+    
     // UI components
     JTabbedPane m_tabPan;
 	JButton m_openBtn;
@@ -137,8 +139,8 @@ public class PC_TinyImageViewer extends JFrame implements ActionListener, PC_Sim
         System.out.println (msg);
         
         // We handle: UPDATE:<path>
-        if (msg.startsWith ("UPDATE:")) {
-            String path = msg.substring (7);
+        if (msg.startsWith (UPDATE)) {
+            String path = msg.substring (UPDATE.length ());
             m_remotePanel.drawNewFile (path);
         }
     } 
