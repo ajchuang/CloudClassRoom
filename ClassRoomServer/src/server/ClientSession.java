@@ -64,25 +64,16 @@ public class ClientSession {
 	public ClientState login(final LoginReqMsg loginReq, final Socket socket) {
 		final String password = loginReq.getPassword();
 
-		final ClientState state = getCurrentState();
-		if (ClientState.NOT_CONNECTED.equals(state)
-				|| ClientState.LOGIN_FAIL.equals(state)
-				|| ClientState.SUSPENDED.equals(state)) {
-			setSocket(socket);
-			if (user.getPassword().equals(password)) {
-				deviceType = loginReq.getDeviceType();
-				tokenId = loginReq.getTokenId();
-				addState(ClientState.LOGGED_IN);
-				return ClientState.LOGGED_IN;
-			} else {
-				addState(ClientState.LOGIN_FAIL);
-				return ClientState.LOGIN_FAIL;
-			}
-		} else if (ClientState.LOGGED_IN.equals(state)) {
-			return ClientState.DUPLICATE;
+		//final ClientState state = getCurrentState();
+		setSocket(socket);
+		if (user.getPassword().equals(password)) {
+			deviceType = loginReq.getDeviceType();
+			tokenId = loginReq.getTokenId();
+			addState(ClientState.LOGGED_IN);
+			return ClientState.LOGGED_IN;
 		} else {
-			// can't happen
-			throw new RuntimeException("Can't try login from state " + state);
+			addState(ClientState.LOGIN_FAIL);
+			return ClientState.LOGIN_FAIL;
 		}
 	}
 

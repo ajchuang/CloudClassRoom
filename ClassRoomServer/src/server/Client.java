@@ -28,7 +28,7 @@ public class Client {
 			final InputStream inStream = s.getInputStream();
 			serverInputStream = new BufferedReader(new InputStreamReader(
 					inStream));
-			out.println("LOGIN_REQ\n:Rui Chen\n:rc2639\n:Cell\n:sss\nEND");
+			out.println("LOGIN_REQ\n:Rui Chen\n:rc2639\n:iOS\n:sss\nEND");
 			out.close();
 			Thread.sleep(10000);
 			s.close();
