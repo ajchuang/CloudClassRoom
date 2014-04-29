@@ -7,8 +7,9 @@ import javax.swing.event.*;
 import java.util.*;
 
 public class WinServ_ControlPanel extends JFrame 
-    implements ActionListener, WinServ_MsgHandler, ChangeListener {
+    implements ActionListener, WinServ_MsgHandler, ChangeListener, PC_SimpleMsgHandler {
     
+    final static String BUCKET_NAME       = "CloudClassRoom";
     final static String COLON             = ":";
     final static String SUCCESS           = "SUCCESS";
     final static String END               = "END";
@@ -89,9 +90,15 @@ public class WinServ_ControlPanel extends JFrame
     }
     
     void configDataComponents () {
+        
+        // starting my own receiver thread
+        PC_SimpleReceiver.startReceiver (WinServ_SysParam.M_CTL_VIEW_PORT, this);
+
+        // register server events
         WinServ_NtfServer ntfServ = WinServ_NtfServer.getNtfServ ();
         ntfServ.registerMsgHandler (JOIN_CLASS_APPROVAL_REQ, this);
-        ntfServ.registerMsgHandler (CHANGE_PRESENT_TOKEN_REQ, this); 
+        ntfServ.registerMsgHandler (CHANGE_PRESENT_TOKEN_REQ, this);
+        ntfServ.registerMsgHandler (PUSH_CONTENT_NOTIFY, this); 
     }
     
     void configUiComponents () {
@@ -289,9 +296,9 @@ public class WinServ_ControlPanel extends JFrame
         int cookieId = repo.getCookieId ();
         
         if (src == m_codeEditorBtn) {
-            PC_SimpleEditor.startEditor ();
+            PC_SimpleEditor.startEditor (true);
         } else if (src == m_imgViewerBtn) {
-            PC_TinyImageViewer.startImgViewer ();
+            PC_TinyImageViewer.startImgViewer (true);
         } else if (src == m_logoutBtn) {
             
             WinServ_ReqCommand cmd = new WinServ_ReqCommand ();
@@ -554,6 +561,8 @@ public class WinServ_ControlPanel extends JFrame
             processChangePresentReq (cmd);
         } else if (type.equals (GET_PRESENT_TOKEN_RES)) {
             processPresentTokenRes (cmd);
+        } else if (type.equals (PUSH_CONTENT_NOTIFY)) {
+            processPushContentNtf (cmd);
         } else {
             WinServ.logErr ("Unhandled message: " + type);
         }
@@ -802,6 +811,45 @@ public class WinServ_ControlPanel extends JFrame
         ntfServ.sendMsgToServer (cmd);
     }
     
+    void processPushContentNtf (WinServ_ReqCommand cmd) {
+        
+        String contentName = cmd.getStrAt (2).substring (1);
+        String localName = WinServ_SysParam.getFsPath (contentName);
+        
+        boolean ret = 
+            WinServ_CloudHelper.downloadFile (
+                localName, 
+                WinServ_SysParam.M_BKT_NAME, 
+                contentName);
+                 
+        if (ret == false) {
+            WinServ.logErr ("Download file failure");
+        } else {
+            
+            // name suffix resolver
+            if (WinServ_SysParam.isImageFile (contentName)) {
+                // notify the image viewer
+                PC_TinyImageViewer.startImgViewer (true);
+                
+                // we need to tell the viewrt to show
+                
+            } else {
+                // notify the text viewer
+                PC_TinyImageViewer.startImgViewer (true);
+ 
+                try {
+                    // we need to tell the viewr to show
+                    WinServ_SysParam.sendMsg (
+                        PC_TinyImageViewer.M_MSG_UPDATE, 
+                        localName, 
+                        WinServ_SysParam.M_IMG_VIEW_PORT);
+                } catch (Exception e) {
+                    WinServ.logExp (e, false);
+                }
+            }
+        }
+    }
+    
     void issueListCmd () {
         WinServ_DataRepo repo = WinServ_DataRepo.getDataRepo ();
         WinServ_NtfServer ntfServ = WinServ_NtfServer.getNtfServ ();
@@ -817,5 +865,42 @@ public class WinServ_ControlPanel extends JFrame
             
         ntfServ.registerMsgHandler (LIST_CLASS_RES, this);
         ntfServ.sendMsgToServer (cmd);
+    }
+    
+    @Override
+    public void simpleMsgHandler (String msg) {
+        
+        String update_ntf = "UPDATE_NTF:";
+        WinServ_DataRepo repo = WinServ_DataRepo.getDataRepo ();
+        WinServ_NtfServer ntfServ = WinServ_NtfServer.getNtfServ ();
+        
+        // We handle: UPDATE_NTF: fname 
+        if (msg.startsWith (update_ntf)) {
+            String fname = msg.substring (update_ntf.length ());
+            
+            int selectIdx = m_classList.getSelectedIndex ();
+            
+            if (selectIdx == -1) {
+                JOptionPane.showMessageDialog (
+                    this,
+                    "Input error, select a class first.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            int ids = repo.searchClassByInx (selectIdx).getId ();
+            int cookieId = repo.getCookieId ();
+        
+            // issue list command after create
+            WinServ_ReqCommand cmd = new WinServ_ReqCommand ();
+            cmd.pushStr ("PUSH_CONTENT_REQ");
+            cmd.pushStr (COLON + cookieId);
+            cmd.pushStr (COLON + ids);
+            cmd.pushStr (COLON + fname);
+            cmd.pushStr (COLON + "IMAGE");
+            cmd.pushStr (END);
+            ntfServ.sendMsgToServer (cmd);
+        } 
     }
 }
