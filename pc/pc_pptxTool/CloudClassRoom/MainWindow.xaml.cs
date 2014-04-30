@@ -20,43 +20,52 @@ using System.Windows.Forms;
 
 namespace WpfApplication1
 {
-
-    
-
     /// <summary>
     /// MainWindow.xaml 的互動邏輯
     /// </summary>
     public partial class MainWindow : Window
     {
         string m_openPpt;
-        Microsoft.Office.Interop.PowerPoint.Application     m_oPPT;
-        Microsoft.Office.Interop.PowerPoint.Presentations   m_objPresSet;
-        Microsoft.Office.Interop.PowerPoint.Presentation    m_objPres;
+        Microsoft.Office.Interop.PowerPoint.Application     m_oPPT = null;
+        Microsoft.Office.Interop.PowerPoint.Presentations   m_objPresSet = null;
+        Microsoft.Office.Interop.PowerPoint.Presentation    m_objPres = null;
 
-        public MainWindow()
-        {
-            InitializeComponent();
-            m_openPpt = null;
+        // a random string generator
+        private static Random m_random = new Random ((int)DateTime.Now.Ticks);
+
+        private string generateRandomString(int size) {
+            StringBuilder builder = new StringBuilder();
+            char ch;
+            for (int i = 0; i < size; i++) {
+                ch = Convert.ToChar (Convert.ToInt32 (Math.Floor(26 * m_random.NextDouble() + 65)));
+                builder.Append (ch);
+            }
+
+            return builder.ToString ();
         }
 
-        private void exportCurrentSlide ()
-        {
-            string fName = "d:\\slides.png";
+        public MainWindow () {
+            InitializeComponent ();
+            m_openPpt = null;            
+        }
 
-            try
-            {
+        private void exportCurrentSlide () {
+
+            string fName = System.IO.Path.GetTempPath() + generateRandomString(13) + ".png";
+
+            try {
                 int idx = m_objPres.SlideShowWindow.View.Slide.SlideIndex;
-                m_objPres.SlideShowWindow.View.Slide.Export(fName, "png", 1024, 768);
+                m_objPres.SlideShowWindow.View.Slide.Export (fName, "png", 1024, 768);
+
+                string toSend = "UPDATE:" + fName;
 
                 // notify the server
                 Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-                IPAddress serverAddr = IPAddress.Parse("127.0.0.1");
-                IPEndPoint endPoint = new IPEndPoint(serverAddr, 7788);
-                byte[] send_buffer = Encoding.ASCII.GetBytes(fName);
-                sock.SendTo(send_buffer, endPoint);
-            }
-            catch (Exception e)
-            {
+                IPAddress serverAddr = IPAddress.Parse ("127.0.0.1");
+                IPEndPoint endPoint = new IPEndPoint (serverAddr, 7788);
+                byte[] send_buffer = Encoding.ASCII.GetBytes (toSend);
+                sock.SendTo (send_buffer, endPoint);
+            } catch (Exception e) {
                 Console.WriteLine ("Exception happens");
             }
         }
@@ -80,15 +89,21 @@ namespace WpfApplication1
 
             if (m_openPpt == null)
                 return;
-            try
-            {
+            try {
                 m_objPres.SlideShowWindow.View.Next ();
                 exportCurrentSlide ();
             }
-            catch (Exception ee)
-            {
+            catch (Exception ee) {
                 Console.WriteLine ("No more slides");
-                Environment.Exit(0); 
+
+                if (m_oPPT != null)
+                    m_oPPT.Quit ();
+                
+                m_oPPT = null;
+                m_objPresSet = null;
+                m_objPres = null;
+
+                Environment.Exit(0);
             }
         }
 
@@ -118,7 +133,15 @@ namespace WpfApplication1
             }
         }
 
-        private void closeBtn_click(object sender, RoutedEventArgs e) {
+        private void closeBtn_click (object sender, RoutedEventArgs e) {
+            
+            if (m_oPPT != null)
+                m_oPPT.Quit ();
+
+            m_oPPT = null;
+            m_objPresSet = null;
+            m_objPres = null;
+            
             Environment.Exit (0);           
         }
     }
