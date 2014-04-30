@@ -1,5 +1,5 @@
 package message;
-
+/*
 public class PushContentGetReqMsg extends AbstractMessage {
 
 	private static final String head = "JOIN_CLASS_REQ";
@@ -46,3 +46,4 @@ public class PushContentGetReqMsg extends AbstractMessage {
 				Long.valueOf(getData(fields[3])));
 	}
 }
+*/

@@ -21,6 +21,8 @@ import message.ChangePresentTokenResMsg;
 import message.ClassAdminStatus;
 import message.CreateClassReqMsg;
 import message.CreateClassResultMsg;
+import message.CreateUsrReqMsg;
+import message.CreateUsrResMsg;
 import message.DeleteClassReqMsg;
 import message.DeleteClassResMsg;
 import message.GetPresentTokenReqMsg;
@@ -39,8 +41,6 @@ import message.LoginResultMsg;
 import message.LogoutReqMsg;
 import message.LogoutResultMsg;
 import message.Message;
-import message.PushContentGetReqMsg;
-import message.PushContentGetResMsg;
 import message.PushContentNotifyMsg;
 import message.PushContentReqMsg;
 import message.PushContentResMsg;
@@ -94,6 +94,34 @@ class ServerModel {
 	 * @param userName
 	 * @return
 	 */
+	
+	synchronized CreateUsrResMsg createUser(final CreateUsrReqMsg request) {
+		final List<User> users = dao.loadUsers();
+		boolean duplicate = false;
+		for(final User user : users){
+			if(user.getUserName().equals(request.getUserName())){
+				duplicate = true;
+			}				
+		}
+		if(duplicate){
+			return new CreateUsrResMsg("DUPLICATE");
+		} else if (!request.getRole().equals("Student") && !request.getRole().equals("Instructor") ) {
+			return new CreateUsrResMsg("INVALID_ROLE");
+		} else {
+			User user;
+			if (request.getRole().equals("Student")){
+				user = new Student(request.getUserName(), request.getPassword());
+			} else {
+				user = new Instructor(request.getUserName(),request.getPassword());
+			}
+			System.out.println(user.getUserName() +'\n'+user.getPassword());
+			dao.insertUser(user);
+			allClients.put(user.getUserName(), new ClientSession(user));
+			System.out.println("User added");
+			return new CreateUsrResMsg("SUCCESS");
+		}
+	}
+	
 	synchronized long getCookieId(final ClientSession client,
 			final String userName) {
 		for (final Entry<Long, String> entry : cookieToUser.entrySet()) {

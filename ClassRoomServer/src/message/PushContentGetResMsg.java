@@ -1,5 +1,5 @@
 package message;
-
+/*
 public class PushContentGetResMsg extends AbstractMessage {
 
 	private static final String head = "JOIN_CLASS_RES";
@@ -53,3 +53,4 @@ public class PushContentGetResMsg extends AbstractMessage {
 		return str.toString();
 	}
 }
+*/

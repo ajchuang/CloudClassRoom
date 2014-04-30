@@ -16,6 +16,7 @@ import server.ServerModel.MessageToClient;
 
 import message.ChangePresentTokenResMsg;
 import message.CreateClassReqMsg;
+import message.CreateUsrReqMsg;
 import message.DeleteClassReqMsg;
 import message.GetPresentTokenReqMsg;
 import message.JoinClassApprovalResMsg;
@@ -27,7 +28,6 @@ import message.LoginResultMsg;
 import message.LogoutReqMsg;
 import message.Message;
 import message.MessageFactory;
-import message.PushContentGetReqMsg;
 import message.PushContentReqMsg;
 import message.QueryClassInfoReqMsg;
 import message.QuitClassReqMsg;
@@ -115,6 +115,10 @@ public class ServerThread implements Runnable {
 								.getUserName();
 						sendMessages(server.login(
 								(LoginReqMsg) messageFromClient, incoming), out);
+					} else if (messageFromClient instanceof CreateUsrReqMsg) {
+						sendMessages(
+								server.createUser((CreateUsrReqMsg) messageFromClient),
+								out);
 					} else if (messageFromClient instanceof LogoutReqMsg) {
 						sendMessages(
 								server.logout((LogoutReqMsg) messageFromClient),
