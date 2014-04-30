@@ -8,11 +8,6 @@ public class WinServ implements Runnable {
     
     int m_port;
     
-    static final int DEFAULT_LOCAL_PORT = 5566;
-    static final int DEFAULT_COMM_PORT  = 4119;
-    static final String sfm_fileSysDir = "./fs/";
-    static final String sfm_defaultBucket = "CloudClassRoom";
-    
     public static void logErr (String s) {
         System.out.println ("[Bug] " + s);
     }
@@ -97,7 +92,11 @@ public class WinServ implements Runnable {
     boolean downloadFileFromS3 (String remoteName, String localName) {
         
         try {
-            WinServ_CloudHelper.downloadFile (sfm_fileSysDir+localName, sfm_defaultBucket, remoteName);
+            WinServ_CloudHelper.downloadFile (
+                WinServ_SysParam.getFsPath (localName), 
+                WinServ_SysParam.M_BKT_NAME, 
+                remoteName);
+                
         } catch (Exception e) {
             WinServ.logExp (e, false);
             return false;
@@ -107,8 +106,17 @@ public class WinServ implements Runnable {
         return true;
     }
     
-    // TODO: notify the server
-    void notifyCloud () {
+    // TODO: notify the server that upload is done.
+    void notifyControlPanel (String fname) {
+        
+        try {
+            WinServ_SysParam.sendMsg (
+                "UPDATE_NTF", 
+                fname, 
+                WinServ_SysParam.M_CTL_VIEW_PORT);
+        } catch (Exception e) {
+            WinServ.logExp (e, false);
+        }
     }
     
     void processMsg_UpdateFile (WinServ_ReqCommand cmd) {
@@ -119,10 +127,12 @@ public class WinServ implements Runnable {
         WinServ.logInfo ("UPDATE_FILE: " + f.getAbsolutePath () + ":" + f.getName ());
         
         // update to the Amazon server. Fix the remote name
-        uploadFileToS3 (path, f.getName ());
-        
-        // send notification to the server
-        notifyCloud ();
+        if (uploadFileToS3 (path, f.getName ()) == true) {
+            // send notification to the server
+            notifyControlPanel (f.getName ());
+        } else {
+            WinServ.logInfo ("UPDATE_FILE: failed");
+        }
     }
     
     void processMsg_DLFile (WinServ_ReqCommand cmd) {
@@ -183,7 +193,7 @@ public class WinServ implements Runnable {
     }
     
     public static int getPort () {
-        return DEFAULT_LOCAL_PORT;
+        return WinServ_SysParam.M_TEST_PORT;
     }
     
     public static void main (String args[]) throws Exception {
@@ -197,7 +207,7 @@ public class WinServ implements Runnable {
             
         } else {
             remoteHost = "localhost";
-            remotePort = DEFAULT_COMM_PORT;
+            remotePort = WinServ_SysParam.M_DEF_SVR_PORT;
         }
         
         // starting data repo
@@ -208,13 +218,16 @@ public class WinServ implements Runnable {
         ntf.start ();
         
         // starting local working server
-        Thread serv = new Thread (new WinServ (DEFAULT_LOCAL_PORT));
+        Thread serv = new Thread (new WinServ (WinServ_SysParam.M_TEST_PORT));
         serv.start ();
+        
+        // start local services
+        PC_TinyImageViewer.startImgViewer (false);
+        PC_SimpleEditor.startEditor (false);
         
         // starting login UI
         WinServ_LoginWindow loginWin = new WinServ_LoginWindow ();
         
         return;
     }
-    
 }

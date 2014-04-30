@@ -70,6 +70,7 @@ public class WinServ_NtfServer implements Runnable {
                 LinkedList<WinServ_MsgHandler> newHdlr = new LinkedList<WinServ_MsgHandler> ();
                 newHdlr.add (handler);
                 m_msgMap.put (msg, newHdlr);
+                
                 WinServ.logInfo ("registerMsgHandler - completed.1");
             } else {
                 // someone has register this event

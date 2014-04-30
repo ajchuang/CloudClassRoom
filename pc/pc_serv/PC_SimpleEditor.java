@@ -7,8 +7,14 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.io.*;
 import java.net.*;
+import java.nio.charset.Charset;
 
 public class PC_SimpleEditor extends JFrame implements ActionListener, PC_SimpleMsgHandler {
+    
+    public static final String M_MSG_UPDATE = "UPDATE:";
+    public static final int M_BLINK_TIME    = 300;
+    public static final int M_EDIT_PANE     = 0;
+    public static final int M_SHARE_PANE    = 1;
     
     // UI components
     private JTextArea    m_editArea;
@@ -30,7 +36,7 @@ public class PC_SimpleEditor extends JFrame implements ActionListener, PC_Simple
     
     static PC_SimpleEditor sm_editor = null;
     
-    public static PC_SimpleEditor startEditor () {
+    public static PC_SimpleEditor startEditor (boolean doShow) {
         
         if (sm_editor == null) {
             sm_editor = new PC_SimpleEditor ();
@@ -39,8 +45,9 @@ public class PC_SimpleEditor extends JFrame implements ActionListener, PC_Simple
                     sm_editor = null;
                 }
             });
+            sm_editor.setVisible (doShow);
         } else {
-            sm_editor.setVisible (true);
+            sm_editor.setVisible (doShow);
         }
         
         return sm_editor;
@@ -48,7 +55,7 @@ public class PC_SimpleEditor extends JFrame implements ActionListener, PC_Simple
     
     private PC_SimpleEditor () {
         setupUiComponent ();
-        PC_SimpleReceiver.startReceiver (8002, this);
+        PC_SimpleReceiver.startReceiver (WinServ_SysParam.M_TXT_VIEW_PORT, this);
     }
     
     void setupUiComponent () {
@@ -126,7 +133,7 @@ public class PC_SimpleEditor extends JFrame implements ActionListener, PC_Simple
         setTitle ("PC_SimpleEditor");
         pack ();
         setLocationRelativeTo (null);
-        setVisible (true);
+        //setVisible (true);
     }
     
     class OpenAction extends AbstractAction {
@@ -193,20 +200,38 @@ public class PC_SimpleEditor extends JFrame implements ActionListener, PC_Simple
         
         public void actionPerformed (ActionEvent e) {
             
-            System.out.println ("Sharing");
+            WinServ.logInfo ("Sharing");
+            
+            WinServ_DataRepo repo = WinServ_DataRepo.getDataRepo ();
+            
+            if (repo.isPresenter () == false) {
+                JOptionPane.showMessageDialog (
+                    null,
+                    "Sorry, you are not the presenter",
+                    "Status",
+                    JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             
             try {
-                File tempFile = File.createTempFile ("temp-edit-file", ".tmp");
+                File tempFile = File.createTempFile ("temp-edit-file", ".txt");
                 PrintWriter p = new PrintWriter (tempFile);
                 String s = m_editArea.getText (); 
                 p.print (s);
                 p.close ();
                 
-                Socket sck = new Socket ("localhost", 5566);
+                Socket sck = 
+                    new Socket (
+                        WinServ_SysParam.M_LOCALHOST, 
+                        WinServ_SysParam.M_TEST_PORT);
+                
+                // write to the server element.
                 PrintWriter writer = new PrintWriter (sck.getOutputStream (), true);
                 writer.println ("UPDATE_FILE");
-                writer.println (Integer.toString (tempFile.getPath ().length ()) + ":" + tempFile.getPath ());
+                writer.println (":" + tempFile.getPath ());
+                writer.println (":TXT");
                 writer.println ("END");
+                
                 sck.close ();
                 
             } catch (Exception ee) {
@@ -233,12 +258,31 @@ public class PC_SimpleEditor extends JFrame implements ActionListener, PC_Simple
     public void simpleMsgHandler (String msg) {
         
         // We handle: UPDATE:<path>
-        if (msg.startsWith ("UPDATE:")) {
-            String path = msg.substring (7);
+        if (msg.startsWith (M_MSG_UPDATE)) {
+            String name = msg.substring (M_MSG_UPDATE.length ());
+            String path = WinServ_SysParam.getFsPath (name);
+            
+            WinServ.logInfo ("TXT VIEWER: " + path);
             
             try {
                 FileReader reader = new FileReader (path);
-                m_shareArea.read (reader, "");  // Use TextComponent read
+                setVisible (true);
+                m_shareArea.read (reader, "");
+                m_tabPan.setSelectedIndex (M_SHARE_PANE);
+                
+                // play a small trick
+                setAlwaysOnTop (true);
+                
+                javax.swing.Timer myTimer = 
+                    new javax.swing.Timer (
+                        M_BLINK_TIME, 
+                        new ActionListener () {
+                            public void actionPerformed (ActionEvent e) {
+                                setAlwaysOnTop (false);
+                            } 
+                        }
+                );
+                
             } catch (IOException e) {
                 e.printStackTrace ();
             }

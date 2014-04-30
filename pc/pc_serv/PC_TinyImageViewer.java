@@ -11,10 +11,15 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.io.*;
 import java.net.*;
+import java.nio.charset.Charset;
 
 public class PC_TinyImageViewer extends JFrame implements ActionListener, PC_SimpleMsgHandler {
 	
-    final static String UPDATE = "UPDATE:";
+    public static final String M_MSG_UPDATE = "UPDATE:";
+    
+    public static final int M_BLINK_TIME    = 300;
+    public static final int M_EDIT_PANE     = 0;
+    public static final int M_SHARE_PANE    = 1;
     
     // UI components
     JTabbedPane m_tabPan;
@@ -31,26 +36,26 @@ public class PC_TinyImageViewer extends JFrame implements ActionListener, PC_Sim
     
     static PC_TinyImageViewer sm_imgViewer = null;
     
-    public static PC_TinyImageViewer startImgViewer () {
+    public static PC_TinyImageViewer startImgViewer (boolean doShow) {
 		
         if (sm_imgViewer == null) {
             sm_imgViewer = new PC_TinyImageViewer ();
             sm_imgViewer.setSize (800, 600);
-            sm_imgViewer.setVisible (true);
+            sm_imgViewer.setVisible (doShow);
             sm_imgViewer.setResizable (false);
         } else {
-            sm_imgViewer.setVisible (true);
+            sm_imgViewer.setVisible (doShow);
         }
         
         return sm_imgViewer;
 	}
     
-	private PC_TinyImageViewer () {
+    private PC_TinyImageViewer () {
         
         super ("Simple Image Viewer");
         
         setupUiComponents ();
-        PC_SimpleReceiver.startReceiver (8001, this);
+        PC_SimpleReceiver.startReceiver (WinServ_SysParam.M_IMG_VIEW_PORT, this);
 	}
     
     void setupUiComponents () {
@@ -122,6 +127,18 @@ public class PC_TinyImageViewer extends JFrame implements ActionListener, PC_Sim
     }
     
     void sharingImageFile () {
+        
+        WinServ_DataRepo repo = WinServ_DataRepo.getDataRepo ();
+            
+        if (repo.isPresenter () == false) {
+            JOptionPane.showMessageDialog (
+                this,
+                "Sorry, you are not the presenter",
+                "Status",
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
         try {
             Socket sck = new Socket ("localhost", 5566);
             PrintWriter writer = new PrintWriter (sck.getOutputStream (), true);
@@ -139,9 +156,28 @@ public class PC_TinyImageViewer extends JFrame implements ActionListener, PC_Sim
         System.out.println (msg);
         
         // We handle: UPDATE:<path>
-        if (msg.startsWith (UPDATE)) {
-            String path = msg.substring (UPDATE.length ());
+        if (msg.startsWith (M_MSG_UPDATE)) {
+            // force view of the current document
+            String name = msg.substring (M_MSG_UPDATE.length ());
+            String path = WinServ_SysParam.getFsPath (name);
+            
+            WinServ.logInfo ("IMG VIEWER: " + path);
+            
             m_remotePanel.drawNewFile (path);
+            m_tabPan.setSelectedIndex (M_SHARE_PANE);
+            
+            // play a small trick - blink for a while
+            setAlwaysOnTop (true);
+            
+            javax.swing.Timer myTimer = 
+                new javax.swing.Timer (
+                    M_BLINK_TIME, 
+                    new ActionListener () {
+                        public void actionPerformed (ActionEvent e) {
+                            setAlwaysOnTop (false);
+                        } 
+                    }
+                );
         }
     } 
 	
