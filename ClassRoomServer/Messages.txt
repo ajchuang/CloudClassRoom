@@ -162,9 +162,20 @@ NO_PERMISSION
 ALREADY_PRESENTER
 SUCCESS
 
+15.
+CLNT --> QUERY_LASTEST_CONTENT_REQ (cookieId, classId) --> SVR
+SVR --> QUERY_LASTEST_CONTENT_RES (status, classId, content_name) --> CLNT
 
-
-
+status: 
+SUCCESS, 
+EMPTY_CONTENT, no content has been shared before.
+ERROR: other error (invalid users, not in the class)
+status:
+NOT_LOGIN (classId=requesting classId, contentName=“”)
+INVALID_CLASS_ID (classId=requesting classId, contentName=“”) 
+NOT_IN_CLASS (not this class’s instructor or student, classId=requesting classId, contentName=“”) 
+NO_CONTENT (no content has ever been pushed. classId=requesting classId, contentName=“”) 
+SUCCESS
 
 
 

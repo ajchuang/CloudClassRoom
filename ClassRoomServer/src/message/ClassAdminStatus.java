@@ -34,5 +34,6 @@ public enum ClassAdminStatus {
 	 * Apply to join class result
 	 */
 	DENIED,
+	NO_CONTENT,
 	ALREADY_PRESENTER;
 }

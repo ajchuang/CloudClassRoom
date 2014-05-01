@@ -76,6 +76,10 @@ public class MessageFactory {
 			if (msg != null) {
 				return msg;
 			}
+			msg = QueryLatestContentReqMsg.parse(message);
+			if (msg != null) {
+				return msg;
+			}
 		} catch (final Exception e) {
 			throw new UnknownMessageException("Unknown message " + message);
 		}
