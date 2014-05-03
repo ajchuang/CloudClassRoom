@@ -64,6 +64,10 @@ public class WinServ implements Runnable {
                     } else if ((len = isNumber (toks[0])) != -1) {
                         WinServ.logInfo ("Push: " + data.substring (toks[0].length () + 1 ));
                         cmd.pushStr (data.substring (toks[0].length () + 1 ));
+                    } else {
+                        
+                        WinServ.logInfo ("NO Push: " + data);
+                        WinServ.logInfo ("NO Push: " + toks.length);
                     }
                 }
             }

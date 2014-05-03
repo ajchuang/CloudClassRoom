@@ -228,8 +228,8 @@ public class PC_SimpleEditor extends JFrame implements ActionListener, PC_Simple
                 // write to the server element.
                 PrintWriter writer = new PrintWriter (sck.getOutputStream (), true);
                 writer.println ("UPDATE_FILE");
-                writer.println (":" + tempFile.getPath ());
-                writer.println (":TXT");
+                writer.println (tempFile.getPath().length() + ":" + tempFile.getPath ());
+                writer.println ("3:TXT");
                 writer.println ("END");
                 
                 sck.close ();

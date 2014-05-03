@@ -614,6 +614,7 @@ public class WinServ_ControlPanel extends JFrame
         } else {
             rsp.pushStr (":false");
         }
+        rsp.pushStr (END);
         
         ntfServ.sendMsgToServer (rsp);
     }
