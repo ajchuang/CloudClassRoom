@@ -16,6 +16,7 @@ import server.ServerModel.MessageToClient;
 
 import message.ChangePresentTokenResMsg;
 import message.CreateClassReqMsg;
+import message.CreateUsrReqMsg;
 import message.DeleteClassReqMsg;
 import message.GetPresentTokenReqMsg;
 import message.JoinClassApprovalResMsg;
@@ -27,9 +28,9 @@ import message.LoginResultMsg;
 import message.LogoutReqMsg;
 import message.Message;
 import message.MessageFactory;
-import message.PushContentGetReqMsg;
 import message.PushContentReqMsg;
 import message.QueryClassInfoReqMsg;
+import message.QueryLatestContentReqMsg;
 import message.QuitClassReqMsg;
 import message.RetrivePresentTokenReqMsg;
 import message.UnknownMessageException;
@@ -65,10 +66,10 @@ public class ServerThread implements Runnable {
 				if (output.socket != null) {
 					sendMessages(output.messagesToSend, new PrintWriter(
 							output.socket.getOutputStream(), true));
-				}
-				else if (output.user != null) {
+				} else if (output.user != null) {
 					// TODO Push notification
-					System.out.println("push notification to " + output.user.getUser().getUserName());
+					System.out.println("push notification to "
+							+ output.user.getUser().getUserName());
 				}
 			}
 		} catch (IOException e) {
@@ -115,6 +116,10 @@ public class ServerThread implements Runnable {
 								.getUserName();
 						sendMessages(server.login(
 								(LoginReqMsg) messageFromClient, incoming), out);
+					} else if (messageFromClient instanceof CreateUsrReqMsg) {
+						sendMessages(
+								server.createUser((CreateUsrReqMsg) messageFromClient),
+								out);
 					} else if (messageFromClient instanceof LogoutReqMsg) {
 						sendMessages(
 								server.logout((LogoutReqMsg) messageFromClient),
@@ -184,6 +189,10 @@ public class ServerThread implements Runnable {
 										incoming,
 										(RetrivePresentTokenReqMsg) messageFromClient);
 						sendMessageOrNotification(outputs);
+					} else if (messageFromClient instanceof QueryLatestContentReqMsg) {
+						sendMessages(
+								server.queryLatestContent((QueryLatestContentReqMsg) messageFromClient),
+								out);
 					}
 				} catch (final UnknownMessageException e) {
 					System.out.println("Unknown message ");

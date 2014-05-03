@@ -133,4 +133,21 @@ public class ServerDAOImpl implements ServerDAO {
 		execSqlCmd("UPDATE Class SET presenter= '" + presenter + "' where id= "
 				+ classId);
 	}
+
+	@Override
+	public void insertUser(final User user) {
+		String role;
+		if (user instanceof Student){
+			role = "S";
+		}else{
+			role = "I";
+		}
+		execSqlCmd("INSERT INTO user (name, pass, role) VALUES (" 
+				+"'"
+				+ user.getUserName()
+				+ "','"
+				+ user.getPassword()
+				+ "','"
+				+ role + "')");	
+	}
 }

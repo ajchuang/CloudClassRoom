@@ -7,6 +7,8 @@ public interface ServerDAO {
 	List<User> loadUsers();
 
 	Map<Long, Class> loadClasses();
+	
+	void insertUser(final User user);
 
 	void insertNewClass(final Class c);
 

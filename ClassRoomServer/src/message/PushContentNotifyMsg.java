@@ -4,9 +4,9 @@ public class PushContentNotifyMsg extends AbstractMessage {
 
 	private static final String head = "PUSH_CONTENT_NOTIFY";
 	private final long classId;
-	private final long contentId;
+	private final String contentId;
 
-	public PushContentNotifyMsg(final long classId, final long contentId) {
+	public PushContentNotifyMsg(final long classId, final String contentId) {
 		super();
 		this.classId = classId;
 		this.contentId = contentId;
@@ -16,7 +16,7 @@ public class PushContentNotifyMsg extends AbstractMessage {
 		return classId;
 	}
 
-	public long getContentId() {
+	public String getContentId() {
 		return contentId;
 	}
 

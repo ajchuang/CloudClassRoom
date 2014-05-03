@@ -21,6 +21,8 @@ import message.ChangePresentTokenResMsg;
 import message.ClassAdminStatus;
 import message.CreateClassReqMsg;
 import message.CreateClassResultMsg;
+import message.CreateUsrReqMsg;
+import message.CreateUsrResMsg;
 import message.DeleteClassReqMsg;
 import message.DeleteClassResMsg;
 import message.GetPresentTokenReqMsg;
@@ -39,13 +41,13 @@ import message.LoginResultMsg;
 import message.LogoutReqMsg;
 import message.LogoutResultMsg;
 import message.Message;
-import message.PushContentGetReqMsg;
-import message.PushContentGetResMsg;
 import message.PushContentNotifyMsg;
 import message.PushContentReqMsg;
 import message.PushContentResMsg;
 import message.QueryClassInfoReqMsg;
 import message.QueryClassInfoResMsg;
+import message.QueryLatestContentReqMsg;
+import message.QueryLatestContentResMsg;
 import message.QueryResultStatus;
 import message.QuitClassReqMsg;
 import message.QuitClassResMsg;
@@ -94,6 +96,36 @@ class ServerModel {
 	 * @param userName
 	 * @return
 	 */
+
+	synchronized CreateUsrResMsg createUser(final CreateUsrReqMsg request) {
+		final List<User> users = dao.loadUsers();
+		boolean duplicate = false;
+		for (final User user : users) {
+			if (user.getUserName().equals(request.getUserName())) {
+				duplicate = true;
+			}
+		}
+		if (duplicate) {
+			return new CreateUsrResMsg("DUPLICATE");
+		} else if (!request.getRole().equals("Student")
+				&& !request.getRole().equals("Instructor")) {
+			return new CreateUsrResMsg("INVALID_ROLE");
+		} else {
+			User user;
+			if (request.getRole().equals("Student")) {
+				user = new Student(request.getUserName(), request.getPassword());
+			} else {
+				user = new Instructor(request.getUserName(),
+						request.getPassword());
+			}
+			System.out.println(user.getUserName() + '\n' + user.getPassword());
+			dao.insertUser(user);
+			allClients.put(user.getUserName(), new ClientSession(user));
+			System.out.println("User added");
+			return new CreateUsrResMsg("SUCCESS");
+		}
+	}
+
 	synchronized long getCookieId(final ClientSession client,
 			final String userName) {
 		for (final Entry<Long, String> entry : cookieToUser.entrySet()) {
@@ -129,7 +161,7 @@ class ServerModel {
 		String role = "";
 		if (client == null) {
 			result.add(new LoginResultMsg(ClientState.INVALID_USER.toString(),
-					-1,role));
+					-1, role));
 		} else {
 			final ClientState newState = client.login(loginReq, socket);
 			final long cookieId;
@@ -138,9 +170,9 @@ class ServerModel {
 			} else {
 				cookieId = getCookieId(client, loginReq.getUserName());
 			}
-			if (client.getUser() instanceof Student){
+			if (client.getUser() instanceof Student) {
 				role = "Student";
-			}else{
+			} else {
 				role = "Instructor";
 			}
 			result.add(new LoginResultMsg(newState.toString(), cookieId, role));
@@ -697,6 +729,38 @@ class ServerModel {
 			instructorSession.addOfflineMessage(approvalReq);
 			return Collections.<MessageToClient> emptyList();
 		}
+	}
+
+	synchronized QueryLatestContentResMsg queryLatestContent(
+			final QueryLatestContentReqMsg request) {
+		final ClientSession validClient = getLoggedInUser(request.getCookieId());
+		if (validClient == null) {
+			return new QueryLatestContentResMsg(
+					ClassAdminStatus.NOT_LOGIN.toString(),
+					request.getClassId(), "");
+		}
+		final Class classToQuery = classes.get(request.getClassId());
+		if (classToQuery == null) {
+			return new QueryLatestContentResMsg(
+					ClassAdminStatus.INVALID_CLASS_ID.toString(),
+					request.getClassId(), "");
+		}
+		if (!classToQuery.getInstructor().getUserName()
+				.equals(validClient.getUser().getUserName())
+				&& !classToQuery.inClass(validClient.getUser().getUserName())) {
+			return new QueryLatestContentResMsg(
+					ClassAdminStatus.NOT_IN_CLASS.toString(),
+					request.getClassId(), "");
+		}
+		final String contentId = classToQuery.getLatestContent();
+		if (contentId == null) {
+			return new QueryLatestContentResMsg(
+					ClassAdminStatus.NO_CONTENT.toString(),
+					request.getClassId(), "");
+		}
+		return new QueryLatestContentResMsg(
+				ClassAdminStatus.SUCCESS.toString(), request.getClassId(),
+				contentId);
 	}
 
 	public void suspendClientSession(final String user) {

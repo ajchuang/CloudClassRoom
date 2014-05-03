@@ -5,13 +5,13 @@ public class PushContentReqMsg extends AbstractMessage {
 	private static final String head = "PUSH_CONTENT_REQ";
 	private final long cookieId;
 	private final long classId;
-	private final long contentId;
+	private final String contentId;
 	private final String contentType;
 	//private final int nBytes;
 	//private final byte[] bytes;
 
 	public PushContentReqMsg(final long cookieId, final long classId,
-			final long contentId, final String contentType/*, final int nBytes,
+			final String contentId, final String contentType/*, final int nBytes,
 			final byte[] bytes*/) {
 		super();
 		this.cookieId = cookieId;
@@ -30,7 +30,7 @@ public class PushContentReqMsg extends AbstractMessage {
 		return classId;
 	}
 
-	public long getContentId() {
+	public String getContentId() {
 		return contentId;
 	}
 
@@ -67,7 +67,7 @@ public class PushContentReqMsg extends AbstractMessage {
 
 		return new PushContentReqMsg(Long.parseLong(getData(fields[1])),
 				Long.parseLong(getData(fields[2])),
-				Long.parseLong(getData(fields[3])), getData(fields[4])/*, nBytes,
+				getData(fields[3]), getData(fields[4])/*, nBytes,
 				bytes*/);
 	}
 }

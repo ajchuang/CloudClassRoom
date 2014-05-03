@@ -12,6 +12,10 @@ public class MessageFactory {
 			if (msg != null) {
 				return msg;
 			}
+			msg = CreateUsrReqMsg.parse(message);
+			if (msg != null) {
+				return msg;
+			}
 			// msg = LoginResultMsg.parse(message);
 			// if (msg != null) {
 			// return msg;
@@ -69,6 +73,10 @@ public class MessageFactory {
 				return msg;
 			}
 			msg = RetrivePresentTokenReqMsg.parse(message);
+			if (msg != null) {
+				return msg;
+			}
+			msg = QueryLatestContentReqMsg.parse(message);
 			if (msg != null) {
 				return msg;
 			}

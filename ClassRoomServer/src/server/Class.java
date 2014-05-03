@@ -2,30 +2,30 @@ package server;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class Class {
 
-	//public static final class ClassContent {
-	//	private final String contentType;
-	//	private final byte[] contents;
+	// public static final class ClassContent {
+	// private final String contentType;
+	// private final byte[] contents;
 
-	//	public ClassContent(final String contentType, final byte[] contents) {
-	//		super();
-	//		this.contentType = contentType;
-	//		this.contents = contents;
-	//	}
+	// public ClassContent(final String contentType, final byte[] contents) {
+	// super();
+	// this.contentType = contentType;
+	// this.contents = contents;
+	// }
 
-	//	public String getContentType() {
-	//		return contentType;
-	//	}
+	// public String getContentType() {
+	// return contentType;
+	// }
 
-	//	public byte[] getContents() {
-	//		return contents;
-	//	}
-	//}
+	// public byte[] getContents() {
+	// return contents;
+	// }
+	// }
 
 	private final long classId;
 	private final String className;
@@ -33,8 +33,8 @@ public class Class {
 
 	private final Map<String, Student> students;
 	private User presenter;
-	//content ids
-	private final Set<Long> contents;
+	// content ids
+	private final List<String> contents;
 
 	public Class(final long classId, final String className,
 			final Instructor creator) {
@@ -49,7 +49,7 @@ public class Class {
 		this.students = students;
 		// default presenter is the creator
 		presenter = instructor;
-		contents = new HashSet<Long>();
+		contents = new LinkedList<String>();
 	}
 
 	public Instructor getInstructor() {
@@ -103,17 +103,25 @@ public class Class {
 		return false;
 	}
 
-	public boolean hasContent(final long contentId) {
+	public boolean hasContent(final String contentId) {
 		return contents.contains(contentId);
 	}
 
-	public void pushContent(final long contentId) {
+	public void pushContent(final String contentId) {
 		contents.add(contentId);
 	}
 
-	//public ClassContent getContent(final long contentId) {
-	//	return contents.get(contentId);
-	//}
+	/**
+	 * 
+	 * @return null if there is no content
+	 */
+	public String getLatestContent() {
+		return contents.isEmpty() ? null : contents.get(contents.size() - 1);
+	}
+
+	// public ClassContent getContent(final long contentId) {
+	// return contents.get(contentId);
+	// }
 
 	public Collection<Student> getStudents() {
 		return students.values();
