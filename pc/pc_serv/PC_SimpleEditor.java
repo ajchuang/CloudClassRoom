@@ -60,7 +60,7 @@ public class PC_SimpleEditor extends JFrame implements ActionListener, PC_Simple
     
     void setupUiComponent () {
         
-        m_fileChooser = new JFileChooser ();
+        //m_fileChooser = new JFileChooser ();
         m_tabPan = new JTabbedPane (JTabbedPane.TOP);
         
         //... Create scrollable text area.
