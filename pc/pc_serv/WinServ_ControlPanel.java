@@ -781,6 +781,8 @@ public class WinServ_ControlPanel extends JFrame
     }
     
     void processChangePresentReq (WinServ_ReqCommand cmd) {
+        
+        WinServ.logErr ("processChangePresentReq");
         WinServ_DataRepo repo = WinServ_DataRepo.getDataRepo ();
         WinServ_NtfServer ntfServ = WinServ_NtfServer.getNtfServ ();
         
@@ -795,21 +797,22 @@ public class WinServ_ControlPanel extends JFrame
                 "Presentation",
                 JOptionPane.YES_NO_OPTION);
         
-        WinServ_ReqCommand res = new WinServ_ReqCommand ();
-        res.pushStr (CHANGE_PRESENT_TOKEN_RES);
-        res.pushStr (COLON + cookieId);
-        res.pushStr (COLON + classId);
-        res.pushStr (COLON + userName);
+        WinServ_ReqCommand rss = new WinServ_ReqCommand ();
+        
+        rss.pushStr (CHANGE_PRESENT_TOKEN_RES);
+        rss.pushStr (COLON + cookieId);
+        rss.pushStr (COLON + classId);
+        rss.pushStr (COLON + userName);
         
         if (n == JOptionPane.YES_OPTION) {
-            cmd.pushStr (COLON + "true");
+            rss.pushStr (COLON + "true");
         } else {
-            cmd.pushStr (COLON + "false");
+            rss.pushStr (COLON + "false");
         }
         
-        cmd.pushStr (END);
+        rss.pushStr (END);
     
-        ntfServ.sendMsgToServer (cmd);
+        ntfServ.sendMsgToServer (rss);
     }
     
     void processPushContentNtf (WinServ_ReqCommand cmd) {
