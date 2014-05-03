@@ -95,6 +95,7 @@ public class WinServ implements Runnable {
     
     boolean downloadFileFromS3 (String remoteName, String localName) {
         
+        WinServ.logInfo ("downloadFileFromS3: " + remoteName + ":" + localName);
         try {
             WinServ_CloudHelper.downloadFile (
                 WinServ_SysParam.getFsPath (localName), 

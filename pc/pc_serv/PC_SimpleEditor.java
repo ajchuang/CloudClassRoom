@@ -20,7 +20,7 @@ public class PC_SimpleEditor extends JFrame implements ActionListener, PC_Simple
     private JTextArea    m_editArea;
     private JTextArea    m_shareArea;
     
-    private JFileChooser m_fileChooser = new JFileChooser();
+    private JFileChooser m_fileChooser;// = new JFileChooser ();
     
     JButton     m_openBtn;
     JButton     m_saveBtn;
@@ -60,6 +60,7 @@ public class PC_SimpleEditor extends JFrame implements ActionListener, PC_Simple
     
     void setupUiComponent () {
         
+        m_fileChooser = new JFileChooser ();
         m_tabPan = new JTabbedPane (JTabbedPane.TOP);
         
         //... Create scrollable text area.
@@ -229,7 +230,7 @@ public class PC_SimpleEditor extends JFrame implements ActionListener, PC_Simple
                 PrintWriter writer = new PrintWriter (sck.getOutputStream (), true);
                 writer.println ("UPDATE_FILE");
                 writer.println (tempFile.getPath().length() + ":" + tempFile.getPath ());
-                writer.println ("3:TXT");
+                writer.println (":TXT");
                 writer.println ("END");
                 
                 sck.close ();
@@ -259,18 +260,20 @@ public class PC_SimpleEditor extends JFrame implements ActionListener, PC_Simple
         
         // We handle: UPDATE:<path>
         if (msg.startsWith (M_MSG_UPDATE)) {
-            String name = msg.substring (M_MSG_UPDATE.length ());
-            String path = WinServ_SysParam.getFsPath (name);
+            String path = msg.substring (M_MSG_UPDATE.length () + 1);
+            
+            //String path = WinServ_SysParam.getFsPath (name);
             
             WinServ.logInfo ("TXT VIEWER: " + path);
             
             try {
-                FileReader reader = new FileReader (path);
-                setVisible (true);
+                File f = new File (path);
+                FileReader reader = new FileReader (f.getAbsolutePath ());
                 m_shareArea.read (reader, "");
                 m_tabPan.setSelectedIndex (M_SHARE_PANE);
                 
                 // play a small trick
+                setVisible (true);
                 setAlwaysOnTop (true);
                 
                 javax.swing.Timer myTimer = 

@@ -91,6 +91,7 @@ public class WinServ_CloudHelper {
         
         // local var
         boolean ret = true;
+        WinServ.logInfo ("downloadFileFromS3: " + localPath + ":" + bucketName + ":" + keyName);
         
         int rCounr = 0;
         byte[] buf = new byte[sm_downloadPartSize];
@@ -114,8 +115,12 @@ public class WinServ_CloudHelper {
             OutputStream writer = new BufferedOutputStream (new FileOutputStream (outfile));
 
             while ((rCounr = reader.read (buf)) != -1 ) {
-                writer.write (buf);
+                WinServ.logInfo ("counter " + rCounr);
+                writer.write (buf, 0, rCounr);
             }
+            
+            writer.flush ();
+            writer.close ();
             
         } catch (AmazonServiceException ase) {
             WinServ.logErr (

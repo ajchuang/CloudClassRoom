@@ -536,32 +536,43 @@ public class WinServ_ControlPanel extends JFrame
         int cookieId = repo.getCookieId ();
         
         String type = cmd.getStrAt (0);
-        ntfServ.unregisterMsgHandler (type, this);
+        
         
         if (type.equals (LIST_CLASS_RES)) {
+            ntfServ.unregisterMsgHandler (type, this);
             WinServ_WaitDialog.closeDialog ();
             parseListClassRes (cmd);
-        } else if (type.equals (CREATE_CLASS_RES)) {            
+        } else if (type.equals (CREATE_CLASS_RES)) {  
+            ntfServ.unregisterMsgHandler (type, this);          
             parseCreateClassReq (cmd);
         } else if (type.equals (DEL_CLASS_RES)) {
+            ntfServ.unregisterMsgHandler (type, this);
             parseDelClassRes (cmd);
         } else if (type.equals (JOIN_CLASS_RES)) {
+            ntfServ.unregisterMsgHandler (type, this);
             WinServ_WaitDialog.closeDialog ();
             parseJoinClassRes (cmd);
         } else if (type.equals (QUERY_CLASS_INFO_RES)) {
+            ntfServ.unregisterMsgHandler (type, this);
             WinServ_WaitDialog.closeDialog ();
             parseQueryClassInfoRes (cmd);
         } else if (type.equals (JOIN_CLASS_APPROVAL_REQ)) {
+            
             processApprovalReq (cmd);
         } else if (type.equals (KICK_USER_RES)) {
+            ntfServ.unregisterMsgHandler (type, this);
             processKickRsp (cmd);
         } else if (type.equals (RETRIEVE_PRESENT_TOKEN_RES)) {
+            ntfServ.unregisterMsgHandler (type, this);
             processRtrvPresentRsp (cmd); 
         } else if (type.equals (CHANGE_PRESENT_TOKEN_REQ)) {
+            
             processChangePresentReq (cmd);
         } else if (type.equals (GET_PRESENT_TOKEN_RES)) {
+            ntfServ.unregisterMsgHandler (type, this);
             processPresentTokenRes (cmd);
         } else if (type.equals (PUSH_CONTENT_NOTIFY)) {
+            
             processPushContentNtf (cmd);
         } else {
             WinServ.logErr ("Unhandled message: " + type);
@@ -593,13 +604,13 @@ public class WinServ_ControlPanel extends JFrame
         
         String userName     = cmd.getStrAt (1).substring (1);
         String classId      = cmd.getStrAt (2).substring (1);
-        String className    = cmd.getStrAt (2).substring (1);
+        String className    = cmd.getStrAt (3).substring (1);
         
         //default icon, custom title
         int ans = 
             JOptionPane.showConfirmDialog (
                 this,
-                "User " + userName + "would like to join class, " + className + "?",
+                "User, " + userName + ", would like to join class, " + className + " ?",
                 "Approval Request",
                 JOptionPane.YES_NO_OPTION);
         
@@ -839,14 +850,15 @@ public class WinServ_ControlPanel extends JFrame
                 
             } else {
                 // notify the text viewer
-                PC_TinyImageViewer.startImgViewer (true);
+                PC_SimpleEditor.startEditor (true);
  
                 try {
                     // we need to tell the viewr to show
                     WinServ_SysParam.sendMsg (
                         PC_TinyImageViewer.M_MSG_UPDATE, 
                         localName, 
-                        WinServ_SysParam.M_IMG_VIEW_PORT);
+                        WinServ_SysParam.M_TXT_VIEW_PORT);
+                        
                 } catch (Exception e) {
                     WinServ.logExp (e, false);
                 }
