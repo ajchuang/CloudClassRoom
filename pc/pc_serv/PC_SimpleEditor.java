@@ -109,22 +109,22 @@ public class PC_SimpleEditor extends JFrame implements ActionListener, PC_Simple
         toolBar.setFloatable (false);
         add (toolBar, BorderLayout.NORTH);
         
-        m_openBtn = new JButton (new ImageIcon ("res/open.png"));
+        m_openBtn = new JButton (new ImageIcon (WinServ_SysParam.gtResPath ("open.png")));
         m_openBtn.addActionListener (this);
         toolBar.add (m_openBtn);
         
-        m_saveBtn = new JButton (new ImageIcon ("res/save.png"));
+        m_saveBtn = new JButton (new ImageIcon (WinServ_SysParam.gtResPath ("save.png")));
         m_saveBtn.addActionListener (this);
         toolBar.add (m_saveBtn);
         
         toolBar.addSeparator ();
         
-        m_shareBtn = new JButton (new ImageIcon ("res/share.png"));
+        m_shareBtn = new JButton (new ImageIcon (WinServ_SysParam.gtResPath ("share.png")));
         m_shareBtn.addActionListener (this);
         toolBar.add (m_shareBtn);
         toolBar.addSeparator ();
         
-        m_exitBtn = new JButton (new ImageIcon ("res/logout.png"));
+        m_exitBtn = new JButton (new ImageIcon (WinServ_SysParam.gtResPath ("logout.png")));
         m_exitBtn.addActionListener (this);
         toolBar.add (m_exitBtn);
         toolBar.addSeparator ();

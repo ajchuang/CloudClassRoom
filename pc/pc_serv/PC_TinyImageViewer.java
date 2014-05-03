@@ -63,10 +63,10 @@ public class PC_TinyImageViewer extends JFrame implements ActionListener, PC_Sim
         setLayout (new BorderLayout ());
         
         // Create buttons
-        m_openBtn = new JButton (new ImageIcon ("res/open.png"));
-        m_shareBtn = new JButton (new ImageIcon ("res/share.png"));
-        m_saveBtn = new JButton (new ImageIcon ("res/save.png"));
-        m_exitBtn = new JButton (new ImageIcon ("res/logout.png"));
+        m_openBtn = new JButton (new ImageIcon (WinServ_SysParam.gtResPath ("open.png")));
+        m_shareBtn = new JButton (new ImageIcon (WinServ_SysParam.gtResPath ("share.png")));
+        m_saveBtn = new JButton (new ImageIcon (WinServ_SysParam.gtResPath ("save.png")));
+        m_exitBtn = new JButton (new ImageIcon (WinServ_SysParam.gtResPath ("logout.png")));
         
         m_shareBtn.addActionListener (this);
         m_openBtn.addActionListener (this);

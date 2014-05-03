@@ -30,7 +30,7 @@ public class WinServ_WaitDialog extends JFrame {
         // config UI
         setLayout (new BorderLayout ());
         
-        m_label = new JLabel (label, new ImageIcon ("./res/wait.png"), SwingConstants.CENTER);
+        m_label = new JLabel (label, new ImageIcon (WinServ_SysParam.gtResPath ("wait.png")), SwingConstants.CENTER);
     
         add (m_label, BorderLayout.CENTER);
         getContentPane().setSize (200, 150);

@@ -114,16 +114,16 @@ public class WinServ_ControlPanel extends JFrame
         toolBar.setFloatable (false);
         add (toolBar, BorderLayout.NORTH);
         
-        m_logoutBtn = new JButton (new ImageIcon ("res/logout.png"));
+        m_logoutBtn = new JButton (new ImageIcon (WinServ_SysParam.gtResPath ("logout.png")));
         m_logoutBtn.addActionListener (this);
         toolBar.add (m_logoutBtn);
         toolBar.addSeparator ();
         
-        m_codeEditorBtn = new JButton (new ImageIcon ("res/code.png"));
+        m_codeEditorBtn = new JButton (new ImageIcon (WinServ_SysParam.gtResPath ("code.png")));
         m_codeEditorBtn.addActionListener (this);
         toolBar.add (m_codeEditorBtn);
         
-        m_imgViewerBtn = new JButton (new ImageIcon ("res/pic.png"));
+        m_imgViewerBtn = new JButton (new ImageIcon (WinServ_SysParam.gtResPath ("pic.png")));
         m_imgViewerBtn.addActionListener (this);
         toolBar.add (m_imgViewerBtn);
         

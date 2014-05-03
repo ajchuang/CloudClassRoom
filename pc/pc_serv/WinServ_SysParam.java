@@ -1,4 +1,5 @@
 import java.net.*;
+import java.io.File;
 import java.nio.charset.Charset;
 
 public class WinServ_SysParam {
@@ -11,11 +12,37 @@ public class WinServ_SysParam {
     
     public static final String M_LOCALHOST  = "localhost";
     public static final String M_BKT_NAME   = "CloudClassRoom";
-    public static final String M_ROOT_FS    = "./fs/";
+    public static final String M_ROOT_FS    = "fs";
+    public static final String M_SYS_FS     = "sys";
+    public static final String M_RES_FS     = "res";
+    
+    public static final String gtResPath (String res) {
+        String path = 
+            "." + fsSeparator () + M_RES_FS + 
+                  fsSeparator () + res; 
+        WinServ.logInfo ("Res path: " + path);
+        return path;
+    }
     
     public static String getFsPath (String fileName) {
-        return M_ROOT_FS + fileName;
+        String path = 
+            "." + fsSeparator () + M_ROOT_FS + 
+                  fsSeparator () + fileName; 
+        WinServ.logInfo ("File path: " + path);
+        return path;
     }
+    
+    public static String getSecretFileS3 () {
+        String path = 
+            "." + fsSeparator () + M_SYS_FS + 
+                  fsSeparator () + "AwsCredentials.properties";
+        WinServ.logInfo ("S3 secret: " + path);
+        return path;
+    }
+    
+    public static String fsSeparator () {
+        return File.	separator;
+    } 
     
     public static boolean isImageFile (String fname) {
         
