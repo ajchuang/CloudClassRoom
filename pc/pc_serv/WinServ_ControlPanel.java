@@ -48,14 +48,14 @@ public class WinServ_ControlPanel extends JFrame
     final static String PUSH_CONTENT_GET_RES = "PUSH_CONTENT_GET_RES";
     
     // classes control buttons
-    JList<String> m_classList;
+    JList m_classList;
     JButton m_listClassBtn;
     JButton m_createClassBtn;
     JButton m_deleteClassBtn;
     JButton m_joinClassBtn;
     
     // in-class control button
-    JList<String> m_studentList;
+    JList m_studentList;
     JButton m_kickStudentBtn;
     JButton m_queryClassBtn;
     JButton m_leaveClassBtn;
@@ -140,7 +140,7 @@ public class WinServ_ControlPanel extends JFrame
         panel_allClasses.setLayout (classes_gridbag);
         
         // process all class panels
-        m_classList = new JList<String> ();
+        m_classList = new JList ();
         m_classList.setSelectionMode (ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         m_classList.setLayoutOrientation (JList.VERTICAL_WRAP);
         m_classList.setVisibleRowCount (-1);
@@ -212,7 +212,7 @@ public class WinServ_ControlPanel extends JFrame
         panel_inClass.setLayout (inClasses_gridbag);
         
         // process all class panels
-        m_studentList = new JList<String> ();
+        m_studentList = new JList ();
         m_studentList.setSelectionMode (ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         m_studentList.setLayoutOrientation (JList.VERTICAL_WRAP);
         m_studentList.setVisibleRowCount (-1);

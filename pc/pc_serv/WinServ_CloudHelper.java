@@ -23,10 +23,9 @@ public class WinServ_CloudHelper {
         boolean retVal = true;
         int uploadPartSize = sm_uploadPartSize;
         
-        AmazonS3 s3Client = 
-            new AmazonS3Client (new PropertiesCredentials (
-                WinServ_CloudHelper.class.getResourceAsStream (
-                WinServ_SysParam.getSecretFileS3 ())));        
+        File sf = new File (WinServ_SysParam.getSecretFileS3 ());
+        PropertiesCredentials pc = new PropertiesCredentials (sf);
+        AmazonS3 s3Client = new AmazonS3Client (pc);        
 
         // Create a list of UploadPartResponse objects. You get one of these
         // for each part upload.

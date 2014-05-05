@@ -89,7 +89,7 @@ public class WinServ_NtfServer implements Runnable {
     }
     
     synchronized public void unregisterMsgHandler (String msg, WinServ_MsgHandler handler) {
-        
+        /*
         synchronized (m_lock) {
             WinServ.logInfo ("unregisterMsgHandler - Begin");
             
@@ -109,6 +109,7 @@ public class WinServ_NtfServer implements Runnable {
             
             WinServ.logInfo ("unregisterMsgHandler - End");
         } 
+        */
     }
     
     synchronized public void sendMsgToServer (WinServ_ReqCommand cmd) {
@@ -136,6 +137,7 @@ public class WinServ_NtfServer implements Runnable {
             hdlrs = m_msgMap.get (cmdType);
             
             if (hdlrs != null) {
+                
                 for (WinServ_MsgHandler hdl : hdlrs) {
                     hdl.handleServerMsg (cmd);
                 }
