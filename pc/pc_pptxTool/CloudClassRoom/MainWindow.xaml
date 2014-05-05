@@ -4,7 +4,7 @@
         Title="Cloud Class Room" Topmost="True" mc:Ignorable="d" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" Height="147" Width="209" ResizeMode="NoResize">
     <Grid Height="112" Width="183">
         <Button Height="38" HorizontalAlignment="Left" Margin="12,66,0,0" Name="button1" VerticalAlignment="Top" Width="70" Click="prevBtn_Click">
-            <Image Source="Images\next.png"></Image>
+            <Image Source="Images\previous.png"></Image>
         </Button>
         <Button Height="37" HorizontalAlignment="Left" Margin="102,66,0,0" Name="button2" VerticalAlignment="Top" Width="70" Click="nextBtn_Click">
             <Image Source="Images\next.png"></Image>

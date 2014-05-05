@@ -57,16 +57,27 @@ namespace WpfApplication1
                 int idx = m_objPres.SlideShowWindow.View.Slide.SlideIndex;
                 m_objPres.SlideShowWindow.View.Slide.Export (fName, "png", 1024, 768);
 
-                string toSend = "UPDATE:" + fName;
-
-                // notify the server
-                Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-                IPAddress serverAddr = IPAddress.Parse ("127.0.0.1");
-                IPEndPoint endPoint = new IPEndPoint (serverAddr, 7788);
-                byte[] send_buffer = Encoding.ASCII.GetBytes (toSend);
-                sock.SendTo (send_buffer, endPoint);
+                string toSend = "UPDATE_FILE\n" + fName.Length.ToString () + ":" + fName + "\nEND";
+                Console.WriteLine (toSend);
+                sendUpdate(toSend);
             } catch (Exception e) {
                 Console.WriteLine ("Exception happens");
+            }
+        }
+
+        private void sendUpdate(string data) {
+
+            try {
+                Int32 port = 5566;
+                TcpClient client = new TcpClient("localhost", port);
+
+                Byte[] raw = Encoding.ASCII.GetBytes (data);
+                NetworkStream stream = client.GetStream();
+                stream.Write(raw, 0, raw.Length);
+                stream.Close();
+                client.Close();
+            } catch (Exception e){
+                Console.WriteLine("Exception happens");
             }
         }
         

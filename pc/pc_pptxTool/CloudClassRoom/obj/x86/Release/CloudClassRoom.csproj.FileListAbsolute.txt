@@ -10,3 +10,15 @@ D:\00.Home.Alfred\__Projects__\CloudClassRoom\pc\pc_pptxTool\CloudClassRoom\obj\
 D:\00.Home.Alfred\__Projects__\CloudClassRoom\pc\pc_pptxTool\CloudClassRoom\obj\x86\Release\CloudClassRoom.csproj.GenerateResource.Cache
 D:\00.Home.Alfred\__Projects__\CloudClassRoom\pc\pc_pptxTool\CloudClassRoom\obj\x86\Release\CloudClassRoom.exe
 D:\00.Home.Alfred\__Projects__\CloudClassRoom\pc\pc_pptxTool\CloudClassRoom\obj\x86\Release\CloudClassRoom.pdb
+C:\Users\BY\CloudClassRoom\pc\pc_pptxTool\CloudClassRoom\bin\Release\CloudClassRoom.exe
+C:\Users\BY\CloudClassRoom\pc\pc_pptxTool\CloudClassRoom\bin\Release\CloudClassRoom.pdb
+C:\Users\BY\CloudClassRoom\pc\pc_pptxTool\CloudClassRoom\obj\x86\Release\CloudClassRoom.csproj.ResolveComReference.cache
+C:\Users\BY\CloudClassRoom\pc\pc_pptxTool\CloudClassRoom\obj\x86\Release\MainWindow.baml
+C:\Users\BY\CloudClassRoom\pc\pc_pptxTool\CloudClassRoom\obj\x86\Release\MainWindow.g.cs
+C:\Users\BY\CloudClassRoom\pc\pc_pptxTool\CloudClassRoom\obj\x86\Release\App.g.cs
+C:\Users\BY\CloudClassRoom\pc\pc_pptxTool\CloudClassRoom\obj\x86\Release\CloudClassRoom_MarkupCompile.cache
+C:\Users\BY\CloudClassRoom\pc\pc_pptxTool\CloudClassRoom\obj\x86\Release\CloudClassRoom.g.resources
+C:\Users\BY\CloudClassRoom\pc\pc_pptxTool\CloudClassRoom\obj\x86\Release\CloudClassRoom.Properties.Resources.resources
+C:\Users\BY\CloudClassRoom\pc\pc_pptxTool\CloudClassRoom\obj\x86\Release\CloudClassRoom.csproj.GenerateResource.Cache
+C:\Users\BY\CloudClassRoom\pc\pc_pptxTool\CloudClassRoom\obj\x86\Release\CloudClassRoom.exe
+C:\Users\BY\CloudClassRoom\pc\pc_pptxTool\CloudClassRoom\obj\x86\Release\CloudClassRoom.pdb

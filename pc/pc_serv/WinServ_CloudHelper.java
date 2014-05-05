@@ -7,7 +7,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
-import com.amazonaws.auth.PropertiesCredentials;
+import com.amazonaws.auth.*;
 
 public class WinServ_CloudHelper {
     
@@ -22,11 +22,12 @@ public class WinServ_CloudHelper {
         
         boolean retVal = true;
         int uploadPartSize = sm_uploadPartSize;
+        BasicAWSCredentials bac = 
+            new BasicAWSCredentials (
+                "AKIAJQAGTZZGZ6WIE3AQ", 
+                "0nUsEI0htm+ToC5DOIgeOgrO3zJQgWUfS9zngwDV");
         
-        AmazonS3 s3Client = 
-            new AmazonS3Client (new PropertiesCredentials (
-        		WinServ_CloudHelper.class.getResourceAsStream (
-                    WinServ_SysParam.getSecretFileS3 ())));        
+        AmazonS3 s3Client = new AmazonS3Client (bac);        
 
         // Create a list of UploadPartResponse objects. You get one of these
         // for each part upload.

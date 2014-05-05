@@ -22,3 +22,15 @@ D:\00.Home.Alfred\__Projects__\CloudClassRoom\pc\pc_pptxTool\CloudClassRoom\obj\
 D:\00.Home.Alfred\__Projects__\CloudClassRoom\pc\pc_pptxTool\CloudClassRoom\obj\x86\Debug\CloudClassRoom.g.resources
 D:\00.Home.Alfred\__Projects__\CloudClassRoom\pc\pc_pptxTool\CloudClassRoom\obj\x86\Debug\CloudClassRoom.Properties.Resources.resources
 D:\00.Home.Alfred\__Projects__\CloudClassRoom\pc\pc_pptxTool\CloudClassRoom\obj\x86\Debug\CloudClassRoom.csproj.GenerateResource.Cache
+C:\Users\BY\CloudClassRoom\pc\pc_pptxTool\CloudClassRoom\obj\x86\Debug\CloudClassRoom.csproj.ResolveComReference.cache
+C:\Users\BY\CloudClassRoom\pc\pc_pptxTool\CloudClassRoom\obj\x86\Debug\CloudClassRoom.exe
+C:\Users\BY\CloudClassRoom\pc\pc_pptxTool\CloudClassRoom\obj\x86\Debug\CloudClassRoom.pdb
+C:\Users\BY\CloudClassRoom\pc\pc_pptxTool\CloudClassRoom\bin\Debug\CloudClassRoom.exe
+C:\Users\BY\CloudClassRoom\pc\pc_pptxTool\CloudClassRoom\bin\Debug\CloudClassRoom.pdb
+C:\Users\BY\CloudClassRoom\pc\pc_pptxTool\CloudClassRoom\obj\x86\Debug\MainWindow.baml
+C:\Users\BY\CloudClassRoom\pc\pc_pptxTool\CloudClassRoom\obj\x86\Debug\MainWindow.g.cs
+C:\Users\BY\CloudClassRoom\pc\pc_pptxTool\CloudClassRoom\obj\x86\Debug\App.g.cs
+C:\Users\BY\CloudClassRoom\pc\pc_pptxTool\CloudClassRoom\obj\x86\Debug\CloudClassRoom_MarkupCompile.cache
+C:\Users\BY\CloudClassRoom\pc\pc_pptxTool\CloudClassRoom\obj\x86\Debug\CloudClassRoom.g.resources
+C:\Users\BY\CloudClassRoom\pc\pc_pptxTool\CloudClassRoom\obj\x86\Debug\CloudClassRoom.Properties.Resources.resources
+C:\Users\BY\CloudClassRoom\pc\pc_pptxTool\CloudClassRoom\obj\x86\Debug\CloudClassRoom.csproj.GenerateResource.Cache
