@@ -34,8 +34,7 @@ public class WinServ_SysParam {
     
     public static String getSecretFileS3 () {
         String path = 
-            "." + fsSeparator () + 
-                  M_SYS_FS + 
+            "." + fsSeparator () + M_SYS_FS + 
                   fsSeparator () + "AwsCredentials.properties";
         WinServ.logInfo ("S3 secret: " + path);
         return path;
