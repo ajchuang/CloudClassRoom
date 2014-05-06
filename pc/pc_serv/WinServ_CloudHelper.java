@@ -23,6 +23,8 @@ public class WinServ_CloudHelper {
         boolean retVal = true;
         int uploadPartSize = sm_uploadPartSize;
         
+        WinServ.logInfo ("uploadFile: " + filePath + ":" + keyName);
+        
         File sf = new File (WinServ_SysParam.getSecretFileS3 ());
         PropertiesCredentials pc = new PropertiesCredentials (sf);
         AmazonS3 s3Client = new AmazonS3Client (pc);        
@@ -83,6 +85,7 @@ public class WinServ_CloudHelper {
             retVal = false;
         }
         
+        WinServ.logInfo ("uploadFile return: " + retVal);
         return retVal;
     }
     
