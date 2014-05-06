@@ -17,6 +17,7 @@ public class WinServ_LoginWindow extends JFrame implements ActionListener, WinSe
     JPasswordField m_pwdText;
     JButton m_loginBtn;
     JButton m_cancelBtn;
+    JCheckBox m_signUp;
 
     public WinServ_LoginWindow () {
         
@@ -84,10 +85,23 @@ public class WinServ_LoginWindow extends JFrame implements ActionListener, WinSe
         c5.fill = GridBagConstraints.NONE;
         c5.anchor = GridBagConstraints.CENTER;
         add (m_loginBtn, c5);
+        
+        m_signUp = new JCheckBox ("Sing Up");
+        GridBagConstraints c7 = new GridBagConstraints ();
+        c7.gridx = 4;
+        c7.gridy = 3;
+        c7.gridwidth = 1;
+        c7.gridheight = 1;
+        c7.fill = GridBagConstraints.NONE;
+        c7.anchor = GridBagConstraints.CENTER;
+        //add (m_signUp, c7);
 
         pack ();
         setDefaultCloseOperation (JFrame.DO_NOTHING_ON_CLOSE);
-        setBounds (300, 200, 250, 120);
+        setBounds (
+            300, 200, 
+            (int)getSize().getWidth() + 10, 
+            (int)getSize().getHeight() + 10);
         setVisible (true);
     }
     
@@ -114,8 +128,12 @@ public class WinServ_LoginWindow extends JFrame implements ActionListener, WinSe
                 m_nameText.setEditable (false);
                 m_pwdText.setEditable (false);
                 
-                // send msg to server
-                sendLoginMsg (name, pwd);
+                if (m_signUp.isSelected ()) {
+                    sendSignUpMsg (name, pwd);
+                } else {
+                    // send msg to server
+                    sendLoginMsg (name, pwd);
+                }
                 
             } else {
             
@@ -129,6 +147,26 @@ public class WinServ_LoginWindow extends JFrame implements ActionListener, WinSe
             System.out.println ("Cancel Button is performed.");
             System.exit (0);
         }
+    }
+    
+    void sendSignUpMsg (String name, String pwd) {
+        /*
+            WinServ_ReqCommand loginCmd = new WinServ_ReqCommand ();
+            
+            loginCmd.pushStr ("LOGIN_REQ");
+            loginCmd.pushStr (":" + name);
+            loginCmd.pushStr (":" + pass);
+            loginCmd.pushStr (":PC");
+            loginCmd.pushStr (":0");
+            loginCmd.pushStr ("END");
+            
+            // REGISTER NW receiver
+            WinServ_NtfServer ntfServ = WinServ_NtfServer.getNtfServ ();
+            ntfServ.registerMsgHandler ("LOGIN_RES", this);
+            
+            // send event
+            ntfServ.sendMsgToServer (loginCmd);
+        */
     }
     
     void sendLoginMsg (String name, String pass) {
@@ -203,7 +241,13 @@ public class WinServ_LoginWindow extends JFrame implements ActionListener, WinSe
         } else {
             // error information
             WinServ.logInfo ("Login failed: " + ln2);
-            JOptionPane.showMessageDialog (this, "Login failed. Try again.");
+            
+            JOptionPane.showMessageDialog (
+                this,
+                "Login failed. Try again.",
+                "Error",
+                JOptionPane.ERROR_MESSAGE,
+                new ImageIcon (WinServ_SysParam.gtResPath ("error.png")));
             
             // re-enable the login box
             m_loginBtn.setEnabled   (true);

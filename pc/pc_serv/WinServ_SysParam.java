@@ -65,6 +65,16 @@ public class WinServ_SysParam {
         }
     }
     
+    public static boolean isWindows () {
+        
+        String OS = System.getProperty("os.name").toLowerCase();
+        
+        if (OS.indexOf ("win") >= 0)
+            return true;
+        else
+            return false;
+    }
+    
     public static void sendMsg (String msgType, String msg, int port) throws Exception {
         
         String finalMsg = msgType + ":" + msg;

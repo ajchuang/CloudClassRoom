@@ -210,7 +210,8 @@ public class PC_SimpleEditor extends JFrame implements ActionListener, PC_Simple
                     null,
                     "Sorry, you are not the presenter",
                     "Status",
-                    JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.ERROR_MESSAGE,
+                    new ImageIcon (WinServ_SysParam.gtResPath ("error.png")));
                 return;
             }
             

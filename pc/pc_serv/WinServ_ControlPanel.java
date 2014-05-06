@@ -308,6 +308,18 @@ public class WinServ_ControlPanel extends JFrame
             PC_TinyImageViewer.startImgViewer (true);
         } else if (src == m_logoutBtn) {
             
+            int ans = 
+                JOptionPane.showConfirmDialog (
+                    this,
+                    "Do you really want to leave ?",
+                    "Confirm",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    new ImageIcon (WinServ_SysParam.gtResPath ("question.png")));
+                    
+            if (ans != JOptionPane.YES_OPTION)
+                return;
+            
             WinServ_ReqCommand cmd = new WinServ_ReqCommand ();
             cmd.pushStr (LOGOUT_REQ);
             cmd.pushStr (COLON + cookieId);
@@ -354,7 +366,8 @@ public class WinServ_ControlPanel extends JFrame
                     this,
                     "Input error. Please check again.",
                     "Input Error",
-                    JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.ERROR_MESSAGE,
+                    new ImageIcon (WinServ_SysParam.gtResPath ("error.png")));
             }
         } else if (src == m_deleteClassBtn) {
             
@@ -365,9 +378,22 @@ public class WinServ_ControlPanel extends JFrame
                     this,
                     "Input error, select a class first.",
                     "Error",
-                    JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.ERROR_MESSAGE,
+                    new ImageIcon (WinServ_SysParam.gtResPath ("error.png")));
                 return;
             }
+            
+            int ans = 
+                JOptionPane.showConfirmDialog (
+                    this,
+                    "Do you really want to delete the class ?",
+                    "Approval Request",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    new ImageIcon (WinServ_SysParam.gtResPath ("question.png")));
+                    
+            if (ans != JOptionPane.YES_OPTION)
+                return;
             
             int ids = repo.searchClassByInx (selectIdx).getId ();
             
@@ -394,7 +420,8 @@ public class WinServ_ControlPanel extends JFrame
                     this,
                     "Input error, select a class first.",
                     "Error",
-                    JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.ERROR_MESSAGE,
+                    new ImageIcon (WinServ_SysParam.gtResPath ("error.png")));
                 return;
             }
             
@@ -424,9 +451,22 @@ public class WinServ_ControlPanel extends JFrame
                     this,
                     "Input error, please select a student and a class first.",
                     "Error",
-                    JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.ERROR_MESSAGE,
+                    new ImageIcon (WinServ_SysParam.gtResPath ("error.png")));
                 return;
             }
+            
+            int ans = 
+                JOptionPane.showConfirmDialog (
+                    this,
+                    "Do you really want to kick the student ?",
+                    "Approval Request",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    new ImageIcon (WinServ_SysParam.gtResPath ("question.png")));
+                    
+            if (ans != JOptionPane.YES_OPTION)
+                return;
             
             String stdnt = repo.searchStdntByInx (stdntIdx).getName ();
             int classId = repo.searchClassByInx (classIdx).getId ();
@@ -454,7 +494,8 @@ public class WinServ_ControlPanel extends JFrame
                     this,
                     "Input error, select a class first.",
                     "Error",
-                    JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.ERROR_MESSAGE,
+                    new ImageIcon (WinServ_SysParam.gtResPath ("error.png")));
                 return;
             }
             
@@ -482,7 +523,8 @@ public class WinServ_ControlPanel extends JFrame
                     this,
                     "Please select a class first",
                     "Error",
-                    JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.ERROR_MESSAGE,
+                    new ImageIcon (WinServ_SysParam.gtResPath ("error.png")));
                 return;
             }
             
@@ -504,7 +546,8 @@ public class WinServ_ControlPanel extends JFrame
                     this,
                     "Please select a class first",
                     "Error",
-                    JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.ERROR_MESSAGE,
+                    new ImageIcon (WinServ_SysParam.gtResPath ("error.png")));
                 return;
             }
             int classId = repo.searchClassByInx (selectIdx).getId ();
@@ -531,12 +574,23 @@ public class WinServ_ControlPanel extends JFrame
                 ntfServ.sendMsgToServer (cmd);
             }
         } else if (src == m_pptxBtn) {
-            try {
-                Process process = 
-                    new ProcessBuilder (
-                        WinServ_SysParam.getPptxToolPath ()).start();
-            } catch (Exception exp) {
-                WinServ.logExp (exp, false);
+            
+            if (WinServ_SysParam.isWindows ()) {             
+                try {
+                    Process process = 
+                        new ProcessBuilder (
+                            WinServ_SysParam.getPptxToolPath ()).start();
+                } catch (Exception exp) {
+                    WinServ.logExp (exp, false);
+                }
+            } else {
+                JOptionPane.showMessageDialog (
+                    this,
+                    "Sorry! This feature is only supported in Windows.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE,
+                    new ImageIcon (WinServ_SysParam.gtResPath ("error.png")));
+                return;
             }
         }
     }
@@ -615,7 +669,8 @@ public class WinServ_ControlPanel extends JFrame
                 this,
                 "Kick operation is completed.",
                 "Information",
-                JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.INFORMATION_MESSAGE,
+                new ImageIcon (WinServ_SysParam.gtResPath ("info.png")));
         }
         
         return;
@@ -631,12 +686,17 @@ public class WinServ_ControlPanel extends JFrame
         String className    = cmd.getStrAt (3).substring (1);
         
         //default icon, custom title
+        Object[] options = {"Yes", "No"};
         int ans = 
             JOptionPane.showConfirmDialog (
                 this,
                 "User, " + userName + ", would like to join class, " + className + " ?",
                 "Approval Request",
-                JOptionPane.YES_NO_OPTION);
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                new ImageIcon (WinServ_SysParam.gtResPath ("question.png")));
+                //options,
+                //options[0]);
         
         WinServ_ReqCommand rsp = new WinServ_ReqCommand ();
         rsp.pushStr (JOIN_CLASS_APPROVAL_RES);
@@ -663,7 +723,8 @@ public class WinServ_ControlPanel extends JFrame
                 this,
                 "List classes failed: " + status,
                 "Error",
-                JOptionPane.ERROR_MESSAGE);
+                JOptionPane.ERROR_MESSAGE,
+                new ImageIcon (WinServ_SysParam.gtResPath ("error.png")));
             return false;
         }
         
@@ -701,7 +762,8 @@ public class WinServ_ControlPanel extends JFrame
                 this,
                 "Delete class failed: " + status,
                 "Error",
-                JOptionPane.ERROR_MESSAGE);
+                JOptionPane.ERROR_MESSAGE,
+                new ImageIcon (WinServ_SysParam.gtResPath ("error.png")));
             return false;
         }
         
@@ -719,7 +781,8 @@ public class WinServ_ControlPanel extends JFrame
                 this,
                 "Join class failed: " + status,
                 "Error",
-                JOptionPane.ERROR_MESSAGE);
+                JOptionPane.ERROR_MESSAGE,
+                new ImageIcon (WinServ_SysParam.gtResPath ("error.png")));
             return false;
         }
         
@@ -743,7 +806,8 @@ public class WinServ_ControlPanel extends JFrame
                 this,
                 "Query class failed: " + status,
                 "Error",
-                JOptionPane.ERROR_MESSAGE);
+                JOptionPane.ERROR_MESSAGE,
+                new ImageIcon (WinServ_SysParam.gtResPath ("error.png")));
             return false;
         }
         
@@ -780,13 +844,15 @@ public class WinServ_ControlPanel extends JFrame
                 this,
                 "Presentation token retrieval failed: " + status,
                 "Status",
-                JOptionPane.ERROR_MESSAGE);
+                JOptionPane.ERROR_MESSAGE,
+                new ImageIcon (WinServ_SysParam.gtResPath ("error.png")));
         } else {
             JOptionPane.showMessageDialog (
                 this,
                 "Presentation token retrieval done",
                 "Status",
-                JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.INFORMATION_MESSAGE,
+                new ImageIcon (WinServ_SysParam.gtResPath ("info.png")));
         }
         
         return;
@@ -803,13 +869,15 @@ public class WinServ_ControlPanel extends JFrame
                 this,
                 "You have the presentation right now.",
                 "Status",
-                JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.INFORMATION_MESSAGE,
+                new ImageIcon (WinServ_SysParam.gtResPath ("info.png")));
         } else {
             JOptionPane.showMessageDialog (
                 this,
                 "Sorry, the presentation right is not given.",
                 "Status",
-                JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.INFORMATION_MESSAGE,
+                new ImageIcon (WinServ_SysParam.gtResPath ("info.png")));
         }
         
         return;
@@ -825,12 +893,17 @@ public class WinServ_ControlPanel extends JFrame
         String classId  = cmd.getStrAt (2).substring (1);
         int cookieId = repo.getCookieId ();
         
+        Object[] options = {"Yes", "No"};
         int n = 
             JOptionPane.showConfirmDialog (
                 this,
                 "The user," + userName + " , is requesting presentation right. Okay?",
                 "Presentation",
-                JOptionPane.YES_NO_OPTION);
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                new ImageIcon (WinServ_SysParam.gtResPath ("question.png")));
+                //options,
+                //options[0]);
         
         WinServ_ReqCommand rss = new WinServ_ReqCommand ();
         
@@ -925,7 +998,8 @@ public class WinServ_ControlPanel extends JFrame
                     this,
                     "Input error, select a class first.",
                     "Error",
-                    JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.ERROR_MESSAGE,
+                    new ImageIcon (WinServ_SysParam.gtResPath ("error.png")));
                 return;
             }
             

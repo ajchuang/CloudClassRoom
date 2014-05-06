@@ -116,7 +116,11 @@ public class PC_TinyImageViewer extends JFrame implements ActionListener, PC_Sim
             
             if (m_currentLocalFile == null) {
                 JOptionPane.showMessageDialog (
-                    null, "Not file selected", "Error", JOptionPane.ERROR_MESSAGE);
+                    null, 
+                    "Not file selected", 
+                    "Error", 
+                    JOptionPane.ERROR_MESSAGE,
+                    new ImageIcon (WinServ_SysParam.gtResPath ("error.png")));
             } else {
                 sharingImageFile ();
             }
@@ -135,7 +139,8 @@ public class PC_TinyImageViewer extends JFrame implements ActionListener, PC_Sim
                 this,
                 "Sorry, you are not the presenter",
                 "Status",
-                JOptionPane.ERROR_MESSAGE);
+                JOptionPane.ERROR_MESSAGE,
+                new ImageIcon (WinServ_SysParam.gtResPath ("error.png")));
             return;
         }
         
