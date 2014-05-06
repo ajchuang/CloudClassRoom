@@ -31,13 +31,23 @@ public class WinServ_WaitDialog extends JFrame {
         // config UI
         setLayout (new BorderLayout ());
         
-        m_label = new JLabel (label, new ImageIcon (WinServ_SysParam.gtResPath ("wait.png")), SwingConstants.CENTER);
+        m_label = 
+            new JLabel (
+                null, 
+                new ImageIcon (
+                    WinServ_SysParam.gtResPath ("loading.gif")), 
+                    SwingConstants.CENTER);
     
         add (m_label, BorderLayout.CENTER);
         getContentPane().setSize (220, 180);
+        setUndecorated (true);
+        setOpacity (0.75f);
+        
         pack ();
         setDefaultCloseOperation (JFrame.DO_NOTHING_ON_CLOSE);
         setVisible (true);
+        
+        
     }
 
 } 

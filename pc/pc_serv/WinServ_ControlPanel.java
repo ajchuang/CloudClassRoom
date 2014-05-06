@@ -366,6 +366,9 @@ public class WinServ_ControlPanel extends JFrame
             
             int ids = repo.searchClassByInx (selectIdx).getId ();
             
+            // show dialog
+            WinServ_WaitDialog.dialogFactory (this, "Please wait");
+            
             // create message
             WinServ_ReqCommand cmd = new WinServ_ReqCommand ();
             cmd.pushStr (DEL_CLASS_REQ);
@@ -388,7 +391,10 @@ public class WinServ_ControlPanel extends JFrame
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
                 return;
-            } 
+            }
+            
+            // show dialog
+            WinServ_WaitDialog.dialogFactory (this, "Please wait"); 
             
             int ids = repo.searchClassByInx (selectIdx).getId ();
             
@@ -447,6 +453,9 @@ public class WinServ_ControlPanel extends JFrame
                 return;
             }
             
+            // show wait dialog
+            WinServ_WaitDialog.dialogFactory (this, "Please wait");
+            
             int ids = repo.searchClassByInx (selectIdx).getId ();
             
             WinServ_ReqCommand cmd = new WinServ_ReqCommand ();
@@ -479,7 +488,7 @@ public class WinServ_ControlPanel extends JFrame
             cmd.pushStr (END);
             
             // NW things
-            ntfServ.registerMsgHandler (QUERY_CLASS_INFO_RES, this);
+            ntfServ.registerMsgHandler (QUIT_CLASS_RES, this);
             ntfServ.sendMsgToServer (cmd);
             
         } else if (src == m_reqPresenterBtn) {
@@ -513,7 +522,7 @@ public class WinServ_ControlPanel extends JFrame
                 cmd.pushStr (END);
             
                 // NW things
-                ntfServ.registerMsgHandler (QUERY_CLASS_INFO_RES, this);
+                ntfServ.registerMsgHandler (RETRIEVE_PRESENT_TOKEN_RES, this);
                 ntfServ.sendMsgToServer (cmd);
             }
         }
@@ -548,18 +557,18 @@ public class WinServ_ControlPanel extends JFrame
             ntfServ.unregisterMsgHandler (type, this);          
             parseCreateClassReq (cmd);
         } else if (type.equals (DEL_CLASS_RES)) {
+            WinServ_WaitDialog.closeDialog ();
             ntfServ.unregisterMsgHandler (type, this);
             parseDelClassRes (cmd);
         } else if (type.equals (JOIN_CLASS_RES)) {
-            ntfServ.unregisterMsgHandler (type, this);
             WinServ_WaitDialog.closeDialog ();
+            ntfServ.unregisterMsgHandler (type, this);
             parseJoinClassRes (cmd);
         } else if (type.equals (QUERY_CLASS_INFO_RES)) {
-            ntfServ.unregisterMsgHandler (type, this);
             WinServ_WaitDialog.closeDialog ();
+            ntfServ.unregisterMsgHandler (type, this);
             parseQueryClassInfoRes (cmd);
         } else if (type.equals (JOIN_CLASS_APPROVAL_REQ)) {
-            
             processApprovalReq (cmd);
         } else if (type.equals (KICK_USER_RES)) {
             ntfServ.unregisterMsgHandler (type, this);
