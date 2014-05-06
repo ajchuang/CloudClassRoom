@@ -143,25 +143,27 @@ public class WinServ_ControlPanel extends JFrame
         m_classList = new JList ();
         m_classList.setSelectionMode (ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         m_classList.setLayoutOrientation (JList.VERTICAL_WRAP);
-        m_classList.setVisibleRowCount (-1);
-        m_classList.setPrototypeCellValue ("This is a ver long long long long long string");
+        m_classList.setVisibleRowCount (5);
+        m_classList.setPrototypeCellValue ("This is a ver long long long long long string");        
+        JScrollPane listScroller = new JScrollPane (m_classList);
+        listScroller.setPreferredSize (new Dimension (250, 130));
+
         classes_c.gridwidth = 4;                //reset to the default
         classes_c.gridheight = 9;
-        classes_c.weighty = 1.0;
+        classes_c.weighty = 0.9;
         classes_c.weightx = 1.0;
         classes_c.gridx = 0;
-        classes_c.gridy = 0;
+        classes_c.gridy = 1;
         classes_c.fill = GridBagConstraints.BOTH;
-        classes_gridbag.setConstraints (m_classList, classes_c);
-        panel_allClasses.add (m_classList);
+        classes_gridbag.setConstraints (listScroller, classes_c);
+        panel_allClasses.add (listScroller);
         
         m_listClassBtn = new JButton ("List Class");
         m_listClassBtn.addActionListener (this);
         classes_c.gridwidth = 1;                //reset to the default
         classes_c.gridheight = 1;
-        classes_c.weighty = 1.0;
-        classes_c.weightx = 1.0;
-        classes_c.gridx = 5;
+        classes_c.weighty = 0.1;
+        classes_c.gridx = 0;
         classes_c.gridy = 0;
         classes_c.fill = GridBagConstraints.BOTH;
         classes_gridbag.setConstraints (m_listClassBtn, classes_c);
@@ -171,10 +173,9 @@ public class WinServ_ControlPanel extends JFrame
         m_createClassBtn.addActionListener (this);
         classes_c.gridwidth = 1;                //reset to the default
         classes_c.gridheight = 1;
-        classes_c.weighty = 1.0;
-        classes_c.weightx = 1.0;
-        classes_c.gridx = 5;
-        classes_c.gridy = 1;
+        classes_c.weighty = 0.1;
+        classes_c.gridx = 1;
+        classes_c.gridy = 0;
         classes_c.fill = GridBagConstraints.BOTH;
         classes_gridbag.setConstraints (m_createClassBtn, classes_c);
         panel_allClasses.add (m_createClassBtn);
@@ -183,10 +184,9 @@ public class WinServ_ControlPanel extends JFrame
         m_deleteClassBtn.addActionListener (this);
         classes_c.gridwidth = 1;                //reset to the default
         classes_c.gridheight = 1;
-        classes_c.weighty = 1.0;
-        classes_c.weightx = 1.0;
-        classes_c.gridx = 5;
-        classes_c.gridy = 2;
+        classes_c.weighty = 0.1;
+        classes_c.gridx = 2;
+        classes_c.gridy = 0;
         classes_c.fill = GridBagConstraints.BOTH;
         classes_gridbag.setConstraints (m_deleteClassBtn, classes_c);
         panel_allClasses.add (m_deleteClassBtn);
@@ -195,10 +195,9 @@ public class WinServ_ControlPanel extends JFrame
         m_joinClassBtn.addActionListener (this);
         classes_c.gridwidth = 1;                //reset to the default
         classes_c.gridheight = 1;
-        classes_c.weighty = 1.0;
-        classes_c.weightx = 1.0;
-        classes_c.gridx = 5;
-        classes_c.gridy = 3;
+        classes_c.weighty = 0.1;
+        classes_c.gridx = 3;
+        classes_c.gridy = 0;
         classes_c.fill = GridBagConstraints.BOTH;
         classes_gridbag.setConstraints (m_joinClassBtn, classes_c);
         panel_allClasses.add (m_joinClassBtn);
@@ -216,6 +215,9 @@ public class WinServ_ControlPanel extends JFrame
         m_studentList.setSelectionMode (ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         m_studentList.setLayoutOrientation (JList.VERTICAL_WRAP);
         m_studentList.setVisibleRowCount (-1);
+        JScrollPane stdntScroller = new JScrollPane (m_studentList);
+        stdntScroller.setPreferredSize (new Dimension (250, 130));
+        
         inClasses_c.gridwidth = 4;                
         inClasses_c.gridheight = 9;
         inClasses_c.weighty = 0.9;
@@ -223,8 +225,8 @@ public class WinServ_ControlPanel extends JFrame
         inClasses_c.gridx = 0;
         inClasses_c.gridy = 1;
         inClasses_c.fill = GridBagConstraints.BOTH;
-        inClasses_gridbag.setConstraints (m_studentList, inClasses_c);
-        panel_inClass.add (m_studentList);
+        inClasses_gridbag.setConstraints (stdntScroller, inClasses_c);
+        panel_inClass.add (stdntScroller);
         
         m_kickStudentBtn = new JButton ("Kick Student");
         m_kickStudentBtn.addActionListener (this);
