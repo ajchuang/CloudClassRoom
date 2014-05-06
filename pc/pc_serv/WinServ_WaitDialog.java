@@ -40,8 +40,9 @@ public class WinServ_WaitDialog extends JFrame {
     
         add (m_label, BorderLayout.CENTER);
         getContentPane().setSize (220, 180);
+        
         setUndecorated (true);
-        setOpacity (0.75f);
+        //setOpacity (0.75f);
         
         pack ();
         setDefaultCloseOperation (JFrame.DO_NOTHING_ON_CLOSE);
