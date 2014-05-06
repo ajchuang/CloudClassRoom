@@ -51,11 +51,11 @@ namespace WpfApplication1
 
         private void exportCurrentSlide () {
 
-            string fName = System.IO.Path.GetTempPath() + generateRandomString(13) + ".png";
+            string fName = System.IO.Path.GetTempPath() + generateRandomString(13) + ".jpg";
 
             try {
                 int idx = m_objPres.SlideShowWindow.View.Slide.SlideIndex;
-                m_objPres.SlideShowWindow.View.Slide.Export (fName, "png", 1024, 768);
+                m_objPres.SlideShowWindow.View.Slide.Export (fName, "jpg", 1024, 768);
 
                 string toSend = "UPDATE_FILE\n" + fName.Length.ToString () + ":" + fName + "\nEND";
                 Console.WriteLine (toSend);

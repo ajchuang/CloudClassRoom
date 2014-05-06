@@ -83,6 +83,7 @@ public class WinServ_CloudHelper {
                 sm_bucketName, keyName, initResponse.getUploadId ()));
                 
             retVal = false;
+            WinServ.logInfo ("uploadFile return: " + e);
         }
         
         WinServ.logInfo ("uploadFile return: " + retVal);
