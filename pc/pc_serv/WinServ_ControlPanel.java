@@ -142,7 +142,7 @@ public class WinServ_ControlPanel extends JFrame
         // process all class panels
         m_classList = new JList ();
         m_classList.setSelectionMode (ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-        m_classList.setLayoutOrientation (JList.VERTICAL_WRAP);
+        //m_classList.setLayoutOrientation (JList.VERTICAL);
         m_classList.setVisibleRowCount (5);
         m_classList.setPrototypeCellValue ("This is a ver long long long long long string");        
         JScrollPane listScroller = new JScrollPane (m_classList);
@@ -213,8 +213,8 @@ public class WinServ_ControlPanel extends JFrame
         // process all class panels
         m_studentList = new JList ();
         m_studentList.setSelectionMode (ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-        m_studentList.setLayoutOrientation (JList.VERTICAL_WRAP);
-        m_studentList.setVisibleRowCount (-1);
+        //m_studentList.setLayoutOrientation (JList.VERTICAL_WRAP);
+        m_studentList.setVisibleRowCount (5);
         JScrollPane stdntScroller = new JScrollPane (m_studentList);
         stdntScroller.setPreferredSize (new Dimension (250, 130));
         
@@ -312,7 +312,7 @@ public class WinServ_ControlPanel extends JFrame
             
         } else if (src == m_listClassBtn) {
             
-            WinServ_WaitDialog.dialogFactory ("Please wait...");
+            WinServ_WaitDialog.dialogFactory (this, "Please wait...");
             
             WinServ_ReqCommand cmd = new WinServ_ReqCommand ();
             cmd.pushStr (LIST_CLASS_REQ);
@@ -873,7 +873,7 @@ public class WinServ_ControlPanel extends JFrame
         WinServ_NtfServer ntfServ = WinServ_NtfServer.getNtfServ ();
         int cookieId = repo.getCookieId ();
         
-        WinServ_WaitDialog.dialogFactory ("Please wait...");
+        WinServ_WaitDialog.dialogFactory (this, "Please wait...");
      
         // issue list command after create
         WinServ_ReqCommand cmd = new WinServ_ReqCommand ();

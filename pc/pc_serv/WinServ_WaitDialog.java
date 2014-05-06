@@ -9,12 +9,13 @@ public class WinServ_WaitDialog extends JFrame {
     public static WinServ_WaitDialog sm_dialog;
     JLabel  m_label;
     
-    static public WinServ_WaitDialog dialogFactory (String slogan) {
+    static public WinServ_WaitDialog dialogFactory (Component parent, String slogan) {
         
         if (sm_dialog != null)
             return sm_dialog;
             
         sm_dialog = new WinServ_WaitDialog (slogan);
+        sm_dialog.setLocationRelativeTo (parent);
         return sm_dialog;
     }
     
@@ -33,7 +34,7 @@ public class WinServ_WaitDialog extends JFrame {
         m_label = new JLabel (label, new ImageIcon (WinServ_SysParam.gtResPath ("wait.png")), SwingConstants.CENTER);
     
         add (m_label, BorderLayout.CENTER);
-        getContentPane().setSize (200, 150);
+        getContentPane().setSize (220, 180);
         pack ();
         setDefaultCloseOperation (JFrame.DO_NOTHING_ON_CLOSE);
         setVisible (true);

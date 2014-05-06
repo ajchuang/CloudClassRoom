@@ -87,6 +87,7 @@ public class WinServ_LoginWindow extends JFrame implements ActionListener, WinSe
 
         pack ();
         setDefaultCloseOperation (JFrame.DO_NOTHING_ON_CLOSE);
+        setBounds (300, 200, 250, 120);
         setVisible (true);
     }
     
