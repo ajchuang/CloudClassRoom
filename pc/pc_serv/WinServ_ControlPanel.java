@@ -68,6 +68,7 @@ public class WinServ_ControlPanel extends JFrame
     JButton m_logoutBtn;
     JButton m_codeEditorBtn;
     JButton m_imgViewerBtn;    
+    JButton m_pptxBtn;
     
     static WinServ_ControlPanel sm_ctrlPanel;
     
@@ -126,6 +127,10 @@ public class WinServ_ControlPanel extends JFrame
         m_imgViewerBtn = new JButton (new ImageIcon (WinServ_SysParam.gtResPath ("pic.png")));
         m_imgViewerBtn.addActionListener (this);
         toolBar.add (m_imgViewerBtn);
+        
+        m_pptxBtn = new JButton (new ImageIcon (WinServ_SysParam.gtResPath ("pptx.png")));
+        m_pptxBtn.addActionListener (this);
+        toolBar.add (m_pptxBtn);
         
         // tabs
         m_tabPan = new JTabbedPane (JTabbedPane.TOP);
@@ -524,6 +529,13 @@ public class WinServ_ControlPanel extends JFrame
                 // NW things
                 ntfServ.registerMsgHandler (RETRIEVE_PRESENT_TOKEN_RES, this);
                 ntfServ.sendMsgToServer (cmd);
+            }
+        } else if (src == m_pptxBtn) {
+            try {
+                Process process = 
+                    new ProcessBuilder ("..\\sys\\MyExe.exe").start();
+            } catch (Exception exp) {
+                WinServ.logExp (exp, false);
             }
         }
     }
