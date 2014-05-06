@@ -522,17 +522,29 @@ class ServerModel {
 		final List<MessageToClient> result = new ArrayList<MessageToClient>();
 		result.add(new MessageToClient(requestingSocket, toInstructor));
 		for (final ClientSession client : allClients.values()) {
-			if (client.getUser() instanceof Student) {
-				if (ClientState.LOGGED_IN.equals(client.getCurrentState())) {
-					result.add(new MessageToClient(client.getSocket(),
-							toStudent));
-				} else {
-					if (client.canPushNotification()) {
-						result.add(new MessageToClient(client, toStudent));
+			if (!classes.get(request.getClassId()).getPresenter().getUserName().equals(client.getUser().getUserName())){
+				if (client.getUser() instanceof Student) {
+					if (ClientState.LOGGED_IN.equals(client.getCurrentState())) {
+						result.add(new MessageToClient(client.getSocket(),
+								toStudent));
 					} else {
-						client.addOfflineMessage(toStudent);
+						if (client.canPushNotification()) {
+							result.add(new MessageToClient(client, toStudent));
+						} else {
+							client.addOfflineMessage(toStudent);
+						}
 					}
 				}
+				else{
+					if (ClientState.LOGGED_IN.equals(client.getCurrentState())) {
+						result.add(new MessageToClient(client.getSocket(),
+								toStudent));
+						}
+						else{
+							client.addOfflineMessage(toStudent);
+						}
+				}
+				
 			}
 		}
 		return result;

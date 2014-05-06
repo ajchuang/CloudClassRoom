@@ -16,7 +16,7 @@ public class PushContentReqMsg extends AbstractMessage {
 		super();
 		this.cookieId = cookieId;
 		this.classId = classId;
-		this.contentId = contentId;
+		this.contentId = contentId.trim ();
 		this.contentType = contentType;
 		//this.nBytes = nBytes;
 		//this.bytes = bytes;

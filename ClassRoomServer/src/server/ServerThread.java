@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketException;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -50,6 +51,7 @@ public class ServerThread implements Runnable {
 	private void sendMessages(final Message msg, final PrintWriter out) {
 		System.out.println("Sending " + msg.toMseeage());
 		out.println(msg.toMseeage());
+		//out.println (msg.toMseeage ().getBytes (Charset.forName ("UTF-8")));
 	}
 
 	private void sendMessages(final Collection<Message> messages,

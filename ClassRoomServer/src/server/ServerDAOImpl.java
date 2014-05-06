@@ -50,7 +50,7 @@ public class ServerDAOImpl implements ServerDAO {
 	@Override
 	public List<User> loadUsers() {
 		final List<User> users = new ArrayList<User>();
-		final ResultSet rs = execSqlQuery("SELECT * FROM User");
+		final ResultSet rs = execSqlQuery("SELECT * FROM user");
 		try {
 			while (rs.next()) {
 				final String user = rs.getString("name");
@@ -80,7 +80,7 @@ public class ServerDAOImpl implements ServerDAO {
 				final String className = rs.getString("name");
 				final Instructor instructor = new Instructor(
 						rs.getString("instructor"), rs.getString("pass"));
-				final ResultSet students = execSqlQuery("SELECT u.name, u.pass FROM User u, Class_Student c WHERE u.name=c.student AND class_id = "
+				final ResultSet students = execSqlQuery("SELECT u.name, u.pass FROM user u, Class_Student c WHERE u.name=c.student AND class_id = "
 						+ classId);
 				final Map<String, Student> stud = new HashMap<String, Student>();
 				while (students.next()) {
