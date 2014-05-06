@@ -894,7 +894,7 @@ public class WinServ_ControlPanel extends JFrame
         
         // We handle: UPDATE_NTF: fname 
         if (msg.startsWith (update_ntf)) {
-            String fname = msg.substring (update_ntf.length ());
+            String fname = msg.substring (update_ntf.length ()).trim ();
             
             int selectIdx = m_classList.getSelectedIndex ();
             
