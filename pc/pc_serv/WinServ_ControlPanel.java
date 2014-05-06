@@ -151,7 +151,7 @@ public class WinServ_ControlPanel extends JFrame
         m_classList.setVisibleRowCount (5);
         m_classList.setPrototypeCellValue ("This is a ver long long long long long string");        
         JScrollPane listScroller = new JScrollPane (m_classList);
-        listScroller.setPreferredSize (new Dimension (250, 130));
+        listScroller.setPreferredSize (new Dimension (250, 160));
 
         classes_c.gridwidth = 4;                //reset to the default
         classes_c.gridheight = 9;
@@ -221,7 +221,7 @@ public class WinServ_ControlPanel extends JFrame
         //m_studentList.setLayoutOrientation (JList.VERTICAL_WRAP);
         m_studentList.setVisibleRowCount (5);
         JScrollPane stdntScroller = new JScrollPane (m_studentList);
-        stdntScroller.setPreferredSize (new Dimension (250, 130));
+        stdntScroller.setPreferredSize (new Dimension (250, 160));
         
         inClasses_c.gridwidth = 4;                
         inClasses_c.gridheight = 9;
