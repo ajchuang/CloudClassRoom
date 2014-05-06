@@ -533,7 +533,9 @@ public class WinServ_ControlPanel extends JFrame
         } else if (src == m_pptxBtn) {
             try {
                 Process process = 
-                    new ProcessBuilder ("..\\sys\\MyExe.exe").start();
+                    new ProcessBuilder (
+                        WinServ_SysParam.getPptxToolPath ());
+                process.start();
             } catch (Exception exp) {
                 WinServ.logExp (exp, false);
             }

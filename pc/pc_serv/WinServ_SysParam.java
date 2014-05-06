@@ -40,6 +40,14 @@ public class WinServ_SysParam {
         return path;
     }
     
+    public static String getPptxToolPath () {
+        String path = 
+            "." + fsSeparator () + M_SYS_FS + 
+                  fsSeparator () + "CloudClassRoom.exe";
+        WinServ.logInfo ("S3 secret: " + path);
+        return path;
+    }
+    
     public static String fsSeparator () {
         return File.	separator;
     } 
