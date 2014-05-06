@@ -534,8 +534,7 @@ public class WinServ_ControlPanel extends JFrame
             try {
                 Process process = 
                     new ProcessBuilder (
-                        WinServ_SysParam.getPptxToolPath ());
-                process.start();
+                        WinServ_SysParam.getPptxToolPath ()).start();
             } catch (Exception exp) {
                 WinServ.logExp (exp, false);
             }
