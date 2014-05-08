@@ -9,7 +9,7 @@ public class PushContentNotifyMsg extends AbstractMessage {
 	public PushContentNotifyMsg(final long classId, final String contentId) {
 		super();
 		this.classId = classId;
-		this.contentId = contentId;
+		this.contentId = contentId.trim ();
 	}
 
 	public long getClassId() {
