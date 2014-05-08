@@ -84,7 +84,8 @@ public class WinServ_DataRepo {
     } 
     
     public boolean isPresenter () {
-        return m_isPresenter;
+        //return m_isPresenter;
+        return true;
     }
     
     public void setPresenter (boolean present) {

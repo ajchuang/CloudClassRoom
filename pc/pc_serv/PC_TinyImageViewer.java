@@ -133,7 +133,7 @@ public class PC_TinyImageViewer extends JFrame implements ActionListener, PC_Sim
     void sharingImageFile () {
         
         WinServ_DataRepo repo = WinServ_DataRepo.getDataRepo ();
-            
+        
         if (repo.isPresenter () == false) {
             JOptionPane.showMessageDialog (
                 this,

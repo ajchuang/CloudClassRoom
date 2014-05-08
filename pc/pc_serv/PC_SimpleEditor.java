@@ -207,6 +207,7 @@ public class PC_SimpleEditor extends JFrame implements ActionListener, PC_Simple
             
             WinServ_DataRepo repo = WinServ_DataRepo.getDataRepo ();
             
+            
             if (repo.isPresenter () == false) {
                 JOptionPane.showMessageDialog (
                     null,
@@ -216,6 +217,7 @@ public class PC_SimpleEditor extends JFrame implements ActionListener, PC_Simple
                     new ImageIcon (WinServ_SysParam.gtResPath ("error.png")));
                 return;
             }
+            
             
             try {
                 File tempFile = File.createTempFile ("temp-edit-file", ".txt");
