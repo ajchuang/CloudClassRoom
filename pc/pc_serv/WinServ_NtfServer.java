@@ -161,13 +161,14 @@ public class WinServ_NtfServer implements Runnable {
                 WinServ_ReqCommand cmd = new WinServ_ReqCommand ();
                 
                 while ((data = m_inputStream.readLine ()) != null) {
-                    data.trim ();
-                    WinServ.logInfo ("Received: " + data);
+                    
+                    String nData = new String (data.trim ());
+                    WinServ.logInfo ("Received: " + nData);
                 
-                    if (data.equals ("END") == true) 
+                    if (nData.equals ("END") == true) 
                         break;
                     else {
-                        cmd.pushStr (data);
+                        cmd.pushStr (nData);
                     }
                 }
                 

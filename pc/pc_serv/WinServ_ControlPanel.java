@@ -925,7 +925,7 @@ public class WinServ_ControlPanel extends JFrame
     
     void processPushContentNtf (WinServ_ReqCommand cmd) {
         
-        String contentName = cmd.getStrAt (2).substring (1);
+        String contentName = cmd.getStrAt (2).substring (1).trim ();
         String localName = WinServ_SysParam.getFsPath (contentName);
         
         boolean ret = 
@@ -944,6 +944,16 @@ public class WinServ_ControlPanel extends JFrame
                 PC_TinyImageViewer.startImgViewer (true);
                 
                 // we need to tell the viewrt to show
+                try {
+                    // we need to tell the viewr to show
+                    WinServ_SysParam.sendMsg (
+                        PC_TinyImageViewer.M_MSG_UPDATE, 
+                        localName, 
+                        WinServ_SysParam.M_IMG_VIEW_PORT);
+                        
+                } catch (Exception e) {
+                    WinServ.logExp (e, false);
+                }
                 
             } else {
                 // notify the text viewer

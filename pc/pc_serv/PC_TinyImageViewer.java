@@ -163,13 +163,13 @@ public class PC_TinyImageViewer extends JFrame implements ActionListener, PC_Sim
         // We handle: UPDATE:<path>
         if (msg.startsWith (M_MSG_UPDATE)) {
             // force view of the current document
-            String name = msg.substring (M_MSG_UPDATE.length ());
-            String path = WinServ_SysParam.getFsPath (name);
+            String name = msg.substring (M_MSG_UPDATE.length () + 1);
+            WinServ.logInfo ("IMG VIEWER: " + name);
+            System.out.println("Working Directory = " + System.getProperty("user.dir"));
             
-            WinServ.logInfo ("IMG VIEWER: " + path);
-            
-            m_remotePanel.drawNewFile (path);
-            m_tabPan.setSelectedIndex (M_SHARE_PANE);
+            File f = new File (name);
+            m_tabPan.setSelectedComponent (m_remotePanel);
+            m_remotePanel.drawNewFile (f.getAbsolutePath ());
             
             // play a small trick - blink for a while
             setAlwaysOnTop (true);
@@ -191,8 +191,11 @@ public class PC_TinyImageViewer extends JFrame implements ActionListener, PC_Sim
 		
         Color m_chalkBoardGreen = new Color (59, 101, 61);
         Image m_image;
+        String m_fName;
         
         public void drawNewFile (String name) {
+            m_fName = name;
+            WinServ.logInfo ("drawNewFile: " + name);
             m_image = new ImageIcon (name).getImage ();
             repaint ();
         }
@@ -200,13 +203,14 @@ public class PC_TinyImageViewer extends JFrame implements ActionListener, PC_Sim
         public void paintComponent (Graphics g) {
             	
             if (m_image != null) {
-                g.setColor (Color.WHITE);
-                g.fillRect (0, 0, 800, 600);
+                //g.setColor (Color.WHITE);
+                //g.fillRect (0, 0, 800, 600);
                 
                 int w = m_image.getWidth (null);
                 int h = m_image.getHeight (null);
                 int r = scaleRatio (w, h);    
-                    
+                
+                g.drawString ("Updated: " + m_fName, 10, 10);
                 g.drawImage (m_image, 0, 0, w/r, h/r, null);
             }
         }

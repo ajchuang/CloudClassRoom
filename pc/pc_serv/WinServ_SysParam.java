@@ -18,32 +18,39 @@ public class WinServ_SysParam {
     
     public static final String gtResPath (String res) {
         String path = 
-            "." + fsSeparator () + M_RES_FS + 
-                  fsSeparator () + res; 
+            System.getProperty ("user.dir") + fsSeparator () +
+            M_RES_FS + fsSeparator () + 
+            res; 
         WinServ.logInfo ("Res path: " + path);
         return path;
     }
     
     public static String getFsPath (String fileName) {
         String path = 
-            "." + fsSeparator () + M_ROOT_FS + 
-                  fsSeparator () + fileName; 
+            System.getProperty ("user.dir") + fsSeparator () + 
+            M_ROOT_FS + fsSeparator () + 
+            fileName;
+             
         WinServ.logInfo ("File path: " + path);
         return path;
     }
     
     public static String getSecretFileS3 () {
         String path = 
-            "." + fsSeparator () + M_SYS_FS + 
-                  fsSeparator () + "AwsCredentials.properties";
+            "." + fsSeparator () +
+            M_SYS_FS + fsSeparator () + 
+            "AwsCredentials.properties";
+            
         WinServ.logInfo ("S3 secret: " + path);
         return path;
     }
     
     public static String getPptxToolPath () {
         String path = 
-            "." + fsSeparator () + M_SYS_FS + 
-                  fsSeparator () + "CloudClassRoom.exe";
+            System.getProperty ("user.dir") + fsSeparator () +
+            M_SYS_FS + fsSeparator () + 
+            "CloudClassRoom.exe";
+            
         WinServ.logInfo ("S3 secret: " + path);
         return path;
     }

@@ -145,9 +145,11 @@ public class PC_SimpleEditor extends JFrame implements ActionListener, PC_Simple
         }
         
         public void actionPerformed(ActionEvent e) {
-            int retval = m_fileChooser.showOpenDialog (PC_SimpleEditor.this);
+            JFileChooser fileChooser = new JFileChooser ();
+            int retval = fileChooser.showOpenDialog (PC_SimpleEditor.this);
+            
             if (retval == JFileChooser.APPROVE_OPTION) {
-                File f = m_fileChooser.getSelectedFile ();
+                File f = fileChooser.getSelectedFile ();
                 try {
                     FileReader reader = new FileReader (f);
                     m_editArea.read (reader, "");  // Use TextComponent read
