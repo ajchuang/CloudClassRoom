@@ -1,5 +1,5 @@
 /*
-//package server;
+package server;
 
 import javapns.Push;
 import javapns.communication.exceptions.CommunicationException;
@@ -16,7 +16,7 @@ public class PushNotification {
 		// TODO Auto-generated method stub
 		
 		try {
-			List<PushedNotification> rsp = Push.alert("Hello World!", "certiAPNS.p12", "123qweasdzxcv", false, "dd6f6c4209b7bbef85a58de807640f9fd9771f11594a9de2e2b17d1bd22e76ea");
+			List<PushedNotification> rsp = Push.alert("Hello World!", "Cloud_Classroom.p12", "123qweasdzxcv", false, "dd6f6c4209b7bbef85a58de807640f9fd9771f11594a9de2e2b17d1bd22e76ea");
 			
 			for (PushedNotification pnf: rsp) {
 				if (pnf.isSuccessful ()) {

@@ -13,6 +13,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import javapns.Push;
+import javapns.communication.exceptions.CommunicationException;
+import javapns.communication.exceptions.KeystoreException;
+import javapns.notification.PushedNotification;
+import javapns.notification.ResponsePacket;
+
 import server.ServerModel.MessageToClient;
 
 import message.ChangePresentTokenResMsg;
@@ -72,6 +78,28 @@ public class ServerThread implements Runnable {
 					// TODO Push notification
 					System.out.println("push notification to "
 							+ output.user.getUser().getUserName());
+					try {
+						List<PushedNotification> rsp = Push.alert(output.messagesToSend.toMseeage(), "Cloud_Classroom.p12", "123qweasdzxcv", false, output.user.getTokenId());
+						
+						for (PushedNotification pnf: rsp) {
+							if (pnf.isSuccessful ()) {
+								System.out.println ("Oh yeah!");
+							} else {
+								String tok = pnf.getDevice().getToken ();
+								ResponsePacket theError = pnf.getResponse ();
+								
+								System.out.println ("Oh no! : " + tok);
+							}
+						}
+						
+						
+					} catch (CommunicationException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (KeystoreException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			}
 		} catch (IOException e) {
