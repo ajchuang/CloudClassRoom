@@ -151,7 +151,9 @@ int data;
 					if (msgFromClient == null) {
 						break;
 					}
-					System.out.println("Input from client " + msgFromClient);
+					System.out.println("Input from client :" + msgFromClient);
+					//System.out.println(msgFromClient.length());
+					//System.out.println(Message.END.length());
 					if (!Message.END.equals(msgFromClient)) {
 						if (pendingMessage.toString().isEmpty()) {
 							pendingMessage.append(msgFromClient);

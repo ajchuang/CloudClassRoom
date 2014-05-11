@@ -193,6 +193,14 @@ class ServerModel {
 		if (ClientState.LOGGED_IN.equals(client.getCurrentState())) {
 			return client;
 		}
+		if (ClientState.SUSPENDED.equals(client.getCurrentState())) {
+			// when the client session is in SUSPENDED state and receive a
+			// request of its cookie id, then automatically resume the state to
+			// logged in
+			System.out.println("Resumes a suspended session");
+			client.addState(ClientState.LOGGED_IN);
+			return client;
+		}
 		return null;
 	}
 
@@ -522,7 +530,8 @@ class ServerModel {
 		final List<MessageToClient> result = new ArrayList<MessageToClient>();
 		result.add(new MessageToClient(requestingSocket, toInstructor));
 		for (final ClientSession client : allClients.values()) {
-			if (!classes.get(request.getClassId()).getPresenter().getUserName().equals(client.getUser().getUserName())){
+			if (!classes.get(request.getClassId()).getPresenter().getUserName()
+					.equals(client.getUser().getUserName())) {
 				if (client.getUser() instanceof Student) {
 					if (ClientState.LOGGED_IN.equals(client.getCurrentState())) {
 						result.add(new MessageToClient(client.getSocket(),
@@ -534,17 +543,15 @@ class ServerModel {
 							client.addOfflineMessage(toStudent);
 						}
 					}
-				}
-				else{
+				} else {
 					if (ClientState.LOGGED_IN.equals(client.getCurrentState())) {
 						result.add(new MessageToClient(client.getSocket(),
 								toStudent));
-						}
-						else{
-							client.addOfflineMessage(toStudent);
-						}
+					} else {
+						client.addOfflineMessage(toStudent);
+					}
 				}
-				
+
 			}
 		}
 		return result;
