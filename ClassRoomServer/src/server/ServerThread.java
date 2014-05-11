@@ -79,7 +79,7 @@ public class ServerThread implements Runnable {
 					System.out.println("push notification to "
 							+ output.user.getUser().getUserName());
 					try {
-						List<PushedNotification> rsp = Push.alert(output.messagesToSend.toMseeage(), "Cloud_Classroom.p12", "123qweasdzxcv", false, output.user.getTokenId());
+						List<PushedNotification> rsp = Push.alert(output.messagesToSend.toMseeage(), "dev_id.p12", "123qweasdzxcv", false, output.user.getTokenId());
 						
 						for (PushedNotification pnf: rsp) {
 							if (pnf.isSuccessful ()) {
@@ -117,10 +117,37 @@ public class ServerThread implements Runnable {
 			final BufferedReader in = new BufferedReader(new InputStreamReader(
 					inStream));
 			StringBuilder pendingMessage = new StringBuilder();
-			String msgFromClient;
+			String msgFromClient = null;
+			StringBuilder bdr;
+//@lfred
+int data;
 			while (true) {
 				try {
-					msgFromClient = in.readLine();
+					//try {	
+					//	String tmp = new String ();
+						bdr = new StringBuilder ();
+						while (true) {
+							data = in.read ();
+							if (data >= 0){
+
+								if (data == 0x0a) {
+									msgFromClient = bdr.toString ();
+									break;
+								}
+
+								bdr.append ((char)data);
+							} else {
+								System.out.println ("FIN received");
+								throw new SocketException ();
+							}
+						}
+						
+						//msgFromClient = in.readLine();
+					//} catch (Exception xxx) {
+					//	System.out.println (xxx);
+					//	xxx.printStackTrace ();
+					//}
+					
 					if (msgFromClient == null) {
 						break;
 					}
@@ -234,12 +261,21 @@ public class ServerThread implements Runnable {
 				server.suspendClientSession(userName);
 				System.out.println("Client session suspended: " + userName);
 			}
+
+			// @lfred
+			try {
+				incoming.close ();
+			} catch (Exception eeeee) {
+				System.out.println ("Oh NO");
+				eeeee.printStackTrace ();
+				
+			}
 		} catch (Exception e) {
 			e.printStackTrace(System.out);
 			System.out.println(e);
 			// throw new RuntimeException(e);
-		} finally {
-
-		}
+		} /*finally {
+			System.out.println ("Finally -@lfred");
+		}*/
 	}
 }
