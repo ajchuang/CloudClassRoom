@@ -46,18 +46,17 @@ public class ServerThread implements Runnable {
 	private final Socket incoming;
 	private final ServerModel server;
 	private String userName = null;
-	private boolean firstLoginMsg;
+	private long cookieId = -1;
 
 	public ServerThread(final Socket s, final ServerModel server) {
 		incoming = s;
 		this.server = server;
-		firstLoginMsg = true;
 	}
 
 	private void sendMessages(final Message msg, final PrintWriter out) {
 		System.out.println("Sending " + msg.toMseeage());
 		out.println(msg.toMseeage());
-		//out.println (msg.toMseeage ().getBytes (Charset.forName ("UTF-8")));
+		// out.println (msg.toMseeage ().getBytes (Charset.forName ("UTF-8")));
 	}
 
 	private void sendMessages(final Collection<Message> messages,
@@ -79,20 +78,22 @@ public class ServerThread implements Runnable {
 					System.out.println("push notification to "
 							+ output.user.getUser().getUserName());
 					try {
-						List<PushedNotification> rsp = Push.alert(output.messagesToSend.toMseeage(), "dev_id.p12", "123qweasdzxcv", false, output.user.getTokenId());
-						
-						for (PushedNotification pnf: rsp) {
-							if (pnf.isSuccessful ()) {
-								System.out.println ("Oh yeah!");
+						List<PushedNotification> rsp = Push.alert(
+								output.messagesToSend.toMseeage(),
+								"dev_id.p12", "123qweasdzxcv", false,
+								output.user.getTokenId());
+
+						for (PushedNotification pnf : rsp) {
+							if (pnf.isSuccessful()) {
+								System.out.println("Oh yeah!");
 							} else {
-								String tok = pnf.getDevice().getToken ();
-								ResponsePacket theError = pnf.getResponse ();
-								
-								System.out.println ("Oh no! : " + tok);
+								String tok = pnf.getDevice().getToken();
+								ResponsePacket theError = pnf.getResponse();
+
+								System.out.println("Oh no! : " + tok);
 							}
 						}
-						
-						
+
 					} catch (CommunicationException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -119,44 +120,44 @@ public class ServerThread implements Runnable {
 			StringBuilder pendingMessage = new StringBuilder();
 			String msgFromClient = null;
 			StringBuilder bdr;
-			//@lfred
+			// @lfred
 			int data;
 
 			while (true) {
 				try {
-					//try {	
-					//	String tmp = new String ();
-						bdr = new StringBuilder ();
-						while (true) {
-							data = in.read ();
-							if (data >= 0){
+					// try {
+					// String tmp = new String ();
+					bdr = new StringBuilder();
+					while (true) {
+						data = in.read();
+						if (data >= 0) {
 
-								if (data == 0x0a) {
-									msgFromClient = bdr.toString ();
-									break;
-								} else if (data == 0x0d) {
-								  continue;
-								}
-
-								bdr.append ((char)data);
-							} else {
-								System.out.println ("FIN received");
-								throw new SocketException ();
+							if (data == 0x0a) {
+								msgFromClient = bdr.toString();
+								break;
+							} else if (data == 0x0d) {
+								continue;
 							}
+
+							bdr.append((char) data);
+						} else {
+							System.out.println("FIN received");
+							throw new SocketException();
 						}
-						
-						//msgFromClient = in.readLine();
-					//} catch (Exception xxx) {
-					//	System.out.println (xxx);
-					//	xxx.printStackTrace ();
-					//}
-					
+					}
+
+					// msgFromClient = in.readLine();
+					// } catch (Exception xxx) {
+					// System.out.println (xxx);
+					// xxx.printStackTrace ();
+					// }
+
 					if (msgFromClient == null) {
 						break;
 					}
 					System.out.println("Input from client :" + msgFromClient);
-					//System.out.println(msgFromClient.length());
-					//System.out.println(Message.END.length());
+					// System.out.println(msgFromClient.length());
+					// System.out.println(Message.END.length());
 					if (!Message.END.equals(msgFromClient)) {
 						if (pendingMessage.toString().isEmpty()) {
 							pendingMessage.append(msgFromClient);
@@ -179,50 +180,72 @@ public class ServerThread implements Runnable {
 						sendMessages(server.login(
 								(LoginReqMsg) messageFromClient, incoming), out);
 					} else if (messageFromClient instanceof CreateUsrReqMsg) {
+						userName = ((CreateUsrReqMsg) messageFromClient)
+								.getUserName();
 						sendMessages(
 								server.createUser((CreateUsrReqMsg) messageFromClient),
 								out);
 					} else if (messageFromClient instanceof LogoutReqMsg) {
+						cookieId = ((LogoutReqMsg) messageFromClient)
+								.getCookieId();
 						sendMessages(
 								server.logout((LogoutReqMsg) messageFromClient),
 								out);
 					} else if (messageFromClient instanceof CreateClassReqMsg) {
+						cookieId = ((CreateClassReqMsg) messageFromClient)
+								.getCookieId();
 						sendMessages(
 								server.createClass((CreateClassReqMsg) messageFromClient),
 								out);
 					} else if (messageFromClient instanceof ListClassReqMsg) {
+						cookieId = ((ListClassReqMsg) messageFromClient)
+								.getCookieId();
 						sendMessages(
 								server.listClass((ListClassReqMsg) messageFromClient),
 								out);
 					} else if (messageFromClient instanceof DeleteClassReqMsg) {
+						cookieId = ((DeleteClassReqMsg) messageFromClient)
+								.getCookieId();
 						sendMessages(
 								server.deleteClass((DeleteClassReqMsg) messageFromClient),
 								out);
 					} else if (messageFromClient instanceof JoinClassReqMsg) {
+						cookieId = ((JoinClassReqMsg) messageFromClient)
+								.getCookieId();
 						final List<MessageToClient> outputs = server
 								.joinClassRequest(incoming,
 										(JoinClassReqMsg) messageFromClient);
 						sendMessageOrNotification(outputs);
 					} else if (messageFromClient instanceof JoinClassApprovalResMsg) {
+						cookieId = ((JoinClassApprovalResMsg) messageFromClient)
+								.getApproverCookieId();
 						final List<MessageToClient> outputs = server
 								.joinClassResult(
 										incoming,
 										(JoinClassApprovalResMsg) messageFromClient);
 						sendMessageOrNotification(outputs);
 					} else if (messageFromClient instanceof QueryClassInfoReqMsg) {
+						cookieId = ((QueryClassInfoReqMsg) messageFromClient)
+								.getCookieId();
 						sendMessages(
 								server.queryClassInfo((QueryClassInfoReqMsg) messageFromClient),
 								out);
 					} else if (messageFromClient instanceof QuitClassReqMsg) {
+						cookieId = ((QuitClassReqMsg) messageFromClient)
+								.getCookieId();
 						sendMessages(
 								server.quitClass((QuitClassReqMsg) messageFromClient),
 								out);
 					} else if (messageFromClient instanceof KickUserReqMsg) {
+						cookieId = ((KickUserReqMsg) messageFromClient)
+								.getCookieId();
 						final List<MessageToClient> outputs = server
 								.kickUserFromClass(incoming,
 										(KickUserReqMsg) messageFromClient);
 						sendMessageOrNotification(outputs);
 					} else if (messageFromClient instanceof PushContentReqMsg) {
+						cookieId = ((PushContentReqMsg) messageFromClient)
+								.getCookieId();
 						final List<MessageToClient> outputs = server
 								.pushContent(incoming,
 										(PushContentReqMsg) messageFromClient);
@@ -234,24 +257,32 @@ public class ServerThread implements Runnable {
 						// messageFromClient),
 						// out);
 					} else if (messageFromClient instanceof GetPresentTokenReqMsg) {
+						cookieId = ((GetPresentTokenReqMsg) messageFromClient)
+								.getCookieId();
 						final List<MessageToClient> outputs = server
 								.getPresenterRequest(
 										incoming,
 										(GetPresentTokenReqMsg) messageFromClient);
 						sendMessageOrNotification(outputs);
 					} else if (messageFromClient instanceof ChangePresentTokenResMsg) {
+						cookieId = ((ChangePresentTokenResMsg) messageFromClient)
+								.getApproverCookieId();
 						final List<MessageToClient> outputs = server
 								.changePresentResult(
 										incoming,
 										(ChangePresentTokenResMsg) messageFromClient);
 						sendMessageOrNotification(outputs);
 					} else if (messageFromClient instanceof RetrivePresentTokenReqMsg) {
+						cookieId = ((RetrivePresentTokenReqMsg) messageFromClient)
+								.getCookieId();
 						final List<MessageToClient> outputs = server
 								.retrivePresentToken(
 										incoming,
 										(RetrivePresentTokenReqMsg) messageFromClient);
 						sendMessageOrNotification(outputs);
 					} else if (messageFromClient instanceof QueryLatestContentReqMsg) {
+						cookieId = ((QueryLatestContentReqMsg) messageFromClient)
+								.getCookieId();
 						sendMessages(
 								server.queryLatestContent((QueryLatestContentReqMsg) messageFromClient),
 								out);
@@ -262,6 +293,10 @@ public class ServerThread implements Runnable {
 			}
 		} catch (final SocketException e) {
 			System.out.println("Client closed socket");
+			if (cookieId != -1) {
+				System.out.println("Get username from cookie id " + cookieId);
+				userName = server.getUserFromCookieId(cookieId);
+			}
 			if (userName != null) {
 				server.suspendClientSession(userName);
 				System.out.println("Client session suspended: " + userName);
@@ -269,18 +304,18 @@ public class ServerThread implements Runnable {
 
 			// @lfred
 			try {
-				incoming.close ();
+				incoming.close();
 			} catch (Exception eeeee) {
-				System.out.println ("Oh NO");
-				eeeee.printStackTrace ();
-				
+				System.out.println("Oh NO");
+				eeeee.printStackTrace();
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace(System.out);
 			System.out.println(e);
 			// throw new RuntimeException(e);
-		} /*finally {
-			System.out.println ("Finally -@lfred");
-		}*/
+		} /*
+		 * finally { System.out.println ("Finally -@lfred"); }
+		 */
 	}
 }

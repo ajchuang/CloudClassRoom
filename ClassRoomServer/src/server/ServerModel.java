@@ -183,6 +183,11 @@ class ServerModel {
 		}
 		return result;
 	}
+	
+	public String getUserFromCookieId(final long cookieId)
+	{
+		return cookieToUser.get(cookieId);
+	}
 
 	private ClientSession getLoggedInUser(final long cookieId) {
 		final String userName = cookieToUser.get(cookieId);
