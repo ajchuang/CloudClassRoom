@@ -119,8 +119,9 @@ public class ServerThread implements Runnable {
 			StringBuilder pendingMessage = new StringBuilder();
 			String msgFromClient = null;
 			StringBuilder bdr;
-//@lfred
-int data;
+			//@lfred
+			int data;
+
 			while (true) {
 				try {
 					//try {	
@@ -133,6 +134,8 @@ int data;
 								if (data == 0x0a) {
 									msgFromClient = bdr.toString ();
 									break;
+								} else if (data == 0x0d) {
+								  continue;
 								}
 
 								bdr.append ((char)data);
