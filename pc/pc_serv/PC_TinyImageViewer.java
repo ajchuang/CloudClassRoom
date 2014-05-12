@@ -203,14 +203,12 @@ public class PC_TinyImageViewer extends JFrame implements ActionListener, PC_Sim
         public void paintComponent (Graphics g) {
             	
             if (m_image != null) {
-                //g.setColor (Color.WHITE);
-                //g.fillRect (0, 0, 800, 600);
+                g.setColor (Color.WHITE);
+                g.fillRect (0, 0, 800, 600);
                 
                 int w = m_image.getWidth (null);
                 int h = m_image.getHeight (null);
                 int r = scaleRatio (w, h);    
-                
-                g.drawString ("Updated: " + m_fName, 10, 10);
                 g.drawImage (m_image, 0, 0, w/r, h/r, null);
             }
         }
