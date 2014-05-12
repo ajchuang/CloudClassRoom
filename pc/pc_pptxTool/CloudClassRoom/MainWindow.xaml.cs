@@ -55,7 +55,7 @@ namespace WpfApplication1
 
             try {
                 int idx = m_objPres.SlideShowWindow.View.Slide.SlideIndex;
-                m_objPres.SlideShowWindow.View.Slide.Export (fName, "jpg", 1024, 768);
+                m_objPres.SlideShowWindow.View.Slide.Export (fName, "jpg", 800, 600);
 
                 string toSend = "UPDATE_FILE\n" + fName.Length.ToString () + ":" + fName + "\nEND";
                 Console.WriteLine (toSend);
