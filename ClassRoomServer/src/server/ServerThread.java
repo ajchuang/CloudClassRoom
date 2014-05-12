@@ -95,11 +95,9 @@ public class ServerThread implements Runnable {
 						}
 
 					} catch (CommunicationException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						e.printStackTrace(System.out);
 					} catch (KeystoreException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						e.printStackTrace(System.out);
 					}
 				}
 			}
