@@ -195,20 +195,22 @@ public class ServerThread implements Runnable {
 						cookieId = ((CreateClassReqMsg) messageFromClient)
 								.getCookieId();
 						sendMessages(
-								server.createClass((CreateClassReqMsg) messageFromClient),
-								out);
+								server.createClass(
+										(CreateClassReqMsg) messageFromClient,
+										incoming), out);
 					} else if (messageFromClient instanceof ListClassReqMsg) {
 						cookieId = ((ListClassReqMsg) messageFromClient)
 								.getCookieId();
-						sendMessages(
-								server.listClass((ListClassReqMsg) messageFromClient),
+						sendMessages(server.listClass(
+								(ListClassReqMsg) messageFromClient, incoming),
 								out);
 					} else if (messageFromClient instanceof DeleteClassReqMsg) {
 						cookieId = ((DeleteClassReqMsg) messageFromClient)
 								.getCookieId();
 						sendMessages(
-								server.deleteClass((DeleteClassReqMsg) messageFromClient),
-								out);
+								server.deleteClass(
+										(DeleteClassReqMsg) messageFromClient,
+										incoming), out);
 					} else if (messageFromClient instanceof JoinClassReqMsg) {
 						cookieId = ((JoinClassReqMsg) messageFromClient)
 								.getCookieId();
@@ -227,14 +229,14 @@ public class ServerThread implements Runnable {
 					} else if (messageFromClient instanceof QueryClassInfoReqMsg) {
 						cookieId = ((QueryClassInfoReqMsg) messageFromClient)
 								.getCookieId();
-						sendMessages(
-								server.queryClassInfo((QueryClassInfoReqMsg) messageFromClient),
-								out);
+						sendMessages(server.queryClassInfo(
+								(QueryClassInfoReqMsg) messageFromClient,
+								incoming), out);
 					} else if (messageFromClient instanceof QuitClassReqMsg) {
 						cookieId = ((QuitClassReqMsg) messageFromClient)
 								.getCookieId();
-						sendMessages(
-								server.quitClass((QuitClassReqMsg) messageFromClient),
+						sendMessages(server.quitClass(
+								(QuitClassReqMsg) messageFromClient, incoming),
 								out);
 					} else if (messageFromClient instanceof KickUserReqMsg) {
 						cookieId = ((KickUserReqMsg) messageFromClient)
@@ -283,9 +285,9 @@ public class ServerThread implements Runnable {
 					} else if (messageFromClient instanceof QueryLatestContentReqMsg) {
 						cookieId = ((QueryLatestContentReqMsg) messageFromClient)
 								.getCookieId();
-						sendMessages(
-								server.queryLatestContent((QueryLatestContentReqMsg) messageFromClient),
-								out);
+						sendMessages(server.queryLatestContent(
+								(QueryLatestContentReqMsg) messageFromClient,
+								incoming), out);
 					}
 				} catch (final UnknownMessageException e) {
 					System.out.println("Unknown message ");

@@ -41,7 +41,7 @@ public class ClientSession {
 		return socket;
 	}
 
-	private void setSocket(final Socket socket) {
+	void setSocket(final Socket socket) {
 		this.socket = socket;
 	}
 
