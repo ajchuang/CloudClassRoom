@@ -16,10 +16,12 @@ import java.nio.charset.Charset;
 public class PC_TinyImageViewer extends JFrame implements ActionListener, PC_SimpleMsgHandler {
 	
     public static final String M_MSG_UPDATE = "UPDATE:";
-    
     public static final int M_BLINK_TIME    = 300;
     public static final int M_EDIT_PANE     = 0;
     public static final int M_SHARE_PANE    = 1;
+    
+    final static int M_WINDOW_WIDTH     = 1024;
+    final static int M_WINDOW_HEIGHT    = 768;
     
     // UI components
     JTabbedPane m_tabPan;
@@ -40,7 +42,7 @@ public class PC_TinyImageViewer extends JFrame implements ActionListener, PC_Sim
 		
         if (sm_imgViewer == null) {
             sm_imgViewer = new PC_TinyImageViewer ();
-            sm_imgViewer.setSize (800, 600);
+            sm_imgViewer.setSize (M_WINDOW_WIDTH, M_WINDOW_HEIGHT);
             sm_imgViewer.setVisible (doShow);
             sm_imgViewer.setResizable (false);
         } else {
@@ -179,6 +181,7 @@ public class PC_TinyImageViewer extends JFrame implements ActionListener, PC_Sim
                     M_BLINK_TIME, 
                     new ActionListener () {
                         public void actionPerformed (ActionEvent e) {
+                            WinServ.logInfo ("Unset always on TOP");
                             setAlwaysOnTop (false);
                         } 
                     }
@@ -204,12 +207,18 @@ public class PC_TinyImageViewer extends JFrame implements ActionListener, PC_Sim
             	
             if (m_image != null) {
                 g.setColor (Color.WHITE);
-                g.fillRect (0, 0, 800, 600);
+                g.fillRect (0, 0, M_WINDOW_WIDTH, M_WINDOW_HEIGHT);
+                
                 
                 int w = m_image.getWidth (null);
                 int h = m_image.getHeight (null);
-                int r = scaleRatio (w, h);    
-                g.drawImage (m_image, 0, 0, w/r, h/r, null);
+                int r = scaleRatio (w, h);
+                    
+                g.drawImage (
+                    m_image, 0, 0, 
+                    (int)((double)w/(double)r), 
+                    (int)((double)h/(double)r), 
+                    null);
             }
         }
         
@@ -218,11 +227,14 @@ public class PC_TinyImageViewer extends JFrame implements ActionListener, PC_Sim
             int r1 = 1, r2 = 1;
             
             if (w > getWidth ())
-                r1 = w/getWidth () + 1;
+                r1 = w/getWidth ();
                 
             if (h > getHeight ())
-                r2 = h/getHeight () + 1;
-                    
+                r2 = h/getHeight ();
+                
+            WinServ.logInfo ("w: " + w + ", h: " + h );
+            WinServ.logInfo ("r1: " + r1 + ", r2: " + r2 );
+            WinServ.logInfo ("getWidth: " + getWidth () + ", getHeight: " + getHeight ());
             return (r1 > r2) ? r1:r2;
         }
 	}
