@@ -562,6 +562,9 @@ class ServerModel {
 			if (!classes.get(request.getClassId()).getPresenter().getUserName()
 					.equals(client.getUser().getUserName())) {
 				if (client.getUser() instanceof Student) {
+					if (!classToAdd.inClass(client.getUser().getUserName())) {
+						continue;
+					}
 					if (ClientState.LOGGED_IN.equals(client.getCurrentState())) {
 						System.out.println(client.getUser().getUserName()
 								+ " is logged in, send via socket");
@@ -579,6 +582,10 @@ class ServerModel {
 						}
 					}
 				} else {
+					if (!client.getUser().getUserName()
+							.equals(classToAdd.getInstructor().getUserName())) {
+						continue;
+					}
 					if (ClientState.LOGGED_IN.equals(client.getCurrentState())) {
 						result.add(new MessageToClient(client.getSocket(),
 								toStudent));
