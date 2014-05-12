@@ -184,7 +184,12 @@ class ServerModel {
 		return result;
 	}
 
-	private ClientSession getLoggedInUser(final long cookieId) {
+	public String getUserFromCookieId(final long cookieId) {
+		return cookieToUser.get(cookieId);
+	}
+
+	private ClientSession getLoggedInUser(final long cookieId,
+			final Socket socket) {
 		final String userName = cookieToUser.get(cookieId);
 		if (userName == null) {
 			return null;
@@ -193,12 +198,22 @@ class ServerModel {
 		if (ClientState.LOGGED_IN.equals(client.getCurrentState())) {
 			return client;
 		}
+		if (ClientState.SUSPENDED.equals(client.getCurrentState())) {
+			// when the client session is in SUSPENDED state and receive a
+			// request of its cookie id, then automatically resume the state to
+			// logged in
+			System.out.println("Resumes a suspended session");
+			client.setSocket(socket);
+			client.addState(ClientState.LOGGED_IN);
+			return client;
+		}
 		return null;
 	}
 
 	synchronized CreateClassResultMsg createClass(
-			final CreateClassReqMsg request) {
-		final ClientSession validClient = getLoggedInUser(request.getCookieId());
+			final CreateClassReqMsg request, final Socket socket) {
+		final ClientSession validClient = getLoggedInUser(
+				request.getCookieId(), socket);
 		if (validClient == null) {
 			return new CreateClassResultMsg(ClassAdminStatus.NOT_LOGIN, -1);
 		}
@@ -221,8 +236,10 @@ class ServerModel {
 				newClass.getClassId());
 	}
 
-	synchronized DeleteClassResMsg deleteClass(final DeleteClassReqMsg request) {
-		final ClientSession validClient = getLoggedInUser(request.getCookieId());
+	synchronized DeleteClassResMsg deleteClass(final DeleteClassReqMsg request,
+			final Socket socket) {
+		final ClientSession validClient = getLoggedInUser(
+				request.getCookieId(), socket);
 		if (validClient == null) {
 			return new DeleteClassResMsg(ClassAdminStatus.NOT_LOGIN);
 		}
@@ -239,8 +256,10 @@ class ServerModel {
 		return new DeleteClassResMsg(ClassAdminStatus.SUCCESS);
 	}
 
-	synchronized ListClassResMsg listClass(final ListClassReqMsg request) {
-		final ClientSession validClient = getLoggedInUser(request.getCookieId());
+	synchronized ListClassResMsg listClass(final ListClassReqMsg request,
+			final Socket socket) {
+		final ClientSession validClient = getLoggedInUser(
+				request.getCookieId(), socket);
 		if (validClient == null) {
 			return new ListClassResMsg(QueryResultStatus.NOT_LOGIN,
 					Collections.<Class> emptyList());
@@ -273,7 +292,8 @@ class ServerModel {
 	// return list in case we want to send message to multiple clients
 	synchronized List<MessageToClient> getPresenterRequest(
 			final Socket requestingSocket, final GetPresentTokenReqMsg request) {
-		final ClientSession validClient = getLoggedInUser(request.getCookieId());
+		final ClientSession validClient = getLoggedInUser(
+				request.getCookieId(), requestingSocket);
 		if (validClient == null) {
 			return Collections.singletonList(new MessageToClient(
 					requestingSocket, new GetPresentTokenResMsg(request
@@ -331,8 +351,8 @@ class ServerModel {
 	synchronized List<MessageToClient> changePresentResult(
 			final Socket requestingSocket,
 			final ChangePresentTokenResMsg request) {
-		final ClientSession validClient = getLoggedInUser(request
-				.getApproverCookieId());
+		final ClientSession validClient = getLoggedInUser(
+				request.getApproverCookieId(), requestingSocket);
 		if (validClient == null) {
 			// Note that we don't send error message
 			return Collections.<MessageToClient> emptyList();
@@ -377,14 +397,20 @@ class ServerModel {
 				classToUpdate.getClassId(), classToUpdate.getClassName(),
 				decision);
 		if (ClientState.LOGGED_IN.equals(studentSession.getCurrentState())) {
+			System.out.println(studentSession.getUser().getUserName()
+					+ " is logged in, send via socket");
 			// logged in -> socket is in connection -> send message directly
 			return Collections.singletonList(new MessageToClient(studentSession
 					.getSocket(), result));
 		} else {
 			if (studentSession.canPushNotification()) {
+				System.out.println("Added a push notification "
+						+ studentSession.getUser().getUserName());
 				return Collections.singletonList(new MessageToClient(
 						studentSession, result));
 			} else {
+				System.out.println("Added offline message to "
+						+ studentSession.getUser().getUserName());
 				studentSession.addOfflineMessage(result);
 				return Collections.<MessageToClient> emptyList();
 			}
@@ -392,8 +418,9 @@ class ServerModel {
 	}
 
 	synchronized QueryClassInfoResMsg queryClassInfo(
-			final QueryClassInfoReqMsg request) {
-		final ClientSession validClient = getLoggedInUser(request.getCookieId());
+			final QueryClassInfoReqMsg request, final Socket socket) {
+		final ClientSession validClient = getLoggedInUser(
+				request.getCookieId(), socket);
 		if (validClient == null) {
 			return new QueryClassInfoResMsg(
 					ClassAdminStatus.NOT_LOGIN.toString(), "",
@@ -413,8 +440,10 @@ class ServerModel {
 				classToQuery.getInstructor().getUserName(), students);
 	}
 
-	synchronized QuitClassResMsg quitClass(final QuitClassReqMsg request) {
-		final ClientSession validClient = getLoggedInUser(request.getCookieId());
+	synchronized QuitClassResMsg quitClass(final QuitClassReqMsg request,
+			final Socket socket) {
+		final ClientSession validClient = getLoggedInUser(
+				request.getCookieId(), socket);
 		if (validClient == null) {
 			return new QuitClassResMsg(ClassAdminStatus.NOT_LOGIN.toString());
 		}
@@ -434,7 +463,8 @@ class ServerModel {
 
 	synchronized List<MessageToClient> kickUserFromClass(
 			final Socket requestingSocket, final KickUserReqMsg request) {
-		final ClientSession validClient = getLoggedInUser(request.getCookieId());
+		final ClientSession validClient = getLoggedInUser(
+				request.getCookieId(), requestingSocket);
 		if (validClient == null) {
 			return Collections.singletonList(new MessageToClient(
 					requestingSocket, new KickUserResMsg(
@@ -473,12 +503,18 @@ class ServerModel {
 		final List<MessageToClient> result = new ArrayList<MessageToClient>();
 		result.add(new MessageToClient(requestingSocket, msgToInstructor));
 		if (ClientState.LOGGED_IN.equals(studentSession.getCurrentState())) {
+			System.out.println(studentSession.getUser().getUserName()
+					+ " is logged in, send via socket");
 			result.add(new MessageToClient(studentSession.getSocket(),
 					msgToStudent));
 		} else {
 			if (studentSession.canPushNotification()) {
+				System.out.println("Added a push notification "
+						+ studentSession.getUser().getUserName());
 				result.add(new MessageToClient(studentSession, msgToStudent));
 			} else {
+				System.out.println("Added offline message to "
+						+ studentSession.getUser().getUserName());
 				studentSession.addOfflineMessage(msgToStudent);
 			}
 		}
@@ -487,7 +523,8 @@ class ServerModel {
 
 	synchronized List<MessageToClient> pushContent(
 			final Socket requestingSocket, final PushContentReqMsg request) {
-		final ClientSession validClient = getLoggedInUser(request.getCookieId());
+		final ClientSession validClient = getLoggedInUser(
+				request.getCookieId(), requestingSocket);
 		if (validClient == null) {
 			return Collections.singletonList(new MessageToClient(
 					requestingSocket, new PushContentResMsg(
@@ -522,29 +559,41 @@ class ServerModel {
 		final List<MessageToClient> result = new ArrayList<MessageToClient>();
 		result.add(new MessageToClient(requestingSocket, toInstructor));
 		for (final ClientSession client : allClients.values()) {
-			if (!classes.get(request.getClassId()).getPresenter().getUserName().equals(client.getUser().getUserName())){
+			if (!classes.get(request.getClassId()).getPresenter().getUserName()
+					.equals(client.getUser().getUserName())) {
 				if (client.getUser() instanceof Student) {
+					if (!classToAdd.inClass(client.getUser().getUserName())) {
+						continue;
+					}
 					if (ClientState.LOGGED_IN.equals(client.getCurrentState())) {
+						System.out.println(client.getUser().getUserName()
+								+ " is logged in, send via socket");
 						result.add(new MessageToClient(client.getSocket(),
 								toStudent));
 					} else {
 						if (client.canPushNotification()) {
+							System.out.println("Added a push notification "
+									+ client.getUser().getUserName());
 							result.add(new MessageToClient(client, toStudent));
 						} else {
+							System.out.println("Added offline message to "
+									+ client.getUser().getUserName());
 							client.addOfflineMessage(toStudent);
 						}
 					}
-				}
-				else{
+				} else {
+					if (!client.getUser().getUserName()
+							.equals(classToAdd.getInstructor().getUserName())) {
+						continue;
+					}
 					if (ClientState.LOGGED_IN.equals(client.getCurrentState())) {
 						result.add(new MessageToClient(client.getSocket(),
 								toStudent));
-						}
-						else{
-							client.addOfflineMessage(toStudent);
-						}
+					} else {
+						client.addOfflineMessage(toStudent);
+					}
 				}
-				
+
 			}
 		}
 		return result;
@@ -587,7 +636,8 @@ class ServerModel {
 	synchronized List<MessageToClient> retrivePresentToken(
 			final Socket requestingSocket,
 			final RetrivePresentTokenReqMsg request) {
-		final ClientSession validClient = getLoggedInUser(request.getCookieId());
+		final ClientSession validClient = getLoggedInUser(
+				request.getCookieId(), requestingSocket);
 		if (validClient == null) {
 			return Collections.singletonList(new MessageToClient(
 					requestingSocket, new RetrivePresentTokenResMsg(
@@ -625,12 +675,18 @@ class ServerModel {
 		final List<MessageToClient> result = new ArrayList<MessageToClient>();
 		result.add(new MessageToClient(requestingSocket, toInstructor));
 		if (ClientState.LOGGED_IN.equals(currentPresent.getCurrentState())) {
+			System.out.println(currentPresent.getUser().getUserName()
+					+ " is logged in, send via socket");
 			result.add(new MessageToClient(currentPresent.getSocket(),
 					toOldPresenter));
 		} else {
 			if (currentPresent.canPushNotification()) {
+				System.out.println("Added a push notification "
+						+ currentPresent.getUser().getUserName());
 				result.add(new MessageToClient(currentPresent, toOldPresenter));
 			} else {
+				System.out.println("Added offline message to "
+						+ currentPresent.getUser().getUserName());
 				currentPresent.addOfflineMessage(toOldPresenter);
 			}
 		}
@@ -639,8 +695,8 @@ class ServerModel {
 
 	synchronized List<MessageToClient> joinClassResult(
 			final Socket requestingSocket, final JoinClassApprovalResMsg request) {
-		final ClientSession validClient = getLoggedInUser(request
-				.getApproverCookieId());
+		final ClientSession validClient = getLoggedInUser(
+				request.getApproverCookieId(), requestingSocket);
 		if (validClient == null) {
 			// Note that we don't send error message
 			return Collections.<MessageToClient> emptyList();
@@ -684,13 +740,19 @@ class ServerModel {
 				classToJoin.getClassId(), classToJoin.getClassName(), decision);
 		if (ClientState.LOGGED_IN.equals(studentSession.getCurrentState())) {
 			// prepare a message to send
+			System.out.println(studentSession.getUser().getUserName()
+					+ " is logged in, send via socket");
 			return Collections.singletonList(new MessageToClient(studentSession
 					.getSocket(), result));
 		} else {
 			if (studentSession.canPushNotification()) {
+				System.out.println("Added a push notification "
+						+ studentSession.getUser().getUserName());
 				return Collections.singletonList(new MessageToClient(
 						studentSession, result));
 			} else {
+				System.out.println("Added offline message to "
+						+ studentSession.getUser().getUserName());
 				studentSession.addOfflineMessage(result);
 				return Collections.<MessageToClient> emptyList();
 			}
@@ -700,7 +762,8 @@ class ServerModel {
 	// return list in case we want to send message to multiple clients
 	synchronized List<MessageToClient> joinClassRequest(
 			final Socket requestingSocket, final JoinClassReqMsg request) {
-		final ClientSession validClient = getLoggedInUser(request.getCookieId());
+		final ClientSession validClient = getLoggedInUser(
+				request.getCookieId(), requestingSocket);
 		if (validClient == null) {
 			return Collections.singletonList(new MessageToClient(
 					requestingSocket, new JoinClassResMsg(request.getClassId(),
@@ -744,8 +807,9 @@ class ServerModel {
 	}
 
 	synchronized QueryLatestContentResMsg queryLatestContent(
-			final QueryLatestContentReqMsg request) {
-		final ClientSession validClient = getLoggedInUser(request.getCookieId());
+			final QueryLatestContentReqMsg request, final Socket socket) {
+		final ClientSession validClient = getLoggedInUser(
+				request.getCookieId(), socket);
 		if (validClient == null) {
 			return new QueryLatestContentResMsg(
 					ClassAdminStatus.NOT_LOGIN.toString(),

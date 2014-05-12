@@ -41,11 +41,11 @@ public class ClientSession {
 		return socket;
 	}
 
-	private void setSocket(final Socket socket) {
+	void setSocket(final Socket socket) {
 		this.socket = socket;
 	}
 
-	private void addState(final ClientState state) {
+	void addState(final ClientState state) {
 		states.add(new TimedState(state));
 	}
 
